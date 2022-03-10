@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Alert from "../../../services/classes/Alert";
-import { collection, store } from "../../../services/utils/controllers";
+import { collection, fetch, store } from "../../../services/utils/controllers";
 import {
   formatCurrency,
   getPaymentType,
@@ -109,13 +109,30 @@ const Approvals = (props) => {
     setState(initialState);
   };
 
+  const handleClearQuery = (batch) => {
+    const id = batch && batch.id;
+
+    fetch("batches/clear/query", id)
+      .then((res) => {
+        const data = res.data.data;
+
+        setState({
+          ...state,
+          batch: data,
+          batch_id: data.id,
+          grandTotal: parseFloat(data.amount),
+        });
+      })
+      .catch((err) => console.log(err.message));
+  };
+
   useEffect(() => {
     if (state.batch && state.batch !== null && !state.showDetails) {
       setState({
         ...state,
         batch: state.batch,
         batch_id: state.batch.id,
-        grandTotal: state.batch.amount,
+        grandTotal: parseFloat(state.batch.amount),
       });
     }
   }, [state.batch, state.showDetails]);
@@ -252,21 +269,33 @@ const Approvals = (props) => {
                 state.batch.steps === 3 &&
                 state.batch.editable === 1 &&
                 userHasRole(auth, "audit-officer") ? (
-                  <button
-                    type="button"
-                    className="btn btn-danger btn-uppercase btn-sm"
-                    disabled={
-                      state.status === "approved" ||
-                      state.expenditure !== null ||
-                      state.description === ""
-                    }
-                    onClick={() => {
-                      setState({ ...state, status: "queried" });
-                      handlePaymentAction("queried");
-                    }}
-                  >
-                    Query
-                  </button>
+                  <>
+                    {state.batch.queried && (
+                      <button
+                        type="button"
+                        className="btn btn-primary btn-uppercase btn-sm"
+                        onClick={() => handleClearQuery(state.batch)}
+                      >
+                        Clear Query
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      className="btn btn-danger btn-uppercase btn-sm"
+                      disabled={
+                        state.status === "approved" ||
+                        state.expenditure !== null ||
+                        state.description === "" ||
+                        state.batch.queried
+                      }
+                      onClick={() => {
+                        setState({ ...state, status: "queried" });
+                        handlePaymentAction("queried");
+                      }}
+                    >
+                      Query
+                    </button>
+                  </>
                 ) : null}
 
                 <button
