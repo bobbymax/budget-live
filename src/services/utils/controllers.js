@@ -35,3 +35,8 @@ export const destroy = async (entity, id) => {
     headers: authHeader(),
   });
 };
+
+export const batchRequests = async (...arrRequests) => {
+  const result = await axios.all(...arrRequests);
+  return Promise.resolve(result);
+};

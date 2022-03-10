@@ -146,16 +146,22 @@ const OverviewExpenditure = () => {
               </thead>
 
               <tbody>
-                {state.expenditures && state.expenditures.length > 0
-                  ? state.expenditures.map((subBudget) => (
-                      <tr key={subBudget.id}>
-                        <td>{subBudget.subBudgetHead.budgetCode}</td>
-                        <td>{subBudget.beneficiary}</td>
-                        <td>{subBudget.description}</td>
-                        <td>{formatCurrency(subBudget.amount)}</td>
-                      </tr>
-                    ))
-                  : null}
+                {state.expenditures && state.expenditures.length > 0 ? (
+                  state.expenditures.map((subBudget) => (
+                    <tr key={subBudget.id}>
+                      <td>{subBudget.subBudgetHead.budgetCode}</td>
+                      <td>{subBudget.beneficiary}</td>
+                      <td>{subBudget.description}</td>
+                      <td>{formatCurrency(parseFloat(subBudget.amount))}</td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="text-danger">
+                      No Expenditures Available!!!
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

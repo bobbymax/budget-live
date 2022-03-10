@@ -10,6 +10,18 @@ const toWords = new ToWords({
   },
 });
 
+export const handleSubsCalculations = (args) => {
+  let arr = [];
+  if (args.length > 0) {
+    args.map((arg) => arg && arr.push(arg.fund));
+  }
+
+  return (
+    arr.length > 0 &&
+    arr.reduce((prev, current) => prev + current.actual_expenditure, 0)
+  );
+};
+
 export const formatConfig = (arr) => {
   const obt = {};
 
@@ -58,14 +70,6 @@ export const formatCurrency = (fig) => {
   let currency = Intl.NumberFormat("en-US");
   return "NGN " + currency.format(fig);
 };
-
-// const htmlEntities = (str) => {
-//   return String(str)
-//     .replace(/&/g, "&amp;")
-//     .replace(/</g, "&lt;")
-//     .replace(/>/g, "&gt;")
-//     .replace(/"/g, "&quot;");
-// };
 
 export const verifyNumOfDays = (started, ended) => {
   const date1 = new Date(started);

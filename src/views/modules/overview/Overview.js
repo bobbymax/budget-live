@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
 import { formatCurrency } from "../../../services/utils/helpers";
@@ -54,6 +55,15 @@ const columns = [
 const Overview = (props) => {
   const navigate = useNavigate();
 
+  const initialState = {
+    approvedAmount: 0,
+    bookedExpenditure: 0,
+    actualExpenditure: 0,
+    bookedBalance: 0,
+    actualBalance: 0,
+  };
+
+  const [state, setState] = useState(initialState);
   const [data, setData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
@@ -102,6 +112,18 @@ const Overview = (props) => {
       .catch((err) => console.log(err));
   }, []);
 
+  const getTotal = (data, key) => {
+    if (data.length == 0) {
+      return 0;
+    }
+
+    return data
+      .map((sub) => {
+        return sub.fund && parseFloat(sub.fund[key]);
+      })
+      .reduce((sum, current) => sum + current, 0);
+  };
+
   const handleChange = (value) => {
     if (value > 0) {
       collection("departments/" + value + "/budget/summary")
@@ -143,6 +165,21 @@ const Overview = (props) => {
       },
     });
   };
+
+  useEffect(() => {
+    if (data.length > 0) {
+      setState({
+        ...state,
+        approvedAmount: getTotal(data, "approved_amount"),
+        bookedExpenditure: getTotal(data, "booked_expenditure"),
+        actualExpenditure: getTotal(data, "actual_expenditure"),
+        bookedBalance: getTotal(data, "booked_balance"),
+        actualBalance: getTotal(data, "actual_balance"),
+      });
+    } else {
+      setState(initialState);
+    }
+  }, [data]);
 
   return (
     <>
@@ -186,8 +223,8 @@ const Overview = (props) => {
 
                   <h6 style={{ fontSize: 18 }} className="text-black">
                     {data.length > 0
-                      ? formatCurrency(data[0].totals.appAmount)
-                      : "N " + 0}
+                      ? formatCurrency(state.approvedAmount)
+                      : "NGN " + 0}
                   </h6>
                 </div>
               </div>
@@ -205,8 +242,8 @@ const Overview = (props) => {
 
                   <h5 style={{ fontSize: 18 }} className="text-white">
                     {data.length > 0
-                      ? formatCurrency(data[0].totals.actExp)
-                      : "N " + 0}
+                      ? formatCurrency(state.actualExpenditure)
+                      : "NGN " + 0}
                   </h5>
                 </div>
               </div>
@@ -224,8 +261,8 @@ const Overview = (props) => {
 
                   <h2 className="text-white" style={{ fontSize: 18 }}>
                     {data.length > 0
-                      ? formatCurrency(data[0].totals.actBal)
-                      : "N" + 0}
+                      ? formatCurrency(state.actualBalance)
+                      : "NGN " + 0}
                   </h2>
                 </div>
               </div>

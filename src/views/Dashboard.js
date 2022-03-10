@@ -1,17 +1,34 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable eqeqeq */
 import React, { useEffect, useState } from "react";
 import DoughnutChart from "../components/charts/DoughnutChart";
 import BarChart from "../components/charts/BarChart";
-import { collection } from "../services/utils/controllers";
+import { batchRequests, collection } from "../services/utils/controllers";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../services/utils/helpers";
 import BudgetController from "./controller/BudgetController";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Dashboard = () => {
+  const overviewState = {
+    paymentForms: 0,
+    thirdParty: 0,
+    staffPayment: 0,
+    aef: 0,
+    logisticsRefund: 0,
+    reversals: 0,
+    pendingTransactions: 0,
+    paidTransactions: 0,
+    claims: 0,
+    retirement: 0,
+    overview: {},
+    performance: {},
+    summary: {},
+  };
+
   const auth = useSelector((state) => state.auth.value.user);
-  const [overview, setOverview] = useState({});
-  const [performance, setPerformance] = useState({});
-  const [summary, setSummary] = useState({});
+  const [state, setState] = useState(overviewState);
 
   const allowedRoles = [
     "budget-controller",
@@ -20,20 +37,66 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    try {
-      collection("dashboard/overview")
-        .then((res) => {
-          const data = res.data.data;
+    if (auth !== null) {
+      const expenditureRequest = collection("expenditures");
+      const claimsRequest = collection("claims");
+      const overviews = collection("dashboard/overview");
 
-          setOverview(data.utilization);
-          setPerformance(data.performance);
-          setSummary(data.summary);
-        })
-        .catch((err) => console.log(err.message));
-    } catch (error) {
-      console.log(error);
+      try {
+        batchRequests([expenditureRequest, claimsRequest, overviews])
+          .then(
+            axios.spread((...res) => {
+              const expenditures = res[0].data.data;
+              const claims = res[1].data.data;
+              const overview = res[2].data.data;
+              const paymentForms = expenditures.filter(
+                (exp) =>
+                  exp && exp.subBudgetHead.department_id == auth.department_id
+              );
+              const aef = claims.filter(
+                (claim) =>
+                  claim && claim.owner.department_id == auth.department_id
+              );
+              const personal = claims.filter(
+                (claim) => claim && claim.owner.id == auth.id
+              );
+              const retirement = personal.filter(
+                (claim) => claim.type === "touring-advance" && !claim.rettired
+              );
+
+              setState({
+                ...state,
+                aef: aef.length,
+                claims: personal.length,
+                retirement: retirement.length,
+                paymentForms: paymentForms.length,
+                thirdParty: paymentForms.filter(
+                  (exp) => exp.payment_type === "third-party"
+                ).length,
+                staffPayment: paymentForms.filter(
+                  (exp) => exp.payment_type === "staff-payment"
+                ).length,
+                pendingTransactions: paymentForms.filter(
+                  (exp) => exp.status !== "paid"
+                ).length,
+                paidTransactions: paymentForms.filter(
+                  (exp) => exp.status === "paid"
+                ).length,
+                overview: overview.utilization,
+                performance: overview.performance,
+                summary: overview.summary,
+              });
+            })
+          )
+          .catch((err) => console.log(err.message));
+      } catch (error) {
+        console.log(error);
+      }
     }
-  }, []);
+    return () => {
+      setState(overviewState);
+    };
+  }, [auth]);
 
   const {
     approvedAmount,
@@ -43,7 +106,7 @@ const Dashboard = () => {
     bookedExpenditure,
     expectedPerformance,
     actualPerformance,
-  } = summary;
+  } = state.summary;
 
   return (
     <>
@@ -53,14 +116,24 @@ const Dashboard = () => {
           <p className="mb-0">Welcome {auth !== null && auth.name}</p>
         </div>
 
-        <Link to="/import/dependencies" className="btn btn-primary rounded">
-          <i className="flaticon-381-settings-2 mr-0"> </i>
-        </Link>
+        {auth &&
+          auth.roles.some((role) =>
+            [
+              "super-administrator",
+              "fad-admin",
+              "ict-admin",
+              "ict-manager",
+            ].includes(role.label)
+          ) && (
+            <Link to="/import/dependencies" className="btn btn-primary rounded">
+              <i className="flaticon-381-settings-2 mr-0"> </i>
+            </Link>
+          )}
       </div>
 
       <div className="row">
         <div className="col-xl-12 col-xxl-12">
-          <BudgetController />
+          <BudgetController userDashboardData={state} />
         </div>
 
         {auth && auth.roles.some((role) => allowedRoles.includes(role.label)) && (
@@ -72,7 +145,7 @@ const Dashboard = () => {
                     <div className="card-body">
                       <div className="media align-items-center">
                         <DoughnutChart
-                          chartData={overview}
+                          chartData={state.overview}
                           totalApproved={approvedAmount}
                         />
                       </div>
@@ -130,7 +203,9 @@ const Dashboard = () => {
                 <div className="card-body pb-0 pt-0">
                   <div className="d-flex align-items-center mb-3">
                     <BarChart
-                      chartData={performance !== undefined ? performance : {}}
+                      chartData={
+                        state.performance !== undefined ? state.performance : {}
+                      }
                     />
                   </div>
                 </div>
