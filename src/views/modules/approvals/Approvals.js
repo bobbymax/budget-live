@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Alert from "../../../services/classes/Alert";
@@ -259,7 +260,9 @@ const Approvals = (props) => {
 
                 <span className="text-muted">
                   {state.batch && state.batch.controller
-                    ? `Expenditure raised by ${state.batch.controller.name} on date`
+                    ? `Expenditure raised by ${
+                        state.batch.controller.name
+                      } on ${moment(state.batch.created_at).format("LL")}`
                     : ""}
                 </span>
               </div>
