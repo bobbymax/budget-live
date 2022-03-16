@@ -6,10 +6,10 @@ import logo from "../../../assets/images/newLogoAlone.png";
 import logoCompact from "../../../assets/images/logo-text-again.png";
 import brand from "../../../assets/images/STAFF SERVICES PORTAL.png";
 
-const Navigation = () => {
+const Navigation = ({ active, handleToggle }) => {
   return (
     <div className="nav-header">
-      <Link to="#" className="brand-logo">
+      <Link to="/" className="brand-logo">
         <img className="logo-abbr" src={logo} alt="logo top" />
         <img className="logo-compact" src={logoCompact} alt="logo compact" />
         <img
@@ -20,8 +20,8 @@ const Navigation = () => {
         />
       </Link>
 
-      <div className="nav-control">
-        <div className="hamburger">
+      <div className="nav-control" onClick={() => handleToggle()}>
+        <div className={`hamburger ${active && "is-active"}`}>
           <span className="line" />
           <span className="line" />
           <span className="line" />

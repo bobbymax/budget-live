@@ -3,8 +3,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
 import avatar from "../../../assets/images/profile/17.jpg";
-import notAvatar from "../../../assets/images/avatar/1.jpg";
-import SearchBar from "../../commons/SearchBar";
+// import notAvatar from "../../../assets/images/avatar/1.jpg";
+// import SearchBar from "../../commons/SearchBar";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { disembark } from "../../../features/auth/userSlice";
@@ -25,10 +25,11 @@ const Header = () => {
         <nav className="navbar navbar-expand">
           <div className="collapse navbar-collapse justify-content-between">
             <div className="header-left">
-              <SearchBar />
+              {/* <SearchBar /> */}
+              <h4>Buget Portal</h4>
             </div>
             <ul className="navbar-nav header-right">
-              <li className="nav-item dropdown notification_dropdown">
+              {/* <li className="nav-item dropdown notification_dropdown">
                 <a
                   className="nav-link  ai-icon"
                   href="#"
@@ -90,9 +91,9 @@ const Header = () => {
                     See all notifications <i className="ti-arrow-right" />
                   </a>
                 </div>
-              </li>
+              </li> */}
 
-              <li className="nav-item dropdown notification_dropdown">
+              {/* <li className="nav-item dropdown notification_dropdown">
                 <a className="nav-link" href="#" data-toggle="dropdown">
                   <svg
                     width={26}
@@ -180,7 +181,7 @@ const Header = () => {
                     </ul>
                   </div>
                 </div>
-              </li>
+              </li> */}
 
               <li className="nav-item dropdown header-profile">
                 <a

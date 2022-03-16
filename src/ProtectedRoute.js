@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
 // import ChatBox from "./components/commons/ChatBox"
@@ -16,6 +16,12 @@ const ProtectedRoute = ({ children }) => {
 
   const dispatch = useDispatch();
 
+  const [active, setActive] = useState(false);
+
+  const handleToggle = () => {
+    setActive(!active);
+  };
+
   useEffect(() => {
     if (auth) {
       try {
@@ -30,12 +36,26 @@ const ProtectedRoute = ({ children }) => {
     }
   }, [auth]);
 
+  useEffect(() => {
+    if (active) {
+      const intervalI = setInterval(() => {
+        setActive(false);
+      }, 2500);
+
+      return () => clearInterval(intervalI);
+    }
+  }, [active]);
+
   return (
     <>
-      <div id="main-wrapper" style={{ opacity: 1 }}>
-        <Navigation />
+      <div
+        id="main-wrapper"
+        style={{ opacity: 1 }}
+        className={`${active ? "show menu-toggle" : ""}`}
+      >
+        <Navigation active={active} handleToggle={handleToggle} />
         <Header />
-        <Aside />
+        <Aside active={active} />
 
         <div className="content-body">
           <div className="container-fluid">

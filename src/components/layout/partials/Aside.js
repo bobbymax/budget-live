@@ -3,14 +3,22 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link, NavLink, useLocation } from "react-router-dom";
 
-const Aside = () => {
+const Aside = ({ active }) => {
   const location = useLocation();
   const auth = useSelector((state) => state.auth.value.user);
 
+  const allowedRoles = [
+    "budget-controller",
+    "dfpm",
+    "es",
+    "ict-admin",
+    "super-administrator",
+  ];
+
   return (
     <div className="deznav">
-      <div className="deznav-scroll">
-        <ul className="metismenu" id="menu">
+      <div className={`deznav-scroll ${active && "mm-active ps ps--active-y"}`}>
+        <ul className={`metismenu ${active && "mm-show"}`} id="menu">
           <li
             className={
               location.pathname && location.pathname === "/" ? "mm-active" : ""
@@ -54,7 +62,8 @@ const Aside = () => {
             </li>
           ) : null}
 
-          {auth && auth.administrator ? (
+          {auth &&
+          auth.roles.some((role) => allowedRoles.includes(role.label)) ? (
             <li
               className={
                 location.pathname && location.pathname === "/overview"
