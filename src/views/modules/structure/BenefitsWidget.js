@@ -8,30 +8,32 @@ const BenefitsWidget = ({ benefit, onEdit, onDestroy, modalControl }) => {
       <td>{benefit.name}</td>
       <td>{benefit.parent}</td>
       <td>
-        <button
-          className="btn btn-success btn-sm"
-          onClick={() => modalControl(benefit)}
-          disabled={!benefit.canAddEntitlement}
-        >
-          {/* <FiWind style={{ marginRight: 8 }} /> */}
-          Add Entitlement
-        </button>
-        <button
-          onClick={() => onEdit(benefit)}
-          className="btn btn-warning btn-sm"
-        >
-          <i className="fa fa-edit"></i>
-          {/* <FiEdit /> */}
-        </button>
+        <div className="btn-group btn-rounded">
+          <button
+            className="btn btn-success btn-sm"
+            onClick={() => modalControl(benefit)}
+            disabled={!benefit.canAddEntitlement}
+          >
+            {/* <FiWind style={{ marginRight: 8 }} /> */}
+            Add Entitlement
+          </button>
+          <button
+            onClick={() => onEdit(benefit)}
+            className="btn btn-warning btn-sm"
+          >
+            <i className="fa fa-edit"></i>
+            {/* <FiEdit /> */}
+          </button>
 
-        <button
-          type="button"
-          className="btn btn-danger btn-sm"
-          onClick={() => onDestroy(benefit)}
-        >
-          <i className="fa fa-trash"></i>
-          {/* <FiTrash2 /> */}
-        </button>
+          <button
+            type="button"
+            className="btn btn-danger btn-sm"
+            onClick={() => onDestroy(benefit)}
+          >
+            <i className="fa fa-trash"></i>
+            {/* <FiTrash2 /> */}
+          </button>
+        </div>
       </td>
     </tr>
   );

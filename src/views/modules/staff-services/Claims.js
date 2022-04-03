@@ -40,6 +40,7 @@ const Claims = (props) => {
   const [errors, setErrors] = useState({});
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
+  const [collectables, setCollectables] = useState([]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -155,6 +156,14 @@ const Claims = (props) => {
     request("claims");
   }, []);
 
+  useEffect(() => {
+    if (claims.length > 0) {
+      setCollectables(
+        claims.filter((claim) => claim && claim.type !== "touring-advance")
+      );
+    }
+  }, [claims]);
+
   return (
     <>
       {loading ? <Loading /> : null}
@@ -225,7 +234,7 @@ const Claims = (props) => {
 
         <div className="col-lg-12">
           <ClaimTable
-            claims={claims}
+            claims={collectables}
             onView={handlePrintOut}
             onEdit={loadClaim}
             addDetails={handleAddDetails}

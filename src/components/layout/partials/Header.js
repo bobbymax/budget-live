@@ -2,7 +2,7 @@
 /* eslint-disable jsx-a11y/img-redundant-alt */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from "react";
-import avatar from "../../../assets/images/profile/17.jpg";
+import avatar from "../../../assets/avatar/staff.png";
 // import notAvatar from "../../../assets/images/avatar/1.jpg";
 // import SearchBar from "../../commons/SearchBar";
 import { Link, useNavigate } from "react-router-dom";

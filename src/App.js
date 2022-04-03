@@ -34,8 +34,9 @@ import Profile from "./views/Profile";
 import Configuration from "./views/modules/configuration/Configuration";
 import TouringAdvance from "./views/modules/staff-services/TouringAdvance";
 import Retirement from "./views/modules/staff-services/Retirement";
-import RetirementDetails from "./views/modules/staff-services/RetirementDetails";
+// import RetirementDetails from "./views/modules/staff-services/RetirementDetails";
 import Dependencies from "./views/imports/Dependencies";
+import MakeRetirement from "./views/modules/staff-services/MakeRetirement";
 
 const App = () => {
   return (
@@ -346,7 +347,7 @@ const App = () => {
           path="/retire/:id"
           element={
             <ProtectedRoute>
-              <RetirementDetails />
+              <MakeRetirement />
             </ProtectedRoute>
           }
         />

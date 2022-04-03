@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../cards/custom-card.css";
 
 const ModuleCard = ({
   name,
@@ -12,7 +13,7 @@ const ModuleCard = ({
   return (
     <>
       <Link to={path} state={{ module: entity }}>
-        <div className={`widget-stat card bg-${color}`}>
+        <div className={`widget-stat card bg-${color} budget-box-shadow`}>
           <div className="card-body p-4">
             <div className="media">
               <span className="me-3">

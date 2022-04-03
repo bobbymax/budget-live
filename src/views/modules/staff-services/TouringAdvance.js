@@ -144,11 +144,16 @@ const TouringAdvance = () => {
     if (auth !== null) {
       setLoading(true);
       try {
-        collection("touringAdvances").then((res) => {
-          const data = res.data.data;
-          setTourings(data.filter((tour) => tour.user_id === auth.id));
-          setLoading(false);
-        });
+        collection("touringAdvances")
+          .then((res) => {
+            const data = res.data.data;
+            setTourings(data.filter((tour) => tour.user_id === auth.id));
+            setLoading(false);
+          })
+          .catch((err) => {
+            console.log(err.message);
+            setLoading(false);
+          });
       } catch (error) {
         console.log(error);
         setLoading(false);
@@ -322,6 +327,7 @@ const TouringAdvance = () => {
               <table className="table table-bordered table-striped">
                 <thead>
                   <tr>
+                    <th>Reference Code</th>
                     <th>Beneficiary</th>
                     <th>Title</th>
                     <th>Amount</th>
@@ -333,6 +339,7 @@ const TouringAdvance = () => {
                   {tourings.length > 0 ? (
                     tourings.map((tour) => (
                       <tr key={tour.id}>
+                        <td>{tour.reference_no}</td>
                         <td>
                           {tour.claim && tour.claim.owner.name.toUpperCase()}
                         </td>

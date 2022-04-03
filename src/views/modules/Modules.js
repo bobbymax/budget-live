@@ -45,7 +45,7 @@ const Modules = () => {
         {accessible.map(
           (module) =>
             module.type === "application" && (
-              <div className="col-xl-3 col-lg-6 col-sm-6" key={module.id}>
+              <div className="col-md-4" key={module.id}>
                 <ModuleCard
                   name={module.name}
                   path={`/applications${module.path}`}

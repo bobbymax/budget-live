@@ -79,22 +79,41 @@ const Aside = ({ active }) => {
           ) : null}
 
           {auth && auth.administrator ? (
-            <li
-              className={
-                location.pathname && location.pathname === "/configuration"
-                  ? "mm-active"
-                  : ""
-              }
-            >
-              <Link
-                to="/configuration"
-                className="ai-icon"
-                aria-expanded="false"
+            <>
+              <li
+                className={
+                  location.pathname && location.pathname === "/configuration"
+                    ? "mm-active"
+                    : ""
+                }
               >
-                <i className="fa fa-building" />
-                <span className="nav-text">Configuration</span>
-              </Link>
-            </li>
+                <Link
+                  to="/configuration"
+                  className="ai-icon"
+                  aria-expanded="false"
+                >
+                  <i className="fa fa-building" />
+                  <span className="nav-text">Configuration</span>
+                </Link>
+              </li>
+              {/* <li
+                className={
+                  location.pathname &&
+                  location.pathname === "/import/dependencies"
+                    ? "mm-active"
+                    : ""
+                }
+              >
+                <Link
+                  to="/import/dependencies"
+                  className="ai-icon"
+                  aria-expanded="false"
+                >
+                  <i className="fa fa-upload" />
+                  <span className="nav-text">Imports</span>
+                </Link>
+              </li> */}
+            </>
           ) : null}
         </ul>
       </div>

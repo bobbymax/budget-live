@@ -79,8 +79,8 @@ const DataTableComponent = ({
                 {!isFetching &&
                   rows
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                    .map((row) => (
-                      <tr key={row.id}>
+                    .map((row, i) => (
+                      <tr key={i}>
                         {columns &&
                           columns.length > 0 &&
                           columns.map((col, index) => (

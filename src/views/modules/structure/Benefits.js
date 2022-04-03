@@ -188,11 +188,11 @@ const Benefits = () => {
         <div className="col-md-12">
           <div className="page-titles">
             <button
-              className="btn btn-primary"
+              className="btn btn-primary btn-rounded"
               onClick={() => setOpen(!open)}
               disabled={open}
             >
-              <i className="fa fa-plus-square"></i> Add Benefit
+              <i className="fa fa-plus mr-2"></i> Add Benefit
             </button>
           </div>
         </div>
@@ -217,7 +217,7 @@ const Benefits = () => {
                       <div className="row">
                         <div className="col-md-4">
                           <TextInputField
-                            placeholder="Enter Grade Level Name"
+                            placeholder="Enter Benefit Name"
                             label="Benefit title"
                             type="text"
                             value={state.name}
@@ -299,22 +299,24 @@ const Benefits = () => {
                           />
                         </div>
                         <div className="col-md-12 mt-3">
-                          <button type="submit" className="btn btn-primary">
-                            Submit
-                          </button>
+                          <div className="btn-group btn-rounded">
+                            <button type="submit" className="btn btn-primary">
+                              Submit
+                            </button>
 
-                          <button
-                            type="button"
-                            className="btn btn-danger"
-                            onClick={() => {
-                              setUpdate(false);
-                              setState(initialState);
-                              setOpen(false);
-                              setErrors({});
-                            }}
-                          >
-                            Close
-                          </button>
+                            <button
+                              type="button"
+                              className="btn btn-danger"
+                              onClick={() => {
+                                setUpdate(false);
+                                setState(initialState);
+                                setOpen(false);
+                                setErrors({});
+                              }}
+                            >
+                              Close
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </form>
@@ -354,7 +356,7 @@ const Benefits = () => {
                     ) : (
                       <tr>
                         <td colSpan="3" className="text-danger">
-                          {"No Data Found!!"}
+                          NO DATA FOUND!!!
                         </td>
                       </tr>
                     )}

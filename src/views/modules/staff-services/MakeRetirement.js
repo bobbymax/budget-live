@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
@@ -8,29 +7,26 @@ import InstructionWidget from "../../../components/commons/widgets/InstructionWi
 import TextInputField from "../../../components/forms/input/TextInputField";
 import CustomSelect from "../../../components/forms/select/CustomSelect";
 import CustomSelectOptions from "../../../components/forms/select/CustomSelectOptions";
-import { collection } from "../../../services/utils/controllers";
+import { collection, store } from "../../../services/utils/controllers";
 import {
   formatCurrency,
   verifyNumOfDays,
 } from "../../../services/utils/helpers";
 
-const RetirementDetails = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const auth = useSelector((state) => state.auth.value.user);
-
+const MakeRetirement = () => {
   const initialState = {
-    claim: null,
     claim_id: 0,
     title: "",
-    total: 0,
-    instructions: [],
+    claim: null,
     todo: "",
     status: "",
+    instructions: [],
+    claimTotal: 0,
+    total: 0,
     update: false,
   };
 
-  const formState = {
+  const instructionState = {
     from: "",
     to: "",
     benefit: null,
@@ -45,23 +41,58 @@ const RetirementDetails = () => {
     daysRequired: false,
   };
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const auth = useSelector((state) => state.auth.value.user);
+
   const [state, setState] = useState(initialState);
-  const [instruction, setInstruction] = useState(formState);
+  const [instruction, setInstruction] = useState(instructionState);
   const [open, setOpen] = useState(false);
   const [benefits, setBenefits] = useState([]);
-  const [grandTotal, setGrandTotal] = useState(0);
 
   const handleInstructionDestroy = (ins) => {
-    // console.log(ins);
-
     const newInstructions =
       state.instructions.length > 0 &&
       state.instructions.filter((instruction) => instruction.id !== ins.id);
+    const prevTotal = state.total + ins.amount;
 
     setState({
       ...state,
       instructions: newInstructions,
+      total: prevTotal,
     });
+  };
+
+  const handleRetirementSubmit = () => {
+    const data = {
+      claim_id: state.claim_id,
+      instructions: state.instructions,
+      status: "registered",
+    };
+
+    const url = "claim/instructions";
+
+    try {
+      store(url, data)
+        .then((res) => {
+          const result = res.data;
+          setOpen(false);
+          setBenefits([]);
+          setState(initialState);
+          setInstruction(instructionState);
+          navigate("/retire", {
+            state: {
+              claim: result.data,
+              status: result.message,
+            },
+          });
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      console.log(error);
+    }
+
+    // console.log(data);
   };
 
   const handleSubmit = (e) => {
@@ -86,91 +117,102 @@ const RetirementDetails = () => {
       instructions: [data, ...state.instructions],
     });
 
-    setInstruction(formState);
+    setInstruction(instructionState);
     setOpen(false);
   };
 
-  const getGradeAmount = (entitlements) => {
-    const fee = entitlements.filter(
-      (entitlement) => entitlement.grade === auth.level
-    );
+  const getFee = (benefit, daysDiff) => {
+    const entitlement =
+      benefit && benefit.entitlements && benefit.entitlements.length > 0
+        ? benefit.entitlements.filter((ent) => ent && ent.grade === auth.level)
+        : [];
 
-    return fee[0];
+    const fee = entitlement.length > 0 ? parseFloat(entitlement[0].amount) : 0;
+    return benefit && benefit.numOfDays ? fee * daysDiff : fee;
   };
 
-  const updateGrandTotal = () => {
-    const instructions = state.instructions;
+  useEffect(() => {
+    const boardLength = state.instructions.length;
+    if (boardLength > 0) {
+      const total = state.instructions
+        .map((inst) => inst && inst.amount)
+        .reduce((sum, prev) => sum + prev, 0);
 
-    if (instructions.length > 0) {
-      const value = instructions.reduce(
-        (balance, instruction) => balance + instruction.amount,
-        0
-      );
-      const total = state.total - value;
-
-      console.log(value);
+      const newTotal = state.claimTotal - total;
 
       setState({
         ...state,
-        total: total,
+        total: newTotal,
       });
     }
-  };
+  }, [state.instructions.length]);
 
-  const handleBenefitAction = (benefit) => {
+  useEffect(() => {
+    if (instruction.benefit_id > 0) {
+      const benf = benefits.filter(
+        (bent) => bent && bent.id == instruction.benefit_id
+      );
+
+      const benefit = benf[0];
+
+      setInstruction({
+        ...instruction,
+        categories: benefit.hasChildren ? benefit.children : [],
+        daysRequired: benefit.numOfDays,
+        amount: 0,
+        benefit,
+      });
+    }
+  }, [instruction.benefit_id]);
+
+  useEffect(() => {
+    if (instruction.additional_benefit_id > 0) {
+      const benf =
+        instruction.categories.length > 0
+          ? instruction.categories.filter(
+              (cat) => cat && cat.id == instruction.additional_benefit_id
+            )
+          : [];
+      const benefit = benf.length > 0 ? benf[0] : null;
+      const fee = getFee(benefit, instruction.numOfDays);
+
+      setInstruction({
+        ...instruction,
+        amount: fee,
+      });
+    }
+  }, [instruction.additional_benefit_id]);
+
+  useEffect(() => {
     if (
-      !benefit.numOfDays &&
-      benefit.entitlements.length > 0 &&
-      benefit.children.length === 0
+      instruction.benefit_id > 0 &&
+      instruction.from !== "" &&
+      instruction.to !== ""
     ) {
-      const fee = getGradeAmount(benefit.entitlements);
-      setInstruction({
-        ...instruction,
-        daysRequired: false,
-        categories: [],
-        unitPrice: 0,
-        amount: fee.amount,
-      });
-    } else if (
-      benefit.numOfDays &&
-      benefit.entitlements.length > 0 &&
-      benefit.children.length === 0
-    ) {
-      const fee = getGradeAmount(benefit.entitlements);
-      const value =
-        instruction.numOfDays > 0 ? fee.amount * instruction.numOfDays : 0;
-
-      const objKey = "categories" in benefit;
+      const daysDiff = verifyNumOfDays(instruction.from, instruction.to);
+      const fee = getFee(instruction.benefit, daysDiff);
 
       setInstruction({
         ...instruction,
-        daysRequired: true,
-        unitPrice: fee.amount,
-        categories: objKey ? benefit.categories : [],
-        amount: value,
-      });
-    } else if (
-      benefit.numOfDays &&
-      benefit.entitlements.length === 0 &&
-      benefit.children.length > 0
-    ) {
-      setInstruction({
-        ...instruction,
-        categories: benefit.children,
-        daysRequired: true,
-        unitPrice: 0,
-        amount: 0,
-      });
-    } else {
-      setInstruction({
-        ...instruction,
-        daysRequired: false,
-        categories: [],
-        unitPrice: 0,
-        amount: 0,
+        numOfDays: daysDiff,
+        amount: fee,
       });
     }
-  };
+    // return () => console.log("cleanup");
+  }, [instruction.from, instruction.to]);
+
+  useEffect(() => {
+    try {
+      collection("benefits")
+        .then((res) => {
+          const data = res.data.data;
+          setBenefits(data);
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
 
   useEffect(() => {
     if (location.pathname && location.state) {
@@ -179,89 +221,15 @@ const RetirementDetails = () => {
 
       setState({
         ...state,
-        claim_id: claim.id,
-        title: claim.title,
+        claim_id: claim && claim.id,
+        title: claim && claim.title,
+        claimTotal: claim && claim.total_amount,
+        total: claim && claim.total_amount,
         claim,
         todo,
       });
-
-      setGrandTotal(claim.total_amount);
     }
   }, []);
-
-  useEffect(() => {
-    collection("benefits")
-      .then((res) => {
-        const data = res.data.data;
-
-        setBenefits(data);
-      })
-      .catch((err) => console.log(err.message));
-  }, []);
-
-  useEffect(() => {
-    if (instruction.from !== "" && instruction.to !== "") {
-      if (instruction.benefit && instruction.benefit.numOfDays) {
-        const daysDiff = verifyNumOfDays(instruction.from, instruction.to);
-
-        const fee =
-          instruction.unitPrice > 0 ? daysDiff * instruction.unitPrice : 0;
-
-        setInstruction({
-          ...instruction,
-          numOfDays: daysDiff,
-          amount: fee,
-        });
-      } else {
-        setInstruction({
-          ...instruction,
-          numOfDays: 0,
-        });
-      }
-    }
-    return () => console.log("cleanup");
-  }, [instruction.from, instruction.to]);
-
-  useEffect(() => {
-    if (instruction.benefit_id > 0 && benefits.length > 0) {
-      const entity = benefits.filter(
-        (single) => single.id == instruction.benefit_id
-      );
-
-      const benefit = entity[0];
-
-      setInstruction({
-        ...instruction,
-        benefit: benefit,
-      });
-    }
-  }, [instruction.benefit_id]);
-
-  useEffect(() => {
-    if (instruction.benefit !== null) {
-      handleBenefitAction(instruction.benefit);
-    }
-  }, [instruction.benefit]);
-
-  useEffect(() => {
-    if (instruction.additional_benefit_id > 0) {
-      const categories = instruction.categories;
-
-      if (categories.length > 0) {
-        const single = categories.filter(
-          (cat) => cat.id == instruction.additional_benefit_id
-        );
-        const category = single[0];
-        category["categories"] = categories;
-        handleBenefitAction(category);
-      }
-    }
-  }, [instruction.additional_benefit_id]);
-
-  useEffect(() => {
-    updateGrandTotal();
-    return () => console.log("clean up here!!");
-  }, [state.instructions]);
 
   return (
     <>
@@ -280,21 +248,13 @@ const RetirementDetails = () => {
           <div className="card">
             <div className="card-body">
               <div className="row">
-                <div className="col-md-8">
+                <div className="col-md-12">
                   <TextInputField
                     label="Title"
                     value={state.title.toUpperCase()}
                     onChange={(e) =>
                       setState({ ...state, title: e.target.value })
                     }
-                    disabled
-                  />
-                </div>
-                <div className="col-md-4">
-                  <TextInputField
-                    label="Amount"
-                    value={formatCurrency(grandTotal)}
-                    onChange={(e) => setGrandTotal(e.target.value)}
                     disabled
                   />
                 </div>
@@ -452,7 +412,7 @@ const RetirementDetails = () => {
                           className="btn btn-danger"
                           type="button"
                           onClick={() => {
-                            setInstruction(formState);
+                            setInstruction(instructionState);
                             setOpen(false);
                           }}
                         >
@@ -497,6 +457,37 @@ const RetirementDetails = () => {
                   )}
                 </tbody>
               </table>
+              <h4 className="mb-4 pull-right">
+                TOTAL:{" "}
+                <span style={{ marginLeft: 10 }}>
+                  <strong>{formatCurrency(state.total)}</strong>
+                </span>
+              </h4>
+              <div className="mt-5 btn-group btn-rounded">
+                <button
+                  type="button"
+                  className="btn btn-success btn-md"
+                  disabled={state.instructions.length == 0}
+                  onClick={handleRetirementSubmit}
+                >
+                  <i className="fa fa-send mr-2"></i>
+                  Submit
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-danger btn-md"
+                  onClick={() => {
+                    setOpen(false);
+                    setBenefits([]);
+                    setState(initialState);
+                    setInstruction(instructionState);
+                    navigate("/retire");
+                  }}
+                >
+                  <i className="fa fa-close mr-2"></i>
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -505,4 +496,4 @@ const RetirementDetails = () => {
   );
 };
 
-export default RetirementDetails;
+export default MakeRetirement;

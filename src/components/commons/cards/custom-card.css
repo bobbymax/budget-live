@@ -1,0 +1,13 @@
+.budget-card {
+  background-color: rgb(31, 29, 29);
+  height: auto;
+  box-shadow: 16px 17px 31px -8px rgba(0, 0, 0, 0.73);
+  -webkit-box-shadow: 16px 17px 31px -8px rgba(0, 0, 0, 0.73);
+  -moz-box-shadow: 16px 17px 31px -8px rgba(0, 0, 0, 0.73);
+}
+
+.budget-box-shadow {
+  box-shadow: 16px 17px 31px -18px rgba(0, 0, 0, 0.61);
+  -webkit-box-shadow: 16px 17px 31px -18px rgba(0, 0, 0, 0.61);
+  -moz-box-shadow: 16px 17px 31px -18px rgba(0, 0, 0, 0.61);
+}

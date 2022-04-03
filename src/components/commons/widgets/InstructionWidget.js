@@ -1,12 +1,13 @@
+import moment from "moment";
 import React from "react";
 import { formatCurrency } from "../../../services/utils/helpers";
 
 const InstructionWidget = ({ instruction, onDestroy }) => {
   return (
     <tr>
-      <td>{instruction.from}</td>
-      <td>{instruction.to}</td>
-      <td>{instruction.benefit && instruction.benefit.name}</td>
+      <td>{moment(instruction.from).format("LL")}</td>
+      <td>{moment(instruction.to).format("LL")}</td>
+      <td>{instruction.description}</td>
       <td>{formatCurrency(instruction.amount)}</td>
 
       <td>

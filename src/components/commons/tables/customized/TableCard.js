@@ -73,8 +73,8 @@ const TableCard = ({
                       (currentPage - 1) * itemsPerPage,
                       (currentPage - 1) * itemsPerPage + itemsPerPage
                     )
-                    .map((row) => (
-                      <TableRow key={row.id}>
+                    .map((row, i) => (
+                      <TableRow key={i}>
                         {columns.map((col) => (
                           <td key={col.key}>{row[col.key]}</td>
                         ))}

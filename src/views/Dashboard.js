@@ -9,6 +9,7 @@ import { formatCurrency } from "../services/utils/helpers";
 import BudgetController from "./controller/BudgetController";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import "../components/commons/cards/custom-card.css";
 
 const Dashboard = () => {
   const overviewState = {
@@ -58,9 +59,12 @@ const Dashboard = () => {
                   claim && claim.owner.department_id == auth.department_id
               );
               const personal = claims.filter(
-                (claim) => claim && claim.owner.id == auth.id
+                (claim) =>
+                  claim &&
+                  claim.owner.id == auth.id &&
+                  claim.type !== "touring-advance"
               );
-              const retirement = personal.filter(
+              const retirement = claims.filter(
                 (claim) => claim.type === "touring-advance" && !claim.rettired
               );
 
@@ -108,6 +112,8 @@ const Dashboard = () => {
     actualPerformance,
   } = state.summary;
 
+  // console.log(state);
+
   return (
     <>
       <div className="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
@@ -141,7 +147,7 @@ const Dashboard = () => {
             <div className="col-xl-12 col-md-12 col-sm-12">
               <div className="row">
                 <div className="col-sm-12 col-md-4 col-lg-4">
-                  <div className="card">
+                  <div className="card budget-box-shadow">
                     <div className="card-body">
                       <div className="media align-items-center">
                         <DoughnutChart
@@ -154,7 +160,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className="col-sm-12 col-md-8 col-lg-8">
-                  <div className="card text-white bg-success">
+                  <div className="card budget-box-shadow text-white bg-success">
                     <ul className="list-group list-group-flush">
                       <li className="list-group-item d-flex justify-content-between">
                         <span className="mb-0">Approved Amount :</span>
