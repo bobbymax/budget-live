@@ -5,7 +5,7 @@ import TableCard from "../../components/commons/tables/customized/TableCard";
 import TextInputField from "../../components/forms/input/TextInputField";
 import CustomSelect from "../../components/forms/select/CustomSelect";
 import CustomSelectOptions from "../../components/forms/select/CustomSelectOptions";
-import { bulk } from "../../services/utils/controllers";
+import { bulk, collection } from "../../services/utils/controllers";
 
 const EXTS = ["xlsx", "xls", "csv"];
 
@@ -128,7 +128,7 @@ const Dependencies = () => {
     }
   };
 
-  // console.log(cols, data);
+  // console.log(data);
 
   return (
     <>

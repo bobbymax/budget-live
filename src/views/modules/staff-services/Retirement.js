@@ -73,8 +73,6 @@ const Retirement = () => {
     }
   }, []);
 
-  console.log(claims);
-
   return (
     <>
       {loading && <Loading />}

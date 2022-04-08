@@ -112,6 +112,7 @@ const Login = () => {
                         <ButtonField
                           type="submit"
                           disabled={loading ? true : false}
+                          variant="success"
                         >
                           {loading ? (
                             <i className="fa fa-spinner fa-spin"></i>

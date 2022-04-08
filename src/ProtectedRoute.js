@@ -59,7 +59,15 @@ const ProtectedRoute = ({ children }) => {
 
         <div className="content-body">
           <div className="container-fluid">
-            {auth ? children : <Navigate to="/login" />}
+            {auth ? (
+              auth.hasChangedPassword ? (
+                children
+              ) : (
+                <Navigate to="reset-password" />
+              )
+            ) : (
+              <Navigate to="/login" />
+            )}
           </div>
         </div>
         <Footer />

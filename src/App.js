@@ -37,6 +37,7 @@ import Retirement from "./views/modules/staff-services/Retirement";
 // import RetirementDetails from "./views/modules/staff-services/RetirementDetails";
 import Dependencies from "./views/imports/Dependencies";
 import MakeRetirement from "./views/modules/staff-services/MakeRetirement";
+import ChangePassword from "./views/auth/ChangePassword";
 
 const App = () => {
   return (
@@ -363,6 +364,7 @@ const App = () => {
         />
 
         <Route exact path="/login" element={<Login />} />
+        <Route exact path="/reset-password" element={<ChangePassword />} />
       </Routes>
     </Suspense>
   );

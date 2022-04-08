@@ -112,8 +112,6 @@ const Dashboard = () => {
     actualPerformance,
   } = state.summary;
 
-  // console.log(state);
-
   return (
     <>
       <div className="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
