@@ -6,6 +6,7 @@ import TableRow from "./tables/TableRow";
 import CustomPagination from "./tables/CustomPagination";
 import "./tables/table.css";
 import { search } from "../../../../services/utils/helpers";
+import { Link } from "react-router-dom";
 
 const TableCard = ({
   columns,
@@ -13,6 +14,7 @@ const TableCard = ({
   handleEdit = undefined,
   handleDelete = undefined,
   assignRole = undefined,
+  manageStaff = undefined,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -65,6 +67,7 @@ const TableCard = ({
                 handleDelete={handleDelete}
                 handleEdit={handleEdit}
                 assignRole={assignRole}
+                manageStaff={manageStaff}
               />
               <TableBody>
                 {computed.length > 0 ? (
@@ -80,7 +83,8 @@ const TableCard = ({
                         ))}
                         {(handleEdit !== undefined ||
                           handleDelete !== undefined ||
-                          assignRole !== undefined) && (
+                          assignRole !== undefined ||
+                          manageStaff !== undefined) && (
                           <td>
                             {handleEdit !== undefined && (
                               <Icon.Edit2
@@ -100,6 +104,20 @@ const TableCard = ({
                                 onClick={() => assignRole(row)}
                               />
                             )}
+                            {manageStaff !== undefined && (
+                              <span>
+                                <Link
+                                  to="#"
+                                  onClick={() => manageStaff(row)}
+                                  className="mr-4"
+                                  data-toggle="tooltip"
+                                  data-placement="top"
+                                  title="Manage"
+                                >
+                                  <i className="fa fa-user-plus color-muted"></i>
+                                </Link>
+                              </span>
+                            )}
                           </td>
                         )}
                       </TableRow>
@@ -108,7 +126,7 @@ const TableCard = ({
                   <TableRow>
                     <td
                       colSpan={
-                        handleEdit !== undefined
+                        handleEdit !== undefined || manageStaff !== undefined
                           ? columns.length + 1
                           : columns.length
                       }

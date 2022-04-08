@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import CustomSelect from "../../../components/forms/CustomSelect";
 import TextInputField from "../../../components/forms/TextInputField";
@@ -12,12 +11,13 @@ import { validate } from "../../../services/utils/validation";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import Alert from "../../../services/classes/Alert";
-import BasicTable from "../../../components/commons/tables/BasicTable";
+// import BasicTable from "../../../components/commons/tables/BasicTable";
 import { Link } from "react-router-dom";
 import { formatDate } from "../../../services/utils/helpers";
 import AddStaffRole from "./AddStaffRole";
 import ModifyUser from "./ModifyUser";
 import Loading from "../../../components/commons/Loading";
+import TableCard from "../../../components/commons/tables/customized/TableCard";
 
 const Employees = () => {
   const initialState = {
@@ -229,24 +229,24 @@ const Employees = () => {
     });
   };
 
-  const handleDestroy = (data) => {
-    Alert.flash(
-      "Are you sure?",
-      "warning",
-      "You would not be able to revert this!!"
-    ).then((result) => {
-      if (result.isConfirmed) {
-        destroy("users", data.id)
-          .then((res) => {
-            setEmployees([
-              ...employees.filter((staff) => staff.id !== res.data.data.id),
-            ]);
-            Alert.success("Deleted!!", res.data.message);
-          })
-          .catch((err) => console.log(err.message));
-      }
-    });
-  };
+  // const handleDestroy = (data) => {
+  //   Alert.flash(
+  //     "Are you sure?",
+  //     "warning",
+  //     "You would not be able to revert this!!"
+  //   ).then((result) => {
+  //     if (result.isConfirmed) {
+  //       destroy("users", data.id)
+  //         .then((res) => {
+  //           setEmployees([
+  //             ...employees.filter((staff) => staff.id !== res.data.data.id),
+  //           ]);
+  //           Alert.success("Deleted!!", res.data.message);
+  //         })
+  //         .catch((err) => console.log(err.message));
+  //     }
+  //   });
+  // };
 
   return (
     <>
@@ -422,14 +422,11 @@ const Employees = () => {
                 </div>
               )}
             </>
-
-            <div className="col-lg-12">
-              <BasicTable
-                page="Staff"
+            <div className="col-md-12">
+              <TableCard
                 columns={columns}
                 rows={employees}
                 manageStaff={manageStaff}
-                loading={loading}
               />
             </div>
           </>
