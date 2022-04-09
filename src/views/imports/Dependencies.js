@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
+import Loading from "../../components/commons/Loading";
 import TableCard from "../../components/commons/tables/customized/TableCard";
 import TextInputField from "../../components/forms/input/TextInputField";
 import CustomSelect from "../../components/forms/select/CustomSelect";
 import CustomSelectOptions from "../../components/forms/select/CustomSelectOptions";
+import Alert from "../../services/classes/Alert";
 import { bulk, collection } from "../../services/utils/controllers";
 
 const EXTS = ["xlsx", "xls", "csv"];
@@ -13,6 +15,7 @@ const Dependencies = () => {
   const [cols, setCols] = useState([]);
   const [data, setData] = useState([]);
   const [dataType, setDataType] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const types = [
     {
@@ -54,19 +57,29 @@ const Dependencies = () => {
 
   const importData = (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     const body = {
       type: dataType,
       data,
     };
 
-    // console.log(dataType, data);
-
-    // console.log(body.data);
-
-    bulk("imports", body)
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err.message));
+    try {
+      bulk("imports", body)
+        .then((res) => {
+          const result = res.data;
+          console.log(result.data);
+          setIsLoading(false);
+          Alert.success("Imported", result.message);
+        })
+        .catch((err) => {
+          setIsLoading(false);
+          console.log(err.message);
+          Alert.error("Oops!!", "Something must have f=gone wrong");
+        });
+    } catch (error) {
+      console.log(error);
+    }
 
     setCols([]);
     setDataType("");
@@ -128,10 +141,9 @@ const Dependencies = () => {
     }
   };
 
-  // console.log(data);
-
   return (
     <>
+      {isLoading ? <Loading /> : null}
       <div className="row">
         <div className="col-md-12">
           <div className="card">
