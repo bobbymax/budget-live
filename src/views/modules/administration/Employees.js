@@ -4,7 +4,7 @@ import TextInputField from "../../../components/forms/TextInputField";
 import {
   alter,
   collection,
-  destroy,
+  // destroy,
   store,
 } from "../../../services/utils/controllers";
 import { validate } from "../../../services/utils/validation";
@@ -247,6 +247,8 @@ const Employees = () => {
   //     }
   //   });
   // };
+
+  // console.log(staff);
 
   return (
     <>
@@ -581,7 +583,11 @@ const Employees = () => {
                           <tr key={index}>
                             <td>{role.name}</td>
                             <td>{formatDate(role.start_date)}</td>
-                            <td>{formatDate(role.expiry_date)}</td>
+                            <td>
+                              {role.expiry_date !== null
+                                ? formatDate(role.expiry_date)
+                                : "Cannot Expire"}
+                            </td>
                           </tr>
                         ))
                       ) : (

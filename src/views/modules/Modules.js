@@ -5,6 +5,7 @@ import ModuleCard from "../../components/commons/widgets/ModuleCard";
 import { collection } from "../../services/utils/controllers";
 import { canAccessModule } from "../../services/utils/access";
 import Loading from "../../components/commons/Loading";
+import "./dashboard.css";
 
 const Modules = () => {
   const auth = useSelector((state) => state.auth.value.user);
@@ -45,10 +46,11 @@ const Modules = () => {
         {accessible.map(
           (module) =>
             module.type === "application" && (
-              <div className="col-md-4" key={module.id}>
+              <div className="col-md-3" key={module.id}>
                 <ModuleCard
                   name={module.name}
                   path={`/applications${module.path}`}
+                  icon={module.icon}
                   children={module.children}
                   entity={module}
                   handleNav={handleNav}

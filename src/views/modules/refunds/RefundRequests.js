@@ -6,6 +6,9 @@ import { Button, Col, Form, Row } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { alter, collection } from "../../../services/utils/controllers";
 import Alert from "../../../services/classes/Alert";
+import TextInputField from "../../../components/forms/input/TextInputField";
+import CustomSelect from "../../../components/forms/select/CustomSelect";
+import CustomSelectOptions from "../../../components/forms/select/CustomSelectOptions";
 
 const RefundRequests = (props) => {
   const [refunds, setRefunds] = useState([]);
@@ -86,10 +89,7 @@ const RefundRequests = (props) => {
   const loadSubBudgetHeads = () => {
     collection("subBudgetHeads")
       .then((res) => {
-        setState({
-          ...state,
-          subBudgetHeads: res.data.data,
-        });
+        setSubBudgetHeads(res.data.data);
       })
       .catch((err) => console.log(err.message));
   };
@@ -137,151 +137,133 @@ const RefundRequests = (props) => {
 
   return (
     <>
-      <h4 className="mb-4">Refund Requests</h4>
-
       {state.showForm ? (
-        <Form className="mb-4" onSubmit={handleSubmit}>
-          <Row>
-            <Col md={8}>
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  value={state.subBudgetHeadName}
-                  onChange={(e) =>
-                    setState({ ...state, subBudgetHeadName: e.target.value })
-                  }
-                  readOnly
-                />
-              </Form.Group>
-            </Col>
-            <Col md={4}>
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  value={state.budgetCode}
-                  onChange={(e) =>
-                    setState({ ...state, budgetCode: e.target.value })
-                  }
-                  readOnly
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col md={4}>
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  value={state.amount}
-                  onChange={(e) =>
-                    setState({ ...state, amount: e.target.value })
-                  }
-                  readOnly
-                />
-              </Form.Group>
-            </Col>
-            <Col md={8}>
-              <Form.Group>
-                <Form.Control
-                  as="select"
-                  className="form-control"
-                  value={state.subBudgetHeadId}
-                  onChange={(e) => {
-                    setState({ ...state, subBudgetHeadId: e.target.value });
-                  }}
-                >
-                  <option>Select Sub Budget Head</option>
-                  {subBudgetHeads && subBudgetHeads.length > 0
-                    ? subBudgetHeads.map((subBudgetHead) => {
-                        if (
-                          auth &&
-                          auth.department.id === subBudgetHead.department_id &&
-                          state.sub_budget_head_id !== subBudgetHead.id
-                        ) {
-                          return (
-                            <option
-                              key={subBudgetHead.id}
-                              value={subBudgetHead.id}
-                            >
-                              {subBudgetHead.name}
-                            </option>
-                          );
-                        } else {
-                          return null;
+        <>
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">HANDLE REQUEST</h3>
+            </div>
+            <div className="card-body">
+              <form onSubmit={handleSubmit}>
+                <div className="row">
+                  <div className="col-md-8">
+                    <TextInputField
+                      value={state.subBudgetHeadName}
+                      onChange={(e) =>
+                        setState({
+                          ...state,
+                          subBudgetHeadName: e.target.value,
+                        })
+                      }
+                      placeholder="ENTER SUB BUDGET NAME HERE"
+                      readOnly
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <TextInputField
+                      value={state.budgetCode}
+                      onChange={(e) =>
+                        setState({ ...state, budgetCode: e.target.value })
+                      }
+                      readOnly
+                      placeholder="SUB BUDGET CODE"
+                    />
+                  </div>
+                  <div className="col-md-4">
+                    <TextInputField
+                      type="number"
+                      value={state.amount}
+                      onChange={(e) =>
+                        setState({ ...state, amount: e.target.value })
+                      }
+                      readOnly
+                    />
+                  </div>
+                  <div className="col-md-8">
+                    <CustomSelect
+                      value={state.subBudgetHeadId}
+                      onChange={(e) => {
+                        setState({ ...state, subBudgetHeadId: e.target.value });
+                      }}
+                    >
+                      <CustomSelectOptions
+                        label="SELECT SUB BUDGET HEAD"
+                        value={0}
+                      />
+                      {subBudgetHeads.length > 0 &&
+                        subBudgetHeads.map((sub) => (
+                          <CustomSelectOptions
+                            key={sub.id}
+                            value={sub.id}
+                            label={sub.name}
+                          />
+                        ))}
+                    </CustomSelect>
+                  </div>
+                  <div className="col-md-6">
+                    <TextInputField
+                      type="number"
+                      value={state.balance}
+                      onChange={(e) =>
+                        setState({ ...state, balance: e.target.value })
+                      }
+                      readOnly
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <TextInputField
+                      type="number"
+                      value={state.newBalance}
+                      onChange={(e) =>
+                        setState({ ...state, newBalance: e.target.value })
+                      }
+                      readOnly
+                    />
+                  </div>
+                  <div className="col-md-12">
+                    <TextInputField
+                      multiline={4}
+                      value={state.description}
+                      onChange={(e) =>
+                        setState({ ...state, description: e.target.value })
+                      }
+                      placeholder="ENTER DESCRIPTION HERE!!"
+                    />
+                  </div>
+                  <div className="col-md-12 mt-3">
+                    <div className="btn-group btn-rounded">
+                      <button
+                        type="submit"
+                        className="btn btn-success btn-sm"
+                        disabled={
+                          state.description === "" ||
+                          state.subBudgetHeadId === 0
                         }
-                      })
-                    : null}
-                </Form.Control>
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col md={6}>
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  placeholder="AVAILABLE BALANCE"
-                  value={state.balance}
-                  className="form-control"
-                  onChange={(e) =>
-                    setState({ ...state, balance: e.target.value })
-                  }
-                  readOnly
-                />
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group>
-                <Form.Control
-                  type="text"
-                  placeholder="NEW BALANCE"
-                  value={state.newBalance}
-                  onChange={(e) =>
-                    setState({ ...state, newBalance: e.target.value })
-                  }
-                  readOnly
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Form.Group>
-                <Form.Control
-                  as="textarea"
-                  rows="8"
-                  placeholder="ENTER DESCRIPTION"
-                  value={state.description}
-                  onChange={(e) =>
-                    setState({ ...state, description: e.target.value })
-                  }
-                />
-              </Form.Group>
-            </Col>
-          </Row>
-
-          <Row>
-            <Col>
-              <Button
-                type="submit"
-                variant="success"
-                size="sm"
-                disabled={
-                  state.description === "" || state.subBudgetHeadId === 0
-                }
-              >
-                APPROVE REFUND
-              </Button>
-            </Col>
-          </Row>
-        </Form>
+                      >
+                        <i className="fa fa-send mr-2"></i>
+                        APPROVE REFUND
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-sm"
+                        onClick={() => setState(initialState)}
+                      >
+                        <i className="fa fa-close mr-2"></i>
+                        CANCEL
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </>
       ) : null}
 
       <div className="card">
+        <div className="card-header">
+          <h3 className="card-title text-muted">REFUND REQUESTS</h3>
+        </div>
         <div className="card-body table-responsive">
           <table className="table table-striped table-hover table-bordered ">
             <thead>
@@ -297,41 +279,45 @@ const RefundRequests = (props) => {
             </thead>
 
             <tbody>
-              {refunds && refunds.length > 0
-                ? refunds.map((refund) => {
-                    if (auth && auth.department.id === refund.department_id) {
-                      return (
-                        <tr key={refund.id}>
-                          <td>{refund.expenditure.subBudgetHead.name}</td>
-                          <td>{refund.expenditure.beneficiary}</td>
-                          <td>{refund.expenditure.description}</td>
-                          <td>{refund.expenditure.amount}</td>
-                          <td>{refund.created_at}</td>
-                          <td>
-                            {refund.closed === 0
-                              ? "Not Refunded"
-                              : refund.updated_at}
-                          </td>
+              {refunds && refunds.length > 0 ? (
+                refunds.map((refund) => {
+                  if (auth && auth.department.id === refund.department_id) {
+                    return (
+                      <tr key={refund.id}>
+                        <td>{refund.expenditure.subBudgetHead.name}</td>
+                        <td>{refund.expenditure.beneficiary}</td>
+                        <td>{refund.expenditure.description}</td>
+                        <td>{refund.expenditure.amount}</td>
+                        <td>{refund.created_at}</td>
+                        <td>
+                          {refund.closed === 0
+                            ? "Not Refunded"
+                            : refund.updated_at}
+                        </td>
 
-                          <td>
-                            <Button
-                              variant="success"
-                              size="sm"
-                              onClick={() => loadRefundDetails(refund)}
-                              disabled={refund.closed === 1}
-                            >
-                              {refund.closed === 1
-                                ? "REFUNDED"
-                                : "LOAD REQUEST"}
-                            </Button>
-                          </td>
-                        </tr>
-                      );
-                    } else {
-                      return null;
-                    }
-                  })
-                : null}
+                        <td>
+                          <Button
+                            variant="success"
+                            size="sm"
+                            onClick={() => loadRefundDetails(refund)}
+                            disabled={refund.closed === 1}
+                          >
+                            {refund.closed === 1 ? "REFUNDED" : "LOAD REQUEST"}
+                          </Button>
+                        </td>
+                      </tr>
+                    );
+                  } else {
+                    return null;
+                  }
+                })
+              ) : (
+                <tr>
+                  <td colSpan={7} className="text-danger">
+                    NO DATA FOUND!!!
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

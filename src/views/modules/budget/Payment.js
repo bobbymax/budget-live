@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-// /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import BatchPrintOut from "../../../components/commons/BatchPrintOut";
 import Loading from "../../../components/commons/Loading";
@@ -90,34 +90,40 @@ const Payments = (props) => {
                       </thead>
 
                       <tbody>
-                        {batches.map((batch) => (
-                          <tr key={batch.id}>
-                            {/* <td></td> */}
-
-                            <td>
-                              <button
-                                className="btn btn-success mr-3"
-                                onClick={() => handleBatchPrint(batch)}
-                              >
-                                <i className="fa fa-print"></i>
-                                {/* <FiPrinter /> */}
-                              </button>
-                              {batch.batch_no}
-                            </td>
-                            <td>{`NGN ${new Intl.NumberFormat().format(
-                              batch.amount
-                            )}`}</td>
-                            <td>
-                              <span
-                                className={
-                                  "badge badge-" + currentStat(batch.status)
-                                }
-                              >
-                                {batch.status.toUpperCase()}
-                              </span>
+                        {batches.length > 0 ? (
+                          batches.map((batch) => (
+                            <tr key={batch.id}>
+                              <td>
+                                <button
+                                  className="btn btn-success mr-3"
+                                  onClick={() => handleBatchPrint(batch)}
+                                >
+                                  <i className="fa fa-print"></i>
+                                  {/* <FiPrinter /> */}
+                                </button>
+                                {batch.batch_no}
+                              </td>
+                              <td>{`NGN ${new Intl.NumberFormat().format(
+                                batch.amount
+                              )}`}</td>
+                              <td>
+                                <span
+                                  className={
+                                    "badge badge-" + currentStat(batch.status)
+                                  }
+                                >
+                                  {batch.status.toUpperCase()}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={3} className="text-danger">
+                              NO DATA FOUND!!!
                             </td>
                           </tr>
-                        ))}
+                        )}
                       </tbody>
                     </table>
                   </div>

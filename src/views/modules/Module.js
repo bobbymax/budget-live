@@ -43,10 +43,11 @@ const Module = () => {
       <div className="row">
         {accessible.length > 0 &&
           accessible.map((child) => (
-            <div className="col-md-4" key={child.id}>
+            <div className="col-md-3" key={child.id}>
               <ModuleCard
                 name={child.name}
                 path={child.path}
+                icon={child.icon}
                 children={child.children}
                 entity={child}
                 color="warning"

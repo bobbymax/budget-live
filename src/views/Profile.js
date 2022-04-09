@@ -76,7 +76,11 @@ const Profile = () => {
                     <tr key={index}>
                       <td>{role.name}</td>
                       <td>{formatDate(role.start_date)}</td>
-                      <td>{formatDate(role.expiry_date)}</td>
+                      <td>
+                        {role.expiry_date !== null
+                          ? formatDate(role.expiry_date)
+                          : "Cannot Expire"}
+                      </td>
                     </tr>
                   ))
                 ) : (

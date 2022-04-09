@@ -13,10 +13,11 @@ const TextInputField = ({
   additionalClasses = "",
   disabled = false,
   name = "",
+  ...otherProps
 }) => {
   return (
     <div className="form-group">
-      <label className="form-label">{label}</label>
+      {label !== "" && <label className="form-label">{label}</label>}
       {multiline === 0 ? (
         <input
           className={`form-control ${additionalClasses}`}
@@ -27,6 +28,7 @@ const TextInputField = ({
           required={required}
           disabled={disabled}
           name={name}
+          {...otherProps}
         />
       ) : (
         <textarea
@@ -37,6 +39,7 @@ const TextInputField = ({
           placeholder={placeholder}
           value={value}
           name={name}
+          {...otherProps}
         ></textarea>
       )}
     </div>

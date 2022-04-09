@@ -1,11 +1,17 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { collection, store } from "../../../services/utils/controllers";
+import {
+  batchRequests,
+  collection,
+  store,
+} from "../../../services/utils/controllers";
 import CustomSelect from "../../../components/forms/select/CustomSelect";
 import TextInputField from "../../../components/forms/TextInputField";
 import Alert from "../../../services/classes/Alert";
 import CustomSelectOptions from "../../../components/forms/select/CustomSelectOptions";
+import axios from "axios";
+import TableCard from "../../../components/commons/tables/customized/TableCard";
 
 const Expenditures = () => {
   const initialState = {
@@ -27,6 +33,16 @@ const Expenditures = () => {
   const [state, setState] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [subBudgetHeads, setSubBudgetHeads] = useState([]);
+  const [expenditures, setExpenditures] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const columns = [
+    { key: "subBudgetHeadCode", label: "BUDGET CODE" },
+    { key: "beneficiary", label: "BENEFICIARY" },
+    { key: "amount", label: "AMOUNT" },
+    { key: "beneficiary", label: "BENEFICIARY" },
+    { key: "status", label: "STATUS" },
+  ];
 
   useEffect(() => {
     const single =
@@ -90,12 +106,21 @@ const Expenditures = () => {
       additional_info: state.additional_info,
     };
 
-    store("expenditures", data).then((res) => {
-      console.log(res);
-      Alert.success("Expenditure", "Created Successfully!");
+    try {
+      store("expenditures", data)
+        .then((res) => {
+          const result = res.data;
 
-      setState(initialState);
-    });
+          setExpenditures([result.data, ...expenditures]);
+          Alert.success("Expenditure", result.message);
+          setState(initialState);
+          setErrors({});
+          setOpen(false);
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   // const subBudgetHeadsOptions = (optionsArr) => {
@@ -120,11 +145,19 @@ const Expenditures = () => {
 
   useEffect(() => {
     try {
-      collection("subBudgetHeads")
-        .then((res) => {
-          const data = res.data.data;
-          setSubBudgetHeads(data);
-        })
+      const expenditureData = collection("expenditures");
+      const subBudgetHeadsData = collection("subBudgetHeads");
+
+      batchRequests([expenditureData, subBudgetHeadsData])
+        .then(
+          axios.spread((...res) => {
+            const exp = res[0].data.data;
+            const subs = res[1].data.data;
+
+            setExpenditures(exp);
+            setSubBudgetHeads(subs);
+          })
+        )
         .catch((err) => console.log(err.message));
     } catch (error) {
       console.log(error);
@@ -134,14 +167,22 @@ const Expenditures = () => {
   return (
     <div className="row">
       <div className="col-md-12">
-        <div className="page-titles">
-          <h2>New Expenditure</h2>
-        </div>
+        <button
+          type="button"
+          className="btn btn-success btn-rounded mb-4"
+          onClick={() => setOpen(true)}
+          disabled={open}
+        >
+          <i className="fa fa-send mr-2"></i>
+          CREATE EXPENDITURE
+        </button>
       </div>
-
-      <>
+      {open && (
         <div className="col-md-12">
           <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">New Expenditure</h3>
+            </div>
             <div className="card-body">
               <div className="form-body">
                 <form onSubmit={handleSubmit}>
@@ -392,6 +433,7 @@ const Expenditures = () => {
                         onClick={() => {
                           setState(initialState);
                           setErrors({});
+                          setOpen(false);
                         }}
                       >
                         <i className="fa fa-close"></i> Cancel
@@ -403,7 +445,8 @@ const Expenditures = () => {
             </div>
           </div>
         </div>
-      </>
+      )}
+      <TableCard columns={columns} rows={expenditures} />
     </div>
   );
 };
