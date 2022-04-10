@@ -1,5 +1,4 @@
 /* eslint-disable eqeqeq */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import {
@@ -43,7 +42,7 @@ const Logistics = (props) => {
   const [users, setUsers] = useState([]);
   const [state, setState] = useState(initialState);
   const [open, setOpen] = useState(false);
-  const [fulfilled, setFulfilled] = useState(0);
+  // const [fulfilled, setFulfilled] = useState(0);
   const auth = useSelector((state) => state.auth.value.user);
 
   const staffOptions = (optionsArr) => {
@@ -91,6 +90,15 @@ const Logistics = (props) => {
     );
   };
 
+  const handleStaffSelect = (e) => {
+    // console.log(e.key);
+
+    setState({
+      ...state,
+      user_id: e.key,
+    });
+  };
+
   useEffect(() => {
     try {
       const departmentData = collection("departments");
@@ -120,26 +128,33 @@ const Logistics = (props) => {
   }, []);
 
   useEffect(() => {
-    const single =
-      state.sub_budget_head_id > 0 &&
-      state.subBudgetHeads.filter(
-        (sub) => sub.id == state.sub_budget_head_id && sub
-      );
+    // console.log(subBudgetHeads);
 
-    if (single.length > 0) {
-      setState({
-        ...state,
-        budgetCode: single[0].budgetCode,
-      });
+    if (state.sub_budget_head_id > 0) {
+      const single =
+        subBudgetHeads.length > 0 &&
+        subBudgetHeads.filter((sub) => sub.id == state.sub_budget_head_id);
+
+      if (single.length > 0) {
+        setState({
+          ...state,
+          budgetCode: single[0].budgetCode,
+        });
+      }
     }
   }, [state.sub_budget_head_id]);
 
   useEffect(() => {
-    const user = users.filter((user) => user.id === state.user_id);
+    if (state.user_id > 0) {
+      const user = users.filter((user) => user.id === state.user_id);
 
-    setState({
-      department_id: !state.department_id === 0 ? user.department_id : 0,
-    });
+      // console.log(user[0]);
+
+      setState({
+        ...state,
+        department_id: user[0].department_id,
+      });
+    }
   }, [state.user_id]);
 
   return (
@@ -217,12 +232,13 @@ const Logistics = (props) => {
                           components={makeAnimated()}
                           options={staffOptions(users)}
                           placeholder="Select Beneficiary"
-                          onChange={(selectedOption) => {
-                            setState({
-                              ...state,
-                              user_id: selectedOption.key,
-                            });
-                          }}
+                          // onChange={(selectedOption) => {
+                          //   setState({
+                          //     ...state,
+                          //     user_id: selectedOption.key,
+                          //   });
+                          // }}
+                          onChange={handleStaffSelect}
                           isSearchable
                         />
                       </div>
