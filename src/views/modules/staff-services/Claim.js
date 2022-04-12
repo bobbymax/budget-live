@@ -1,13 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+// import { PDFViewer } from "@react-pdf/renderer";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import ClaimDetails from "../../../components/commons/widgets/ClaimDetails";
 import { amountToWords } from "../../../services/utils/helpers";
+// import ExportClaimPDF from "../../exports/ExportClaimPDF";
 import ExportClaim from "./ExportClaim";
+// import ExportClaimPDF from "../../exports/ExportClaimPDF";
 
 export const Claim = (props) => {
   const params = useLocation();
   const navigate = useNavigate();
+  const auth = useSelector((state) => state.auth.value.user);
 
   const initialState = {
     claim: null,
@@ -48,7 +53,7 @@ export const Claim = (props) => {
           </h4>
 
           <button
-            className="btn btn-success mt-3"
+            className="btn btn-success btn-rounded mt-3"
             variant="success"
             onClick={() =>
               setState({
@@ -114,7 +119,8 @@ export const Claim = (props) => {
           </div>
         </>
       ) : (
-        <ExportClaim claim={state.claim} onClose={handleDownload} />
+        <ExportClaim claim={state.claim} auth={auth} onClose={handleDownload} />
+        // <ExportClaimPDF />
       )}
     </>
   );

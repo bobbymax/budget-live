@@ -7,6 +7,7 @@ import ButtonField from "../../components/forms/ButtonField";
 import TextInputField from "../../components/forms/TextInputField";
 import { authenticate } from "../../features/auth/userSlice";
 import { login } from "../../services/utils/auth/auth.controller";
+import "./login.css";
 
 const Login = () => {
   const [staffNo, setStaffNo] = useState("");
@@ -55,7 +56,7 @@ const Login = () => {
   };
 
   return (
-    <div style={{ height: "100vh" }}>
+    <div className="login-wrap">
       <div className="authincation h-100">
         <div className="container h-100">
           <div className="row justify-content-center h-100 align-items-center">

@@ -15,14 +15,16 @@ const options = {
 
 const ExportClaim = ({ claim, auth, onClose }) => {
   const [state, setState] = useState(null);
+  // const [user, setUser] = useState(null);
 
   const styles = {
     container: {
       padding: 30,
+      height: "100%",
     },
     outter: {
-      border: "1px solid #556",
-      width: 728,
+      border: "1px solid rgba(39, 174, 96,0.7)",
+      width: 742,
       paddingBottom: 80,
     },
     claim_id: {
@@ -66,28 +68,33 @@ const ExportClaim = ({ claim, auth, onClose }) => {
   };
 
   useEffect(() => {
-    if (claim) {
+    if (claim && auth) {
       setState(claim);
+      // setUser(auth);
     }
-  }, [state]);
+  }, [claim, auth]);
+
+  // console.log(user);
 
   return (
     <>
-      <Pdf targetRef={ref} filename="claim.pdf" options={options}>
-        {({ toPdf }) => (
-          <button className="btn btn-success mb-4" onClick={toPdf}>
-            <i className="fa fa-print"></i> Print
-          </button>
-        )}
-      </Pdf>
+      <div className="btn-group btn-rounded btn-lg">
+        <Pdf targetRef={ref} filename="claim.pdf" options={options}>
+          {({ toPdf }) => (
+            <button className="btn btn-success btn-lg mb-4" onClick={toPdf}>
+              <i className="fa fa-print mr-2"></i> Print
+            </button>
+          )}
+        </Pdf>
 
-      <button
-        className="btn btn-danger mb-4"
-        style={{ marginLeft: 4 }}
-        onClick={() => onClose()}
-      >
-        <i className="fa fa-close"></i> Close
-      </button>
+        <button
+          className="btn btn-danger btn-lg mb-4"
+          style={{ marginLeft: 4 }}
+          onClick={() => onClose()}
+        >
+          <i className="fa fa-close mr-2"></i> Close
+        </button>
+      </div>
 
       <div className="claim" ref={ref} style={styles.container}>
         <div className="claimBackground" style={styles.outter}>
@@ -158,6 +165,7 @@ const ExportClaim = ({ claim, auth, onClose }) => {
               </strong>
             </p>
           </div>
+
           <div className="rowConts">
             <div className="keepers lefters">
               <div className="liners mt-4"></div>
@@ -177,7 +185,7 @@ const ExportClaim = ({ claim, auth, onClose }) => {
           </div>
           <div className="rowConts">
             <div className="keepers lefters">
-              <div className="liners">
+              <div className="liners mt-4">
                 <h6>{auth ? auth.name.toUpperCase() : null}</h6>
               </div>
               <h6 className="claimTitle">NAME IN BLOCKS</h6>

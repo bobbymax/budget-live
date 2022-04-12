@@ -35,13 +35,14 @@ const ClaimTable = ({
                         claim.status === "cleared" ||
                         claim.status === "batched" ? (
                           <button
-                            className="btn-sm btn btn-primary"
+                            className="btn-sm btn btn-primary btn-rounded"
                             onClick={() => onView(claim)}
                           >
+                            <i className="fa fa-eye mr-2"></i>
                             VIEW CLAIM
                           </button>
                         ) : (
-                          <>
+                          <div className="btn-group btn-rounded">
                             <button
                               className="btn btn-success btn-sm"
                               onClick={() => addDetails(claim)}
@@ -77,7 +78,7 @@ const ClaimTable = ({
                               Delete
                               {/* <FiTrash2 /> */}
                             </button>
-                          </>
+                          </div>
                         )}
                       </td>
                     </tr>

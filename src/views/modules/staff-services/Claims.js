@@ -172,11 +172,11 @@ const Claims = (props) => {
         <div className="col-md-12">
           <div className="page-titles">
             <button
-              className="btn btn-success"
+              className="btn btn-success btn-rounded"
               disabled={open}
               onClick={() => setOpen(true)}
             >
-              <i className="fa fa-plus-square"></i> Add Claim
+              <i className="fa fa-plus-circle mr-2"></i> Add Claim
             </button>
           </div>
         </div>
@@ -207,21 +207,25 @@ const Claims = (props) => {
                         </div>
 
                         <div className="col-md-12 mt-3">
-                          <button type="submit" className="btn btn-primary">
-                            Submit
-                          </button>
-                          <button
-                            type="button"
-                            className="btn btn-danger"
-                            onClick={() => {
-                              setUpdate(false);
-                              setState(initialState);
-                              setOpen(false);
-                              setErrors({});
-                            }}
-                          >
-                            Close
-                          </button>
+                          <div className="btn-group btn-rounded">
+                            <button type="submit" className="btn btn-primary">
+                              <i className="fa fa-send mr-2"></i>
+                              Submit
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-danger"
+                              onClick={() => {
+                                setUpdate(false);
+                                setState(initialState);
+                                setOpen(false);
+                                setErrors({});
+                              }}
+                            >
+                              <i className="fa fa-times-circle mr-2"></i>
+                              Close
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </form>
