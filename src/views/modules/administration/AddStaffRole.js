@@ -79,17 +79,21 @@ const AddStaffRole = (props) => {
             </div>
 
             <div className="modal-footer">
-              <button className="btn btn-success" type="submit">
-                Submit
-              </button>
+              <div className="btn-group btn-rounded">
+                <button className="btn btn-success" type="submit">
+                  <i className="fa fa-send mr-2"></i>
+                  Submit
+                </button>
 
-              <button
-                className="btn btn-danger"
-                type="button"
-                onClick={props.onHide}
-              >
-                Close
-              </button>
+                <button
+                  className="btn btn-danger"
+                  type="button"
+                  onClick={props.onHide}
+                >
+                  <i className="fa fa-times-circle mr-2"></i>
+                  Close
+                </button>
+              </div>
             </div>
           </form>
         </>

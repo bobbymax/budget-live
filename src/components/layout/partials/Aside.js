@@ -13,6 +13,7 @@ const Aside = ({ active }) => {
     "es",
     "ict-admin",
     "super-administrator",
+    "ict-manager",
   ];
 
   return (
