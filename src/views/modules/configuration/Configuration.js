@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
+import Loading from "../../../components/commons/Loading";
 import TextInputField from "../../../components/forms/input/TextInputField";
 import CustomSelect from "../../../components/forms/select/CustomSelect";
 import CustomSelectOptions from "../../../components/forms/select/CustomSelectOptions";
 import { fetchSiteConfig } from "../../../features/config/configSlice";
+import Alert from "../../../services/classes/Alert";
 import { collection, store } from "../../../services/utils/controllers";
 
 const Configuration = () => {
@@ -15,6 +17,7 @@ const Configuration = () => {
   const [state, setState] = useState({});
   const [settings, setSettings] = useState([]);
   const [fileUpload, setFileUpload] = useState(fileState);
+  const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -57,7 +60,7 @@ const Configuration = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const data = {
       state,
     };
@@ -65,9 +68,15 @@ const Configuration = () => {
     store("portal/configuration", data)
       .then((res) => {
         const data = res.data;
+        setLoading(false);
         dispatch(fetchSiteConfig(data));
+        Alert.success("Updated", data.message);
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        setLoading(false);
+        Alert.error("Oops!!", "Something went wrong!!");
+        console.log(err.message);
+      });
   };
 
   useEffect(() => {
@@ -92,6 +101,7 @@ const Configuration = () => {
 
   return (
     <>
+      {loading ? <Loading /> : null}
       <div className="row">
         <div className="col-md-12">
           <div className="card">
