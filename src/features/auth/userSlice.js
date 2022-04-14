@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   value: {
     isLoggedIn: false,
+    dashboardState: false,
     token: null,
     user: null,
   },
@@ -16,11 +17,15 @@ export const userSlice = createSlice({
       localStorage.setItem("token", JSON.stringify(action.payload.data));
 
       state.value.isLoggedIn = true;
+      state.value.dashboardState = false;
       state.value.token = action.payload.data.token;
       state.value.user = action.payload.data.user;
     },
     updateUser: (state, action) => {
       state.value.user = action.payload.data;
+    },
+    changeDashboardState: (state, action) => {
+      state.value.dashboardState = action.payload;
     },
     disembark: (state) => {
       localStorage.removeItem("token");
@@ -30,6 +35,7 @@ export const userSlice = createSlice({
 });
 
 const userReducer = userSlice.reducer;
-export const { authenticate, updateUser, disembark } = userSlice.actions;
+export const { authenticate, updateUser, changeDashboardState, disembark } =
+  userSlice.actions;
 
 export default userReducer;

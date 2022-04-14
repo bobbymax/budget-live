@@ -16,32 +16,38 @@ const columns = [
     key: "budgetCode",
   },
   {
-    label: "Budget Name",
+    label: "Budget",
     key: "name",
   },
   {
     label: "Approved Amount",
     key: "approved_amount",
+    format: "currency",
   },
   {
     label: "Booked Expenditure",
     key: "booked_expenditure",
+    format: "currency",
   },
   {
     label: "Actual Expenditure",
     key: "actual_expenditure",
+    format: "currency",
   },
   {
     label: "Booked Balance",
     key: "booked_balance",
+    format: "currency",
   },
   {
     label: "Actual Balance",
     key: "actual_balance",
+    format: "currency",
   },
   {
     label: "Expected Performace",
     key: "expected_performance",
+    format: "currency",
   },
   {
     label: "Actual Performance",
@@ -150,8 +156,14 @@ const Overview = (props) => {
     { label: "Name", key: "name" },
     { label: "Logistics Budget", key: "logisticsBudget" },
     { label: "Approved Amount", key: "approved_amount" },
-    { label: "Booked Expenditure", key: "booked_expenditure" },
-    { label: "Actual Expenditure", key: "actual_expenditure" },
+    {
+      label: "Booked Expenditure",
+      key: "booked_expenditure",
+    },
+    {
+      label: "Actual Expenditure",
+      key: "actual_expenditure",
+    },
     { label: "Booked Balance", key: "booked_balance" },
     { label: "Actual Balance", key: "actual_balance" },
     { label: "Expected Performance", key: "expected_performance" },

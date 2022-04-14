@@ -4,6 +4,7 @@ import TextInputField from "../../forms/TextInputField";
 import TablePagination from "./TablePagination";
 import "./data-table.css";
 import TableLoader from "./TableLoader";
+import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
 
 const DataTableComponent = ({
   action = undefined,
@@ -58,7 +59,7 @@ const DataTableComponent = ({
             </div>
           </div>
           <div className="table-responsive tableWrapper">
-            <table className="table table-bordered table-striped verticle-middle table-responsive-sm">
+            <table className="table table-bordered table-striped verticle-middle table-responsive-sm data-custom-table">
               {/* Table Head */}
               <thead>
                 <tr>
@@ -66,7 +67,7 @@ const DataTableComponent = ({
                     <th key={index}>{col.label.toUpperCase()}</th>
                   ))}
                   {handleEdit !== undefined && <th scope="col">Action</th>}
-                  {action !== undefined && <th scope="col">View Breakdown</th>}
+                  {action !== undefined && <th scope="col">BREAKDOWN</th>}
 
                   {manageStaff !== undefined && (
                     <th scope="col">Manage Staff</th>
@@ -84,9 +85,11 @@ const DataTableComponent = ({
                         {columns &&
                           columns.length > 0 &&
                           columns.map((col, index) => (
-                            <>
-                              <td key={index}>{row[col.key]}</td>
-                            </>
+                            <td key={index}>
+                              {"format" in col && col.format === "currency"
+                                ? formatCurrencyWithoutSymbol(row[col.key])
+                                : row[col.key]}
+                            </td>
                           ))}
 
                         {handleEdit !== undefined && (

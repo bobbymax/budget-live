@@ -8,7 +8,7 @@ const CustomCard = ({ color = "white", count = 0, title = "", path = "" }) => {
         <div className="card-body">
           <div className="media align-items-center">
             <div className="media-body mr-3">
-              <h2 className="fs-36 text-white font-w600">{count}</h2>
+              <h3 className="fs-36 text-white font-w600">{count}</h3>
               <p className="fs-18 mb-0 text-white font-w500">{title}</p>
             </div>
 

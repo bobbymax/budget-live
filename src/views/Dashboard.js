@@ -7,6 +7,7 @@ import { batchRequests, collection } from "../services/utils/controllers";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../services/utils/helpers";
 import BudgetController from "./controller/BudgetController";
+// import AdminDashboard from "./AdminDashboard";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import "../components/commons/cards/custom-card.css";
@@ -29,13 +30,19 @@ const Dashboard = () => {
   };
 
   const auth = useSelector((state) => state.auth.value.user);
+  // const dash = useSelector((state) => state.auth.value.dashboardState);
   const [state, setState] = useState(overviewState);
+  // const [dashboardState, setDashboardState] = useState(false);
 
   const allowedRoles = [
     "budget-controller",
     "super-administrator",
     "head-of-department",
   ];
+
+  // useEffect(() => {
+  //   setDashboardState(dash);
+  // }, [dash]);
 
   useEffect(() => {
     if (auth !== null) {

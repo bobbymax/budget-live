@@ -70,6 +70,10 @@ export const formatCurrency = (fig) => {
   let currency = Intl.NumberFormat("en-US");
   return "NGN " + currency.format(fig);
 };
+export const formatCurrencyWithoutSymbol = (fig) => {
+  let currency = Intl.NumberFormat("en-US");
+  return currency.format(fig);
+};
 
 export const verifyNumOfDays = (started, ended) => {
   const date1 = new Date(started);

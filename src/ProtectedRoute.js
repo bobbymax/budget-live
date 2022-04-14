@@ -10,13 +10,16 @@ import Header from "./components/layout/partials/Header";
 import Navigation from "./components/layout/partials/Navigation";
 import { fetchSiteConfig } from "./features/config/configSlice";
 import { collection } from "./services/utils/controllers";
+import AdminDashboard from "./views/AdminDashboard";
 
 const ProtectedRoute = ({ children }) => {
   const auth = useSelector((state) => state.auth.value.user);
+  const dash = useSelector((state) => state.auth.value.dashboardState);
 
   const dispatch = useDispatch();
 
   const [active, setActive] = useState(false);
+  const [dashboardState, setDashboardState] = useState(false);
 
   const handleToggle = () => {
     setActive(!active);
@@ -46,6 +49,10 @@ const ProtectedRoute = ({ children }) => {
     }
   }, [active]);
 
+  useEffect(() => {
+    setDashboardState(dash);
+  }, [dash]);
+
   return (
     <>
       <div
@@ -61,7 +68,11 @@ const ProtectedRoute = ({ children }) => {
           <div className="container-fluid">
             {auth ? (
               auth.hasChangedPassword ? (
-                children
+                dashboardState ? (
+                  <AdminDashboard />
+                ) : (
+                  children
+                )
               ) : (
                 <Navigate to="reset-password" />
               )

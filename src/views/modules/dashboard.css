@@ -57,3 +57,26 @@
 .modules:hover .icon-wrapper i {
   transform: translateY(2px);
 }
+
+.dashboard-card {
+  background-color: rgb(36, 35, 33);
+  border-radius: 12px;
+  box-shadow: 7px 6px 10px -3px rgba(0, 0, 0, 0.75);
+  -webkit-box-shadow: 7px 6px 10px -3px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 7px 6px 10px -3px rgba(0, 0, 0, 0.75);
+}
+
+.dash-media {
+  padding: 20px;
+  text-align: center;
+}
+
+.dash-media p {
+  font-size: smaller;
+  margin-bottom: 0px;
+}
+
+.dash-media h3 span {
+  font-size: 14px;
+  margin-right: 3px;
+}
