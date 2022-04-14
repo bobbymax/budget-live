@@ -45,24 +45,23 @@ const Header = () => {
               {/* <SearchBar /> */}
               <div className="dash mt-3">
                 <div className="row">
-                  <div className="col-md-5">
-                    <label className="switch">
-                      <input
-                        type="checkbox"
-                        value={adminState}
-                        onChange={(e) => setAdminState(!adminState)}
-                        disabled={
-                          auth &&
-                          auth.roles.some(
-                            (role) => !allowedRoles.includes(role.label)
-                          )
-                        }
-                      />
-                      <span className="slider round"></span>
-                    </label>
-                  </div>
+                  {auth &&
+                    auth.roles.some((role) =>
+                      allowedRoles.includes(role.label)
+                    ) && (
+                      <div className="col-md-5">
+                        <label className="switch">
+                          <input
+                            type="checkbox"
+                            value={adminState}
+                            onChange={(e) => setAdminState(!adminState)}
+                          />
+                          <span className="slider round"></span>
+                        </label>
+                      </div>
+                    )}
                   <div className="col-md-7">
-                    <h4 className="mt-2">{adminState ? "ADMIN" : "STAFF"}</h4>
+                    <h4 className="mt-2">{adminState ? "ADMIN" : "BUDGET"}</h4>
                   </div>
                 </div>
               </div>

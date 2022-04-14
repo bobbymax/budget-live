@@ -16,6 +16,8 @@ const Aside = ({ active }) => {
     "ict-manager",
   ];
 
+  const adminRoles = ["ict-manager", "fad-admin"];
+
   return (
     <div className="deznav">
       <div className={`deznav-scroll ${active && "mm-active ps ps--active-y"}`}>
@@ -79,7 +81,9 @@ const Aside = ({ active }) => {
             </li>
           ) : null}
 
-          {auth && auth.administrator ? (
+          {(auth && auth.administrator) ||
+          (auth &&
+            auth.roles.some((role) => adminRoles.includes(role.label))) ? (
             <>
               <li
                 className={

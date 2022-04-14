@@ -38,6 +38,7 @@ const Dashboard = () => {
     "budget-controller",
     "super-administrator",
     "head-of-department",
+    "ict-manager",
   ];
 
   // useEffect(() => {
