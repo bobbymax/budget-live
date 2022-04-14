@@ -99,7 +99,7 @@ const Overview = (props) => {
   useEffect(() => {
     const id = auth.department_id;
 
-    if (auth && auth.department_id) {
+    if (auth && auth.department_id > 0) {
       collection("departments/" + id + "/budget/summary")
         .then((res) => {
           setData(res.data.data);

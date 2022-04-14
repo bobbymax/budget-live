@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import * as XLSX from "xlsx";
@@ -64,6 +65,8 @@ const Dependencies = () => {
       data,
     };
 
+    // console.log(body);
+
     try {
       bulk("imports", body)
         .then((res) => {
@@ -104,6 +107,8 @@ const Dependencies = () => {
     // console.log(headers)
     return rows;
   };
+
+  // console.log(data);
 
   const importExcel = (e) => {
     const file = e.target.files[0];
