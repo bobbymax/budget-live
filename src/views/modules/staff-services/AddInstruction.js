@@ -53,17 +53,34 @@ const AddInstruction = (props) => {
     setBenefit(null);
   };
 
+  const getFee = (benefit, daysDiff) => {
+    const child =
+      benefit &&
+      benefit.children.filter((ben) => state.additional_benefit_id == ben.id);
+    const fee = child[0].entitlements.filter((ent) => ent.grade === auth.level);
+    const entitlement = fee[0];
+    const total = entitlement.amount * daysDiff;
+
+    return total;
+  };
+
   useEffect(() => {
     if (state.from !== "" && state.to !== "") {
+      const daysDiff = verifyNumOfDays(state.from, state.to);
+
       if (benefit && benefit.numOfDays) {
+        const amount =
+          state.additional_benefit_id > 0 ? getFee(benefit, daysDiff) : 0;
         setState({
           ...state,
-          numOfDays: verifyNumOfDays(state.from, state.to),
+          numOfDays: daysDiff,
+          amount,
         });
       } else {
         setState({
           ...state,
           numOfDays: 0,
+          amount: 0,
         });
       }
     }
@@ -71,16 +88,7 @@ const AddInstruction = (props) => {
 
   useEffect(() => {
     if (state.additional_benefit_id > 0) {
-      const child = benefit.children.filter(
-        (ben) => state.additional_benefit_id == ben.id
-      );
-
-      const fee = child[0].entitlements.filter(
-        (ent) => ent.grade === auth.level
-      );
-
-      const entitlement = fee[0];
-      const total = entitlement.amount * state.numOfDays;
+      const total = getFee(benefit, state.numOfDays);
 
       setState({
         ...state,
@@ -325,17 +333,21 @@ const AddInstruction = (props) => {
           </div>
 
           <div className="modal-footer">
-            <button className="btn btn-success" type="submit">
-              Submit
-            </button>
+            <div className="btn-group btn-rounded">
+              <button className="btn btn-success" type="submit">
+                <i className="fa fa-send mr-2"></i>
+                Submit
+              </button>
 
-            <button
-              className="btn btn-danger"
-              type="button"
-              onClick={closeModal}
-            >
-              Close
-            </button>
+              <button
+                className="btn btn-danger"
+                type="button"
+                onClick={closeModal}
+              >
+                <i className="fa fa-close mr-2"></i>
+                Close
+              </button>
+            </div>
           </div>
         </form>
       </Modal>

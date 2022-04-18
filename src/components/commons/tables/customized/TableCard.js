@@ -5,7 +5,7 @@ import TableBody from "./tables/TableBody";
 import TableRow from "./tables/TableRow";
 import CustomPagination from "./tables/CustomPagination";
 import "./tables/table.css";
-import { search } from "../../../../services/utils/helpers";
+import { formatCurrency, search } from "../../../../services/utils/helpers";
 import { Link } from "react-router-dom";
 
 const TableCard = ({
@@ -79,7 +79,11 @@ const TableCard = ({
                     .map((row, i) => (
                       <TableRow key={i}>
                         {columns.map((col) => (
-                          <td key={col.key}>{row[col.key]}</td>
+                          <td key={col.key}>
+                            {"format" in col && col.format === "currency"
+                              ? formatCurrency(row[col.key])
+                              : row[col.key]}
+                          </td>
                         ))}
                         {(handleEdit !== undefined ||
                           handleDelete !== undefined ||

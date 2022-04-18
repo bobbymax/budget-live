@@ -53,8 +53,6 @@ const ProtectedRoute = ({ children }) => {
     setDashboardState(dash);
   }, [dash]);
 
-  console.log(auth);
-
   return (
     <>
       <div

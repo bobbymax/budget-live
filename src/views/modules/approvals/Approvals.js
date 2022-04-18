@@ -1,18 +1,30 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Loading from "../../../components/commons/Loading";
 import Alert from "../../../services/classes/Alert";
-import { collection, fetch, store } from "../../../services/utils/controllers";
 import {
+  alter,
+  collection,
+  fetch,
+  store,
+} from "../../../services/utils/controllers";
+import {
+  approvals,
   formatCurrency,
   getPaymentType,
   userHasRole,
 } from "../../../services/utils/helpers";
+import CryptoJS from "crypto-js";
 
 const Approvals = (props) => {
   const auth = useSelector((state) => state.auth.value.user);
+  const budgetYear = useSelector((state) =>
+    parseInt(state.config.value.budget_year)
+  );
 
   const initialState = {
     batch_code: "",
@@ -32,40 +44,117 @@ const Approvals = (props) => {
   };
 
   const [state, setState] = useState(initialState);
+  const [approvalStage, setApprovalStage] = useState({});
+  const [batches, setBatches] = useState();
+  const [loading, setLoading] = useState(false);
 
   const fetchPaymentBatch = (e) => {
     e.preventDefault();
 
     if (state.batch_code !== "") {
-      collection("batches/" + state.batch_code)
-        .then((res) => {
-          const data = res.data.data;
-          setState({
-            ...state,
-            batch: data,
-            batch_id: data.id,
-            batch_code: "",
-            showDetails: true,
-            grandTotal: parseFloat(data.amount),
-          });
-        })
-        .catch((err) => console.log(err));
+      const batch = batches.filter(
+        (batc) => batc.batch_no === state.batch_code
+      );
+
+      // console.log(batch[0]);
+
+      const stage = approvals.filter(
+        (approval) =>
+          approval.stage === batch[0].level && approval.level == batch[0].steps
+      );
+
+      setApprovalStage(stage[0]);
+
+      setState({
+        ...state,
+        batch: batch[0],
+        batch_id: batch[0].id,
+        batch_code: "",
+        showDetails: true,
+        grandTotal: parseFloat(batch[0].amount),
+      });
     }
+  };
+
+  const getStageStatus = () => {
+    const batch = state.batch;
+    const trac =
+      batch !== null && batch.tracks.filter((trk) => trk.stage === batch.level);
+    const track = trac[0];
+
+    const steps = batch !== undefined && batch.steps;
+    const level = batch !== undefined && batch.level;
+
+    return steps == 4 && level === "treasury" ? "pending" : track.status;
   };
 
   const handleExpenditureUpdate = (e) => {
     e.preventDefault();
+    setLoading(true);
 
     const data = {
+      expenditure_id: state.expenditure_id,
       amount: state.amount,
     };
+
+    try {
+      alter("batches", state.batch_id, data)
+        .then((res) => {
+          const result = res.data;
+          setState({
+            ...state,
+            batch: result.data,
+            batch_id: result.data.id,
+            showDetails: true,
+            grandTotal: parseFloat(result.data.amount),
+            expenditure: null,
+            expenditure_id: 0,
+            description: "",
+            beneficiary: "",
+            amount: 0,
+            previousTotal: 0,
+            isUpdating: false,
+          });
+          setLoading(false);
+          Alert.success("Updated!!", result.message);
+        })
+        .catch((err) => {
+          console.log(err.message);
+          Alert.success("Oops!!", "Something has gone wrong!!");
+        });
+    } catch (error) {
+      console.log(error);
+    }
+
+    console.log(data);
   };
 
-  const getBatches = () => {
-    collection("batches")
-      .then((res) => console.log(res))
-      .catch((err) => console.log(err));
-  };
+  useEffect(() => {
+    setLoading(true);
+    try {
+      collection("batches")
+        .then((res) => {
+          const result = res.data.data;
+          setBatches(
+            result.filter(
+              (batch) =>
+                (batch.status !== "paid" || batch.status !== "archived") &&
+                moment(batch.created_at).year() == budgetYear
+            )
+          );
+          setLoading(false);
+          // console.log(result);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }, []);
+
+  console.log(auth, approvalStage);
 
   const fetchExpenditureSubBudgetHead = (batch) => {
     return batch.expenditures[0].subBudgetHead.budgetCode;
@@ -97,15 +186,25 @@ const Approvals = (props) => {
       status: status,
     };
 
-    // console.log(status);
+    try {
+      store("clear/payments", data)
+        .then((res) => {
+          const data = res.data;
+          setBatches(
+            batches.map((batch) => {
+              if (batch.id == data.data.id) {
+                return data.data;
+              }
 
-    store("clear/payments", data)
-      .then((res) => {
-        const data = res.data;
-        Alert.success("Payment Status!!", data.message);
-        console.log(data.data);
-      })
-      .catch((err) => console.log(err));
+              return batch;
+            })
+          );
+          Alert.success("Payment Status!!", data.message);
+        })
+        .catch((err) => console.log(err));
+    } catch (error) {
+      console.log(error);
+    }
 
     setState(initialState);
   };
@@ -138,8 +237,11 @@ const Approvals = (props) => {
     }
   }, [state.batch, state.showDetails]);
 
+  // console.log(getStageStatus());
+
   return (
     <>
+      {loading ? <Loading /> : null}
       <h4 className="mb-4">Approve Payments</h4>
 
       <form onSubmit={fetchPaymentBatch}>
@@ -158,10 +260,6 @@ const Approvals = (props) => {
         </div>
       </form>
 
-      {/* <button className="btn btn-primary" onClick={getBatches}>
-        Get Batch
-      </button> */}
-
       <div className={"payments-container mt-4"}>
         {state.expenditure !== null && state.isUpdating ? (
           <form onSubmit={handleExpenditureUpdate}>
@@ -171,9 +269,9 @@ const Approvals = (props) => {
                   <h5 className="mg-b-3">Expenditure</h5>
                 </div>
 
-                <div className="btn-group-invoice">
+                <div className="btn-group btn-rounded">
                   <button
-                    className="btn btn-white btn-uppercase btn-sm"
+                    className="btn btn-danger btn-uppercase btn-sm"
                     type="button"
                     onClick={() => {
                       setState({
@@ -187,7 +285,7 @@ const Approvals = (props) => {
                       });
                     }}
                   >
-                    <i className="fa fa-close"></i>
+                    <i className="fa fa-close mr-2"></i>
                     Cancel
                   </button>
 
@@ -195,7 +293,7 @@ const Approvals = (props) => {
                     type="submit"
                     className="btn btn-success btn-sm btn-uppercase"
                   >
-                    <div className="fa fa-pen"></div>
+                    <div className="fa fa-send mr-2"></div>
                     Update Expenditure
                   </button>
                 </div>
@@ -269,9 +367,8 @@ const Approvals = (props) => {
 
               <div className="btn-group btn-rounded">
                 {state.batch &&
-                state.batch.steps === 3 &&
-                state.batch.editable === 1 &&
-                userHasRole(auth, "audit-officer") ? (
+                approvalStage !== undefined &&
+                userHasRole(auth, approvalStage.role) ? (
                   <>
                     {state.batch.queried && (
                       <button
@@ -286,7 +383,6 @@ const Approvals = (props) => {
                       type="button"
                       className="btn btn-danger btn-uppercase btn-sm"
                       disabled={
-                        state.status === "approved" ||
                         state.expenditure !== null ||
                         state.description === "" ||
                         state.batch.queried
@@ -296,6 +392,7 @@ const Approvals = (props) => {
                         handlePaymentAction("queried");
                       }}
                     >
+                      <i className="fa fa-question mr-2"></i>
                       Query
                     </button>
                   </>
@@ -307,7 +404,10 @@ const Approvals = (props) => {
                   disabled={
                     state.status === "queried" ||
                     state.expenditure !== null ||
-                    state.batch.status === "paid"
+                    state.batch.status === "paid" ||
+                    state.description !== "" ||
+                    (approvalStage !== undefined &&
+                      userHasRole(auth, approvalStage.role) === false)
                   }
                   onClick={() => {
                     setState({ ...state, status: "approved" });
@@ -315,10 +415,7 @@ const Approvals = (props) => {
                   }}
                 >
                   <i className="fa fa-send mr-2"></i>
-                  {state.batch && state.batch.steps === 4
-                    ? "Post"
-                    : "Clear"}{" "}
-                  Payment
+                  {approvalStage !== undefined && approvalStage.action} Payment
                 </button>
               </div>
             </div>
@@ -351,10 +448,9 @@ const Approvals = (props) => {
               <table className="table table-striped table-bordered">
                 <thead>
                   <tr>
-                    {state.batch &&
-                    state.batch.editable === 1 &&
-                    state.batch.steps >= 2 &&
-                    userHasRole(auth, "treasury-officer") ? (
+                    {approvalStage !== undefined &&
+                    approvalStage.canModify &&
+                    userHasRole(auth, approvalStage.role) ? (
                       <th>Modify</th>
                     ) : null}
                     <th className="wd-40p d-none d-sm-table-cell">
@@ -371,10 +467,9 @@ const Approvals = (props) => {
                     ? state.batch.expenditures.map((exp) => {
                         return (
                           <tr key={exp.id}>
-                            {state.batch &&
-                            state.batch.editable === 1 &&
-                            state.batch.steps >= 2 &&
-                            userHasRole(auth, "treasury-officer") ? (
+                            {approvalStage !== undefined &&
+                            approvalStage.canModify &&
+                            userHasRole(auth, approvalStage.role) ? (
                               <td>
                                 <button
                                   className="btn btn-warning btn-sm btn-rounded"
@@ -388,7 +483,9 @@ const Approvals = (props) => {
 
                             <td>{exp.description}</td>
                             <td className="tx-center">{exp.beneficiary}</td>
-                            <td className="tx-right">{exp.amount}</td>
+                            <td className="tx-right">
+                              {formatCurrency(exp.amount)}
+                            </td>
                           </tr>
                         );
                       })
@@ -398,10 +495,9 @@ const Approvals = (props) => {
 
               <div className="row justify-content-between mg-t-25">
                 <div className="col-sm-6 order-2 order-sm-0 mg-t-40 mg-sm-t-0">
-                  {state.batch &&
-                  state.batch.steps === 3 &&
-                  state.batch.editable === 1 &&
-                  userHasRole(auth, "audit-officer") ? (
+                  {approvalStage !== undefined &&
+                  approvalStage.canQuery &&
+                  userHasRole(auth, approvalStage.role) ? (
                     <>
                       <label className="content-label mg-b-10">Action</label>
                       <div className="row">

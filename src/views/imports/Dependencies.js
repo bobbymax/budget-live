@@ -108,8 +108,6 @@ const Dependencies = () => {
     return rows;
   };
 
-  // console.log(data);
-
   const importExcel = (e) => {
     const file = e.target.files[0];
 

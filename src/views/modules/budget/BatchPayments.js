@@ -10,9 +10,11 @@ import BatchCard from "../../../components/commons/widgets/BatchCard";
 import "./drag.css";
 import Loading from "../../../components/commons/Loading";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const BatchPayment = (props) => {
   const auth = useSelector((state) => state.auth.value.user);
+  const navigate = useNavigate();
   const {
     data: expenditures,
     setData: setExpenditures,
@@ -110,7 +112,8 @@ const BatchPayment = (props) => {
         const data = res.data.data;
         setBoard([]);
         setState(initialState);
-        console.log(data);
+        navigate("/payments");
+        // console.log(data);
       })
       .catch((err) => console.log(err.message));
   };

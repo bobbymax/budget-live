@@ -7,7 +7,6 @@ import { batchRequests, collection } from "../services/utils/controllers";
 import { Link } from "react-router-dom";
 import { formatCurrency } from "../services/utils/helpers";
 import BudgetController from "./controller/BudgetController";
-// import AdminDashboard from "./AdminDashboard";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import "../components/commons/cards/custom-card.css";
@@ -48,7 +47,7 @@ const Dashboard = () => {
   useEffect(() => {
     if (auth !== null) {
       const expenditureRequest = collection("expenditures");
-      const claimsRequest = collection("claims");
+      const claimsRequest = collection("department/claims");
       const overviews = collection("dashboard/overview");
 
       try {
@@ -73,7 +72,10 @@ const Dashboard = () => {
                   claim.type !== "touring-advance"
               );
               const retirement = claims.filter(
-                (claim) => claim.type === "touring-advance" && !claim.rettired
+                (claim) =>
+                  claim.type === "touring-advance" &&
+                  claim.owner.id == auth.id &&
+                  !claim.rettired
               );
 
               setState({
@@ -109,6 +111,8 @@ const Dashboard = () => {
       setState(overviewState);
     };
   }, [auth]);
+
+  // console.log(auth);
 
   const {
     approvedAmount,
@@ -207,9 +211,9 @@ const Dashboard = () => {
                 <div className="card-header align-items-center border-0 pb-0">
                   <h3 className="fs-20 text-black">Monthly Expenses</h3>
 
-                  <Link className="btn btn-outline-primary rounded" to="#">
+                  {/* <Link className="btn btn-outline-primary rounded" to="#">
                     Download CSV
-                  </Link>
+                  </Link> */}
                 </div>
 
                 <div className="card-body pb-0 pt-0">

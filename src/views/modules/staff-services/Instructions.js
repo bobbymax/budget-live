@@ -118,7 +118,7 @@ export const Instructions = (props) => {
     getBenefits();
   }, []);
 
-  console.log(state.instructions);
+  // console.log(state.instructions);
 
   return (
     <>
@@ -149,8 +149,11 @@ export const Instructions = (props) => {
       <div className="">
         <div className="row mb-3">
           <div className="col">
-            <button className="btn btn-success" onClick={() => setModal(true)}>
-              <i className="fa fa-plus" style={{ marginRight: "2px" }}></i>
+            <button
+              className="btn btn-success btn-rounded"
+              onClick={() => setModal(true)}
+            >
+              <i className="fa fa-plus mr-2" style={{ marginRight: "2px" }}></i>
               ADD DETAILS
             </button>
           </div>
@@ -196,12 +199,15 @@ export const Instructions = (props) => {
 
       <div className="">
         <button
-          className="btn btn-success btn-lg"
+          className="btn btn-success btn-lg btn-rounded"
           type="button"
           onClick={registerClaim}
           disabled={state.instructions.length === 0}
         >
-          <i className="fa fa-paper-plane" style={{ marginRight: "2px" }}></i>
+          <i
+            className="fa fa-paper-plane mr-2"
+            style={{ marginRight: "2px" }}
+          ></i>
           Submit
         </button>
       </div>

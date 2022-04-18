@@ -38,6 +38,7 @@ import Retirement from "./views/modules/staff-services/Retirement";
 import Dependencies from "./views/imports/Dependencies";
 import MakeRetirement from "./views/modules/staff-services/MakeRetirement";
 import ChangePassword from "./views/auth/ChangePassword";
+import PreviousBudget from "./views/modules/budget/PreviousBudget";
 
 const App = () => {
   return (
@@ -159,6 +160,16 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Expenditures />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          exact
+          path="/previous/budget"
+          element={
+            <ProtectedRoute>
+              <PreviousBudget />
             </ProtectedRoute>
           }
         />

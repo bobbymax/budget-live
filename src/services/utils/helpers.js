@@ -149,6 +149,41 @@ export const userHasRole = (auth, role) => {
   return authRoles.includes(role);
 };
 
+export const approvals = [
+  {
+    stage: "budget-office",
+    role: "budget-office-officer",
+    level: 1,
+    action: "Clear",
+    canQuery: false,
+    canModify: false,
+  },
+  {
+    stage: "treasury",
+    role: "treasury",
+    level: 2,
+    action: "Clear",
+    canQuery: false,
+    canModify: true,
+  },
+  {
+    stage: "audit",
+    role: "audit",
+    level: 3,
+    action: "Clear",
+    canQuery: true,
+    canModify: true,
+  },
+  {
+    stage: "treasury",
+    role: "treasury",
+    level: 4,
+    action: "Post",
+    canQuery: false,
+    canModify: false,
+  },
+];
+
 export const uniqueNumberGenerator = (str) => {
   const paymentType = str === "staff-payment" ? "SP" : "TPP";
   return paymentType + Math.floor(Math.random() * 100000);

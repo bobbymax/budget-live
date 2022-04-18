@@ -49,7 +49,7 @@ const Header = () => {
                     auth.roles.some((role) =>
                       allowedRoles.includes(role.label)
                     ) && (
-                      <div className="col-md-5">
+                      <div className="col-md-4">
                         <label className="switch">
                           <input
                             type="checkbox"
@@ -60,8 +60,12 @@ const Header = () => {
                         </label>
                       </div>
                     )}
-                  <div className="col-md-7">
-                    <h4 className="mt-2">{adminState ? "ADMIN" : "BUDGET"}</h4>
+                  <div className="col-md-8">
+                    <h4 style={{ fontSize: 13 }}>
+                      {adminState
+                        ? "ICT/DFPM/ES DASHBOARD"
+                        : "BUDGET/STAFF SERVICES"}
+                    </h4>
                   </div>
                 </div>
               </div>
