@@ -63,7 +63,7 @@ const Header = () => {
                   <div className="col-md-8">
                     <h4 style={{ fontSize: 13 }}>
                       {adminState
-                        ? "ICT/DFPM/ES DASHBOARD"
+                        ? "ADMINISTRATION DASHBOARD"
                         : "BUDGET/STAFF SERVICES"}
                     </h4>
                   </div>

@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { batchRequests, collection } from "../services/utils/controllers";
 import { formatCurrencyWithoutSymbol } from "../services/utils/helpers";
+import { CSVLink } from "react-csv";
 import "./modules/dashboard.css";
 
 const AdminDashboard = () => {
@@ -21,9 +22,21 @@ const AdminDashboard = () => {
     parseInt(state.config.value.budget_year)
   );
   const [subs, setSubs] = useState([]);
+  const [downloadable, setDownloadable] = useState([]);
   const [exps, setExps] = useState([]);
   const [trackings, setTrackings] = useState([]);
   const [state, setState] = useState(initialState);
+  const [showCard, setShowCard] = useState(false);
+
+  const headers = [
+    { key: "budgetHead", label: "BUDGET HEAD" },
+    { key: "budgetCode", label: "CODE" },
+    { key: "sub_budget_head_name", label: "DESCRIPTION" },
+    { key: "approved_amount", label: "APPROVED AMOUNT" },
+    { key: "department", label: "BO" },
+    { key: "expected_performance", label: "EXPECTED PERFORMANCE" },
+    { key: "actual_peformance", label: "ACTUAL PERFORMANCE" },
+  ];
 
   const getGrandTotal = (collective, value) => {
     if (collective.length < 1) {
@@ -33,6 +46,12 @@ const AdminDashboard = () => {
       .map((entity) => parseFloat(entity[value]))
       .reduce((sum, prev) => sum + prev, 0);
   };
+
+  // useEffect(() => {
+  //   if (subs.length > 0) {
+
+  //   }
+  // }, [])
 
   useEffect(() => {
     try {
@@ -91,12 +110,23 @@ const AdminDashboard = () => {
     }
   }, []);
 
-  // console.log(state);
+  console.log(subs);
+
   return (
     <>
       <div className="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
         <div className="mr-auto  d-lg-block">
-          <h2 className="text-black font-w600">Admin Dashboard</h2>
+          <h2 className="text-black font-w600">
+            {"Admin Dashboard".toUpperCase()}
+          </h2>
+          <CSVLink
+            data={subs}
+            filename={"budget-overview.csv"}
+            target="_blank"
+            headers={headers}
+          >
+            Download
+          </CSVLink>
         </div>
       </div>
 

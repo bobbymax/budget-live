@@ -2,7 +2,7 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import Login from "./views/auth/Login";
+import AuthLogin from "./views/auth/AuthLogin";
 import Dashboard from "./views/Dashboard";
 import PreLoader from "./components/commons/PreLoader";
 import Settings from "./views/modules/configuration/Settings";
@@ -39,6 +39,7 @@ import Dependencies from "./views/imports/Dependencies";
 import MakeRetirement from "./views/modules/staff-services/MakeRetirement";
 import ChangePassword from "./views/auth/ChangePassword";
 import PreviousBudget from "./views/modules/budget/PreviousBudget";
+import StaffLoginVerification from "./views/auth/StaffLoginVerification";
 
 const App = () => {
   return (
@@ -374,7 +375,12 @@ const App = () => {
           }
         />
 
-        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/login" element={<AuthLogin />} />
+        <Route
+          exact
+          path="/auth/login/:staff/:token"
+          element={<StaffLoginVerification />}
+        />
         <Route exact path="/reset-password" element={<ChangePassword />} />
       </Routes>
     </Suspense>

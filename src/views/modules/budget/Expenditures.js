@@ -331,6 +331,7 @@ const Expenditures = () => {
                         placeholder="AMOUNT"
                         type="number"
                         value={state.amount}
+                        min={0}
                         onChange={(e) =>
                           setState({ ...state, amount: e.target.value })
                         }
@@ -423,20 +424,22 @@ const Expenditures = () => {
                     </div>
 
                     <div className="col-md-12 mt-3">
-                      <button type="submit" className="btn btn-primary">
-                        <i className="fa fa-send"></i> Submit
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-danger"
-                        onClick={() => {
-                          setState(initialState);
-                          setErrors({});
-                          setOpen(false);
-                        }}
-                      >
-                        <i className="fa fa-close"></i> Cancel
-                      </button>
+                      <div className="btn-group btn-rounded">
+                        <button type="submit" className="btn btn-success">
+                          <i className="fa fa-send mr-2"></i> Submit
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger"
+                          onClick={() => {
+                            setState(initialState);
+                            setErrors({});
+                            setOpen(false);
+                          }}
+                        >
+                          <i className="fa fa-close mr-2"></i> Cancel
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </form>

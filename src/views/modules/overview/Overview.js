@@ -47,15 +47,11 @@ const columns = [
   {
     label: "Expected Performace",
     key: "expected_performance",
-    format: "currency",
   },
   {
     label: "Actual Performance",
     key: "actual_performance",
   },
-  // {
-  //   label: "View Breakdrown",
-  // },
 ];
 
 const Overview = (props) => {
@@ -135,6 +131,7 @@ const Overview = (props) => {
       collection("departments/" + value + "/budget/summary")
         .then((res) => {
           setData(res.data.data);
+          console.log(res.data.data);
         })
         .catch((err) => console.log(err.message));
     }
