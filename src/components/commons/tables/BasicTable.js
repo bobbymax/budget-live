@@ -8,6 +8,7 @@ const BasicTable = ({
   handleEdit = undefined,
   handleDelete = undefined,
   manageStaff = undefined,
+  addBudgetOwner = undefined,
   exportable = false,
   loading,
 }) => {
@@ -57,16 +58,30 @@ const BasicTable = ({
                             >
                               <i className="fa fa-pencil color-muted"></i>
                             </Link>
-                            <Link
-                              to="#"
-                              onClick={() => handleDelete(row)}
-                              className="mr-4"
-                              data-toggle="tooltip"
-                              data-placement="top"
-                              title="Edit"
-                            >
-                              <i className="fa fa-trash color-muted"></i>
-                            </Link>
+                            {handleDelete !== undefined && (
+                              <Link
+                                to="#"
+                                onClick={() => handleDelete(row)}
+                                className="mr-4"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Edit"
+                              >
+                                <i className="fa fa-trash color-muted"></i>
+                              </Link>
+                            )}
+                            {addBudgetOwner !== undefined && (
+                              <Link
+                                to="#"
+                                onClick={() => addBudgetOwner(row)}
+                                className="mr-4"
+                                data-toggle="tooltip"
+                                data-placement="top"
+                                title="Manage"
+                              >
+                                <i className="fa fa-user-plus color-muted"></i>
+                              </Link>
+                            )}
                           </span>
                         </td>
                       )}

@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
-import { formatCurrency } from "../../../services/utils/helpers";
+import { formatCurrency, userHasRole } from "../../../services/utils/helpers";
 import { useNavigate } from "react-router-dom";
 import { collection } from "../../../services/utils/controllers";
 import DataTableComponent from "../../../components/commons/tables/DataTableComponent";
@@ -109,7 +109,13 @@ const Overview = (props) => {
   useEffect(() => {
     collection("departments")
       .then((res) => {
-        setDepartments(res.data.data);
+        const result = res.data.data;
+
+        if (userHasRole(auth, "budget-owner")) {
+          setDepartments(result.filter((dept) => dept.budget_owner == auth.id));
+        } else {
+          setDepartments(result);
+        }
       })
       .catch((err) => console.log(err));
   }, []);

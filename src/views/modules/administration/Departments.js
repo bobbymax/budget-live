@@ -1,4 +1,6 @@
+/* eslint-disable eqeqeq */
 import React, { useEffect, useState } from "react";
+import Select from "react-select";
 import Loading from "../../../components/commons/Loading";
 import BasicTable from "../../../components/commons/tables/BasicTable";
 import CustomSelect from "../../../components/forms/CustomSelect";
@@ -6,11 +8,14 @@ import TextInputField from "../../../components/forms/TextInputField";
 import Alert from "../../../services/classes/Alert";
 import {
   alter,
+  batchRequests,
   collection,
-  destroy,
+  // destroy,
   store,
 } from "../../../services/utils/controllers";
 import { validate } from "../../../services/utils/validation";
+import makeAnimated from "react-select/animated";
+import axios from "axios";
 
 const Departments = () => {
   const initialState = {
@@ -19,14 +24,18 @@ const Departments = () => {
     code: "",
     type: "",
     parentId: 0,
+    user_id: 0,
+    department_id: 0,
   };
 
   const [state, setState] = useState(initialState);
   const [departments, setDepartments] = useState([]);
+  const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(true);
+  const [budgetOwner, setBudgetOwner] = useState(false);
 
   const columns = [
     {
@@ -56,6 +65,24 @@ const Departments = () => {
     { name: "type", rules: ["required", "string"] },
     { name: "parentId", rules: ["required"] },
   ];
+
+  const staffOptions = (optionsArr) => {
+    const arr = [];
+    optionsArr.length > 0 &&
+      optionsArr.forEach((el) => {
+        arr.push({ key: el.id, label: el.name });
+      });
+    return arr;
+  };
+
+  const handleStaffSelect = (e) => {
+    // console.log(e.key);
+
+    setState({
+      ...state,
+      user_id: e.key,
+    });
+  };
 
   const formatDept = () => {
     return (
@@ -134,33 +161,97 @@ const Departments = () => {
     setOpen(true);
   };
 
-  const handleDestroy = (data) => {
-    Alert.flash(
-      "Are you sure?",
-      "warning",
-      "You would not be able to revert this!!"
-    ).then((result) => {
-      if (result.isConfirmed) {
-        destroy("departments", data.id)
-          .then((res) => {
-            setDepartments([
-              ...departments.filter((dept) => dept.id !== res.data.data.id),
-            ]);
-            Alert.success("Deleted!!", res.data.message);
-          })
-          .catch((err) => console.log(err.message));
-      }
+  const addBudgetOwner = (data) => {
+    // console.log(data);
+    setBudgetOwner(true);
+    setState({
+      ...state,
+      department_id: data.id,
     });
   };
 
+  const handleBudgetOwner = (e) => {
+    e.preventDefault();
+
+    const data = {
+      user_id: state.user_id,
+      department_id: state.department_id,
+    };
+
+    console.log(data);
+
+    setLoading(true);
+
+    try {
+      store("add/budget/owners", data)
+        .then((res) => {
+          const result = res.data;
+          setDepartments(
+            departments.map((dept) => {
+              if (dept.id == result.data.id) {
+                return result.data;
+              }
+
+              return dept;
+            })
+          );
+          setLoading(false);
+          Alert.success("Added!!", result.message);
+          setState({
+            ...state,
+            department_id: 0,
+            user_id: 0,
+          });
+          setBudgetOwner(false);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // const handleDestroy = (data) => {
+  //   Alert.flash(
+  //     "Are you sure?",
+  //     "warning",
+  //     "You would not be able to revert this!!"
+  //   ).then((result) => {
+  //     if (result.isConfirmed) {
+  //       destroy("departments", data.id)
+  //         .then((res) => {
+  //           setDepartments([
+  //             ...departments.filter((dept) => dept.id !== res.data.data.id),
+  //           ]);
+  //           Alert.success("Deleted!!", res.data.message);
+  //         })
+  //         .catch((err) => console.log(err.message));
+  //     }
+  //   });
+  // };
+
   useEffect(() => {
     try {
-      collection("departments")
-        .then((res) => {
+      const departmentsData = collection("departments");
+      const usersData = collection("users");
+
+      batchRequests([departmentsData, usersData])
+        .then(
+          axios.spread((...res) => {
+            const depts = res[0].data.data;
+            const employees = res[1].data.data;
+
+            setLoading(false);
+            setDepartments(depts);
+            setUsers(employees);
+          })
+        )
+        .catch((err) => {
           setLoading(false);
-          setDepartments(res.data.data);
-        })
-        .catch((err) => console.log(err.message));
+          console.log(err.message);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -174,14 +265,68 @@ const Departments = () => {
         <div className="col-md-12">
           <div className="page-titles">
             <button
-              className="btn btn-success"
+              className="btn btn-success btn-lg btn-rounded"
               onClick={() => setOpen(!open)}
-              disabled={open}
+              disabled={open || budgetOwner}
             >
-              <i className="fa fa-plus"></i> Add Department
+              <i className="fa fa-plus mr-2"></i> Add Department
             </button>
           </div>
         </div>
+
+        {budgetOwner && (
+          <div className="col-md-12">
+            <div className="card">
+              <div className="card-header">
+                <h3 className="card-title">ADD BUDGET OWNER</h3>
+              </div>
+              <div className="card-body">
+                <div className="form-body">
+                  <form onSubmit={handleBudgetOwner}>
+                    <div className="row">
+                      <div className="col-md-12">
+                        <Select
+                          styles={{ height: "40px" }}
+                          components={makeAnimated()}
+                          options={staffOptions(users)}
+                          placeholder="Select Budget Owner"
+                          onChange={handleStaffSelect}
+                          isSearchable
+                        />
+                      </div>
+                      <div className="col-md-12 mt-5">
+                        <div className="btn-group btn-rounded">
+                          <button
+                            type="submit"
+                            className="btn btn-success btn-sm"
+                          >
+                            <i className="fa fa-send mr-2"></i>
+                            Submit
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-danger btn-sm"
+                            onClick={() => {
+                              setState({
+                                ...state,
+                                department_id: 0,
+                                user_id: 0,
+                              });
+                              setBudgetOwner(false);
+                            }}
+                          >
+                            <i className="fa fa-close mr-2"></i>
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {open && (
           <div className="col-md-12">
@@ -281,7 +426,7 @@ const Departments = () => {
             columns={columns}
             rows={departments}
             handleEdit={handleUpdate}
-            handleDelete={handleDestroy}
+            addBudgetOwner={addBudgetOwner}
           />
         </div>
       </div>
