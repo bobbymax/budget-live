@@ -14,6 +14,7 @@ const Aside = ({ active }) => {
     "ict-admin",
     "super-administrator",
     "ict-manager",
+    "budget-owner",
   ];
 
   const adminRoles = ["ict-manager", "fad-admin"];
