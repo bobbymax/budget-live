@@ -66,7 +66,7 @@ const ProtectedRoute = ({ children }) => {
 
         <div className="content-body">
           <div className="container-fluid">
-            {auth ? (
+            {/* {auth ? (
               dashboardState ? (
                 <AdminDashboard />
               ) : (
@@ -74,8 +74,8 @@ const ProtectedRoute = ({ children }) => {
               )
             ) : (
               <Navigate to="/login" />
-            )}
-            {/* {auth ? (
+            )} */}
+            {auth ? (
               auth.hasChangedPassword ? (
                 dashboardState ? (
                   <AdminDashboard />
@@ -87,7 +87,7 @@ const ProtectedRoute = ({ children }) => {
               )
             ) : (
               <Navigate to="/login" />
-            )} */}
+            )}
           </div>
         </div>
         <Footer />
