@@ -67,10 +67,13 @@ const AddInstruction = (props) => {
   useEffect(() => {
     if (state.from !== "" && state.to !== "") {
       const daysDiff = verifyNumOfDays(state.from, state.to);
+      const prevAmount = state.amount;
 
       if (benefit && benefit.numOfDays) {
         const amount =
-          state.additional_benefit_id > 0 ? getFee(benefit, daysDiff) : 0;
+          state.additional_benefit_id > 0
+            ? getFee(benefit, daysDiff)
+            : state.amount;
         setState({
           ...state,
           numOfDays: daysDiff,
@@ -80,7 +83,7 @@ const AddInstruction = (props) => {
         setState({
           ...state,
           numOfDays: 0,
-          amount: 0,
+          amount: prevAmount,
         });
       }
     }
@@ -324,7 +327,7 @@ const AddInstruction = (props) => {
                       onChange={(e) =>
                         setState({ ...state, amount: e.target.value })
                       }
-                      readOnly={benefit && benefit.label !== "others"}
+                      readOnly={benefit && benefit.label !== "other"}
                     />
                   </div>
                 </div>
