@@ -2,7 +2,8 @@
 import React, { Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
-import AuthLogin from "./views/auth/AuthLogin";
+// import AuthLogin from "./views/auth/AuthLogin";
+import Login from "./views/auth/Login";
 import Dashboard from "./views/Dashboard";
 import PreLoader from "./components/commons/PreLoader";
 import Settings from "./views/modules/configuration/Settings";
@@ -375,7 +376,8 @@ const App = () => {
           }
         />
 
-        <Route exact path="/login" element={<AuthLogin />} />
+        {/* <Route exact path="/login" element={<AuthLogin />} /> */}
+        <Route exact path="/login" element={<Login />} />
         <Route
           exact
           path="/auth/login/:staff/:token"
