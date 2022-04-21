@@ -17,7 +17,7 @@ const Aside = ({ active }) => {
     "budget-owner",
   ];
 
-  const adminRoles = ["ict-manager", "fad-admin"];
+  const adminRoles = ["super-administrator", "fad-admin"];
 
   return (
     <div className="deznav">

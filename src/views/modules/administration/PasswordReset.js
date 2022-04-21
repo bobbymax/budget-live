@@ -4,10 +4,23 @@ import TextInputField from "../../../components/forms/input/TextInputField";
 
 const PasswordReset = (props) => {
   const [password, setPassword] = useState("");
-  // const [changeOnLogin, setChangeOnLogin] = useState(false);
+  const [changeOnLogin, setChangeOnLogin] = useState(false);
 
   const changePassword = (e) => {
     e.preventDefault();
+
+    const data = {
+      user_id: props.user.id,
+      passwordChangeOnLogin: changeOnLogin ? 0 : 1,
+      password_confirmation: password,
+      password,
+    };
+
+    props.handlePasswordChange(data);
+
+    setPassword("");
+    setChangeOnLogin(false);
+    props.onHide();
   };
 
   return (
@@ -29,13 +42,31 @@ const PasswordReset = (props) => {
         <div className="modal-body">
           <div className="container-fluid">
             <div className="row">
-              <div className="col-md-3">
+              <div className="col-md-12">
                 <TextInputField
                   placeholder="Enter Password"
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+              </div>
+
+              <div className="col-md-12">
+                <div className="form-check">
+                  <input
+                    className="form-check-input"
+                    type="checkbox"
+                    id="flexCheckDefault"
+                    value={changeOnLogin}
+                    onChange={(e) => setChangeOnLogin(e.target.checked)}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor="flexCheckDefault"
+                  >
+                    User should change password on login
+                  </label>
+                </div>
               </div>
 
               {/* <div className="col-md-6">
@@ -59,7 +90,11 @@ const PasswordReset = (props) => {
             <button
               className="btn btn-danger"
               type="button"
-              onClick={props.onHide}
+              onClick={() => {
+                setPassword("");
+                setChangeOnLogin(false);
+                props.onHide();
+              }}
             >
               <i className="fa fa-close mr-2"></i>
               Close

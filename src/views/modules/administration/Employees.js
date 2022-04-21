@@ -238,6 +238,25 @@ const Employees = () => {
     });
   };
 
+  const handlePasswordChange = (data) => {
+    console.log(data);
+    setLoading(true);
+    try {
+      store("change/password", data)
+        .then((res) => {
+          const result = res.data;
+          setLoading(false);
+          Alert.success("Password Reset!", result.message);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   // const handleDestroy = (data) => {
   //   Alert.flash(
   //     "Are you sure?",
@@ -475,6 +494,7 @@ const Employees = () => {
                 })
               }
               user={staff}
+              handlePasswordChange={handlePasswordChange}
             />
 
             <div className="col-md-6">
