@@ -5,6 +5,7 @@ import Pdf from "react-to-pdf";
 import logo from "../../assets/images/batch_logo.png";
 // import { Row, Col, Table } from "react-bootstrap";
 import { getPaymentType } from "../../services/utils/helpers";
+import { useSelector } from "react-redux";
 
 const ref = React.createRef();
 
@@ -15,6 +16,7 @@ const options = {
 };
 
 const BatchPrintOut = ({ batch, onClose }) => {
+  const budgetYear = useSelector((state) => state.config.value.budget_year);
   return (
     <>
       <Pdf targetRef={ref} filename="claim.pdf" options={options}>
@@ -122,7 +124,7 @@ const BatchPrintOut = ({ batch, onClose }) => {
               </div>
 
               <div className="col-md-8">
-                <div className="boax-enter">{"2021"}</div>
+                <div className="boax-enter">{budgetYear}</div>
               </div>
             </div>
 
@@ -264,7 +266,7 @@ const BatchPrintOut = ({ batch, onClose }) => {
                   <h6>Executive Secretary:</h6>
                 </div>
 
-                <div classNae="col-md-5">
+                <div className="col-md-5">
                   <div className="signature-lines"></div>
                 </div>
 

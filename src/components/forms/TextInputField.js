@@ -37,7 +37,7 @@ const TextInputField = ({
       ) : (
         <textarea
           className="form-control"
-          row={multiline}
+          rows={multiline}
           required={required}
           onChange={onChange}
           placeholder={placeholder}

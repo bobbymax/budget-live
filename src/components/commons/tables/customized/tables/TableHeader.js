@@ -6,6 +6,8 @@ const TableHeader = ({
   handleDelete,
   assignRole,
   manageStaff,
+  reverseBatch,
+  destroyExpenditure,
 }) => {
   return (
     <thead>
@@ -15,7 +17,9 @@ const TableHeader = ({
         {(handleEdit !== undefined ||
           handleDelete !== undefined ||
           assignRole !== undefined ||
-          manageStaff !== undefined) && (
+          manageStaff !== undefined ||
+          reverseBatch !== undefined ||
+          destroyExpenditure !== undefined) && (
           <th>{manageStaff !== undefined ? "Manage" : "Action"}</th>
         )}
       </tr>

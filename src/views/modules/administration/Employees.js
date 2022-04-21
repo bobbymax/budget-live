@@ -18,6 +18,7 @@ import AddStaffRole from "./AddStaffRole";
 import ModifyUser from "./ModifyUser";
 import Loading from "../../../components/commons/Loading";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
+import PasswordReset from "./PasswordReset";
 
 const Employees = () => {
   const initialState = {
@@ -32,6 +33,7 @@ const Employees = () => {
 
   const modalState = {
     visibility: false,
+    passwordReset: false,
   };
 
   const animated = makeAnimated();
@@ -226,6 +228,13 @@ const Employees = () => {
     setModalShow({
       ...modalShow,
       visibility: true,
+    });
+  };
+
+  const resetStaffPassword = () => {
+    setModalShow({
+      ...modalShow,
+      passwordReset: true,
     });
   };
 
@@ -457,6 +466,17 @@ const Employees = () => {
               departments={departments}
             />
 
+            <PasswordReset
+              show={modalShow.passwordReset}
+              onHide={() =>
+                setModalShow({
+                  ...modalShow,
+                  passwordReset: false,
+                })
+              }
+              user={staff}
+            />
+
             <div className="col-md-6">
               <div className="card h-auto">
                 <div className="card-header bg-primary">
@@ -507,6 +527,8 @@ const Employees = () => {
                   <Link
                     to="#"
                     className="list-group-item list-group-item-action text-center"
+                    onClick={() => resetStaffPassword()}
+                    // onClick={() => console.log("here")}
                   >
                     Reset Password <i className="fa fa-lock"></i>
                   </Link>

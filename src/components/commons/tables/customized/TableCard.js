@@ -5,7 +5,11 @@ import TableBody from "./tables/TableBody";
 import TableRow from "./tables/TableRow";
 import CustomPagination from "./tables/CustomPagination";
 import "./tables/table.css";
-import { formatCurrency, search } from "../../../../services/utils/helpers";
+import {
+  elapsed,
+  formatCurrency,
+  search,
+} from "../../../../services/utils/helpers";
 import { Link } from "react-router-dom";
 
 const TableCard = ({
@@ -15,6 +19,12 @@ const TableCard = ({
   handleDelete = undefined,
   assignRole = undefined,
   manageStaff = undefined,
+  handleBatchPrint = undefined,
+  reverseBatch = undefined,
+  destroyExpenditure = undefined,
+  badge = undefined,
+  batchData = false,
+  expenditureData = false,
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -68,6 +78,8 @@ const TableCard = ({
                 handleEdit={handleEdit}
                 assignRole={assignRole}
                 manageStaff={manageStaff}
+                reverseBatch={reverseBatch}
+                destroyExpenditure={destroyExpenditure}
               />
               <TableBody>
                 {computed.length > 0 ? (
@@ -80,15 +92,42 @@ const TableCard = ({
                       <TableRow key={i}>
                         {columns.map((col) => (
                           <td key={col.key}>
-                            {"format" in col && col.format === "currency"
-                              ? formatCurrency(row[col.key])
+                            {batchData &&
+                              "format" in col &&
+                              col.format === "button" && (
+                                <button
+                                  className="btn btn-success mr-3"
+                                  onClick={() => handleBatchPrint(row)}
+                                >
+                                  <i className="fa fa-print"></i>
+                                </button>
+                              )}
+                            {batchData &&
+                              "format" in col &&
+                              col.format === "button" &&
+                              row[col.key]}
+
+                            {"format" in col
+                              ? col.format === "currency"
+                                ? formatCurrency(row[col.key])
+                                : col.format === "badge" && (
+                                    <span
+                                      className={`text-white badge badge-rounded badge-xs badge-${badge(
+                                        row[col.key]
+                                      )}`}
+                                    >
+                                      {row[col.key].toUpperCase()}
+                                    </span>
+                                  )
                               : row[col.key]}
                           </td>
                         ))}
                         {(handleEdit !== undefined ||
                           handleDelete !== undefined ||
                           assignRole !== undefined ||
-                          manageStaff !== undefined) && (
+                          manageStaff !== undefined ||
+                          reverseBatch !== undefined ||
+                          destroyExpenditure !== undefined) && (
                           <td>
                             {handleEdit !== undefined && (
                               <Icon.Edit2
@@ -102,11 +141,40 @@ const TableCard = ({
                                 onClick={() => handleDelete(row.id)}
                               />
                             )}
+                            {destroyExpenditure !== undefined && (
+                              <button
+                                className="btn btn-xs btn-danger btn-rounded"
+                                onClick={() => destroyExpenditure(row.id)}
+                                disabled={row.status !== "cleared"}
+                              >
+                                <Icon.Trash2 size={14} className="mr-2" />
+                                Delete
+                              </button>
+                            )}
                             {assignRole !== undefined && (
                               <Icon.Bookmark
                                 size={16}
                                 onClick={() => assignRole(row)}
                               />
+                            )}
+                            {reverseBatch !== undefined && (
+                              <span>
+                                <Link
+                                  to="#"
+                                  onClick={() => reverseBatch(row)}
+                                  className={`mr-4 btn btn-danger btn-rounded btn-xs ${
+                                    (row.status !== "pending" ||
+                                      elapsed(row.created_at)) &&
+                                    "disabled"
+                                  }`}
+                                  data-toggle="tooltip"
+                                  data-placement="top"
+                                  title="Manage"
+                                >
+                                  <i className="fa fa-repeat color-muted mr-2"></i>
+                                  reverse
+                                </Link>
+                              </span>
                             )}
                             {manageStaff !== undefined && (
                               <span>

@@ -17,6 +17,7 @@ const Dependencies = () => {
   const [data, setData] = useState([]);
   const [dataType, setDataType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [fileUpload, setFileUpload] = useState("");
 
   const types = [
     {
@@ -111,6 +112,10 @@ const Dependencies = () => {
   const importExcel = (e) => {
     const file = e.target.files[0];
 
+    setFileUpload(e.target.value);
+
+    console.log(e.target);
+
     const reader = new FileReader();
     reader.onload = (event) => {
       // console.log(event)
@@ -153,10 +158,14 @@ const Dependencies = () => {
             <div className="card-body">
               <form onSubmit={importData} className="mb-5">
                 <div className="row">
+                  <div className="col-md-12">
+                    <TextInputField type="file" />
+                  </div>
                   <div className="col-md-6">
                     <TextInputField
                       type="file"
                       label="Upload File"
+                      value={fileUpload}
                       onChange={importExcel}
                     />
                   </div>

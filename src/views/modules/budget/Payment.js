@@ -1,14 +1,18 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import BatchPrintOut from "../../../components/commons/BatchPrintOut";
 import Loading from "../../../components/commons/Loading";
-import useApi from "../../../services/hooks/useApi";
-import { collection } from "../../../services/utils/controllers";
+import TableCard from "../../../components/commons/tables/customized/TableCard";
+import Alert from "../../../services/classes/Alert";
+// import useApi from "../../../services/hooks/useApi";
+import { collection, destroy } from "../../../services/utils/controllers";
 
 const Payments = (props) => {
-  const { request, data: batches, loading } = useApi(collection);
+  // const { request, data: batches, loading } = useApi(collection);
 
   const initialState = {
     batch: null,
@@ -38,7 +42,17 @@ const Payments = (props) => {
     },
   ];
 
+  const columns = [
+    { key: "batch_no", label: "Batch Code", format: "button" },
+    { key: "amount", label: "Amount", format: "currency" },
+    { key: "status", label: "Status", format: "badge" },
+  ];
+
   const [state, setState] = useState(initialState);
+  const [batches, setBatches] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const auth = useSelector((state) => state.auth.value.user);
 
   const currentStat = (stat) => {
     const curr = stats.filter((s) => stat === s.value);
@@ -61,8 +75,40 @@ const Payments = (props) => {
     });
   };
 
+  const handleReverse = (data) => {
+    console.log(data);
+    setLoading(true);
+    try {
+      destroy("batches", data.id)
+        .then((res) => {
+          const result = res.data;
+          setBatches(batches.filter((batch) => batch.id != result.data.id));
+          setLoading(false);
+          Alert.success("Reversed!!", result.message);
+        })
+        .catch((err) => {
+          setLoading(false);
+          Alert.error("Oops!!", "Something went wrong!!");
+          console.log(err.message);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
-    request("batches");
+    try {
+      collection("batches")
+        .then((res) => {
+          const result = res.data.data;
+          setBatches(result.filter((batch) => batch.user_id == auth.id));
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   return (
@@ -70,68 +116,14 @@ const Payments = (props) => {
       {loading ? <Loading /> : null}
 
       {!state.isPrinting ? (
-        <>
-          <>
-            <div className="col-md-12">
-              <div className="card">
-                <div className="card-header">
-                  <h4 className="card-title">Payments</h4>
-                </div>
-
-                <div className="card-body">
-                  <div className="table-responsive">
-                    <table className="table table-bordered table-striped vertical middle table reponsive-sm">
-                      <thead>
-                        <tr>
-                          <th>BUDGET CODE</th>
-                          <th>AMOUNT</th>
-                          <th>STATUS</th>
-                        </tr>
-                      </thead>
-
-                      <tbody>
-                        {batches.length > 0 ? (
-                          batches.map((batch) => (
-                            <tr key={batch.id}>
-                              <td>
-                                <button
-                                  className="btn btn-success mr-3"
-                                  onClick={() => handleBatchPrint(batch)}
-                                >
-                                  <i className="fa fa-print"></i>
-                                  {/* <FiPrinter /> */}
-                                </button>
-                                {batch.batch_no}
-                              </td>
-                              <td>{`NGN ${new Intl.NumberFormat().format(
-                                batch.amount
-                              )}`}</td>
-                              <td>
-                                <span
-                                  className={
-                                    "badge badge-" + currentStat(batch.status)
-                                  }
-                                >
-                                  {batch.status.toUpperCase()}
-                                </span>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan={3} className="text-danger">
-                              NO DATA FOUND!!!
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        </>
+        <TableCard
+          columns={columns}
+          rows={batches}
+          batchData
+          handleBatchPrint={handleBatchPrint}
+          badge={currentStat}
+          reverseBatch={handleReverse}
+        />
       ) : (
         <BatchPrintOut batch={state.batch} onClose={printingDone} />
       )}

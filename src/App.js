@@ -41,6 +41,7 @@ import MakeRetirement from "./views/modules/staff-services/MakeRetirement";
 import ChangePassword from "./views/auth/ChangePassword";
 import PreviousBudget from "./views/modules/budget/PreviousBudget";
 import StaffLoginVerification from "./views/auth/StaffLoginVerification";
+import Reversals from "./views/modules/budget/Reversals";
 
 const App = () => {
   return (
@@ -212,6 +213,16 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Payments />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          exact
+          path="/reversals"
+          element={
+            <ProtectedRoute>
+              <Reversals />
             </ProtectedRoute>
           }
         />

@@ -149,6 +149,15 @@ export const userHasRole = (auth, role) => {
   return authRoles.includes(role);
 };
 
+export const elapsed = (batchDate) => {
+  const created = new Date(batchDate);
+  const now = new Date();
+  const msBetweenDates = Math.abs(created.getTime() - now.getTime());
+  const hoursBetweenDates = msBetweenDates / (60 * 60 * 1000);
+
+  return hoursBetweenDates > 24;
+};
+
 export const approvals = [
   {
     stage: "budget-office",

@@ -20,7 +20,7 @@ const BudgetController = ({ userDashboardData }) => {
 
   const cards = [
     {
-      title: "No. of Payment Forms",
+      title: "Payment Forms",
       roles: [
         "budget-controller",
         "es",
@@ -33,7 +33,7 @@ const BudgetController = ({ userDashboardData }) => {
       path: "",
     },
     {
-      title: "No. of Third-Party",
+      title: "Third-Party",
       roles: [
         "budget-controller",
         "es",
@@ -46,7 +46,7 @@ const BudgetController = ({ userDashboardData }) => {
       path: "",
     },
     {
-      title: "No. of Staff Payments",
+      title: "Staff Payments",
       roles: [
         "budget-controller",
         "es",
@@ -59,7 +59,7 @@ const BudgetController = ({ userDashboardData }) => {
       path: "",
     },
     {
-      title: "No. of AEF",
+      title: "AEF",
       roles: [
         "budget-controller",
         "es",
@@ -85,7 +85,7 @@ const BudgetController = ({ userDashboardData }) => {
       path: "",
     },
     {
-      title: "No. of Pending Reversals",
+      title: "Pending Reversals",
       roles: [
         "budget-controller",
         "es",
@@ -98,7 +98,7 @@ const BudgetController = ({ userDashboardData }) => {
       path: "",
     },
     {
-      title: "No. of Pending Transactions",
+      title: "Pending Transactions",
       roles: [
         "budget-controller",
         "es",
@@ -111,7 +111,7 @@ const BudgetController = ({ userDashboardData }) => {
       path: "",
     },
     {
-      title: "No. of Paid Transactions",
+      title: "Paid Transactions",
       roles: [
         "budget-controller",
         "es",
@@ -124,13 +124,13 @@ const BudgetController = ({ userDashboardData }) => {
       path: "",
     },
     {
-      title: "No. of Registered Claims",
+      title: "Registered Claims",
       roles: ["staff"],
       count: claims,
       path: "",
     },
     {
-      title: "Claims to be Rettired",
+      title: "Claims to be Retired",
       roles: ["staff"],
       count: retirement,
       path: "",
