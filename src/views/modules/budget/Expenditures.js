@@ -373,7 +373,6 @@ const Expenditures = () => {
                       <div className="col-md-6">
                         <TextInputField
                           placeholder="AMOUNT"
-                          type="number"
                           value={state.amount}
                           min={0}
                           onChange={(e) =>
