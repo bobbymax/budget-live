@@ -19,13 +19,17 @@ const AddStaffRole = (props) => {
       roles: roles,
     };
 
-    store(`users/${props.user.id}/roles`, data)
-      .then((res) => {
-        Alert.success("Role", res.message);
-        setRoles([]);
-        props.onHide();
-      })
-      .catch((err) => console.log(err.message));
+    props.addRoleToStaff(props.user, data);
+    setRoles([]);
+    props.onHide();
+
+    // store(`users/${props.user.id}/roles`, data)
+    //   .then((res) => {
+    //     Alert.success("Role", res.message);
+    //     setRoles([]);
+    //     props.onHide();
+    //   })
+    //   .catch((err) => console.log(err.message));
   };
 
   const formatRole = () => {

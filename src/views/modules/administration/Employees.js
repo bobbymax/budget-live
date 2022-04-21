@@ -224,6 +224,46 @@ const Employees = () => {
     });
   };
 
+  const alterStaffDetails = (id, data) => {
+    setLoading(true);
+    try {
+      alter("users", id, data)
+        .then((res) => {
+          const result = res.data;
+          setStaff(result.data);
+          setLoading(false);
+          Alert.success("Updated", result.message);
+        })
+        .catch((err) => {
+          console.log(err.message);
+          setLoading(false);
+          Alert.error("Oops!", "Something went wrong");
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addRoleToStaff = (staff, data) => {
+    setLoading(true);
+    try {
+      store(`users/${staff.id}/roles`, data)
+        .then((res) => {
+          setLoading(false);
+          const result = res.data;
+          setStaff(result.data);
+          Alert.success("Role", result.message);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+          Alert.error("Oops!!", "Something went wrong");
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const addRole = () => {
     setModalShow({
       ...modalShow,
@@ -474,6 +514,7 @@ const Employees = () => {
               }
               roles={roles}
               user={staff}
+              addRoleToStaff={addRoleToStaff}
             />
 
             <ModifyUser
@@ -483,6 +524,7 @@ const Employees = () => {
               onHide={() => setUpdateModalShow(false)}
               levels={levels}
               departments={departments}
+              alterStaffDetails={alterStaffDetails}
             />
 
             <PasswordReset

@@ -6,9 +6,6 @@ import { Modal } from "react-bootstrap";
 import CustomSelect from "../../../components/forms/CustomSelect";
 import TextInputField from "../../../components/forms/TextInputField";
 
-import { alter } from "../../../services/utils/controllers";
-import Alert from "../../../services/classes/Alert";
-
 const ModifyUser = (props) => {
   const initialState = {
     id: 0,
@@ -57,12 +54,8 @@ const ModifyUser = (props) => {
       email: state.email,
     };
 
-    alter("users", state.id, data)
-      .then((res) => {
-        Alert.success("Updated User!!", res.message);
-      })
-      .catch((err) => console.log(err.message));
-
+    props.alterStaffDetails(state.id, data);
+    setState(initialState);
     props.onHide();
   };
 

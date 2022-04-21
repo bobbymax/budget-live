@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import Loading from "../../../components/commons/Loading";
 import InstructionWidget from "../../../components/commons/widgets/InstructionWidget";
 import TextInputField from "../../../components/forms/TextInputField";
 import { alter, collection, store } from "../../../services/utils/controllers";
@@ -26,6 +27,7 @@ export const Instructions = (props) => {
   const [total, setTotal] = useState(0);
   const [benefits, setBenefits] = useState([]);
   const [benefit, setBenefit] = useState({});
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = (data) => {
     setState({
@@ -61,18 +63,27 @@ export const Instructions = (props) => {
   };
 
   const registerClaim = () => {
+    setLoading(true);
     const data = {
       claim_id: state.claim_id,
       instructions: state.instructions,
       status: "registered",
     };
 
-    store("claim/instructions", data)
-      .then((res) => {
-        console.log(res);
-        navigate("/claims");
-      })
-      .catch((err) => console.log(err));
+    try {
+      store("claim/instructions", data)
+        .then((res) => {
+          // console.log(res);
+          setLoading(false);
+          navigate("/claims");
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -122,6 +133,7 @@ export const Instructions = (props) => {
 
   return (
     <>
+      {loading ? <Loading /> : null}
       <div className="form-group">
         <label className="form-label">CLAIM TITLE</label>
         <TextInputField
@@ -202,7 +214,7 @@ export const Instructions = (props) => {
           className="btn btn-success btn-lg btn-rounded"
           type="button"
           onClick={registerClaim}
-          disabled={state.instructions.length === 0}
+          disabled={state.instructions.length === 0 || loading}
         >
           <i
             className="fa fa-paper-plane mr-2"
