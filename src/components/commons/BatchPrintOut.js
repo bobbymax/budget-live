@@ -79,9 +79,11 @@ const BatchPrintOut = ({ batch, onClose }) => {
 
               <div className="col-md-8">
                 <div className="boax-enter">
-                  {batch && batch.controller.originator.type === "directorate"
+                  {batch &&
+                  batch.controller.originator !== null &&
+                  batch.controller.originator.type === "directorate"
                     ? batch.controller.originator.name.toUpperCase()
-                    : null}
+                    : batch.controller.department.name.toUpperCase()}
                 </div>
               </div>
             </div>
