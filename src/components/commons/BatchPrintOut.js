@@ -4,7 +4,7 @@ import Pdf from "react-to-pdf";
 // import { FiPrinter, FiX } from "react-icons/fi";
 import logo from "../../assets/images/batch_logo.png";
 // import { Row, Col, Table } from "react-bootstrap";
-import { getPaymentType } from "../../services/utils/helpers";
+import { formatCurrency, getPaymentType } from "../../services/utils/helpers";
 import { useSelector } from "react-redux";
 
 const ref = React.createRef();
@@ -17,6 +17,11 @@ const options = {
 
 const BatchPrintOut = ({ batch, onClose }) => {
   const budgetYear = useSelector((state) => state.config.value.budget_year);
+
+  // const generateFourRandomNumbers = () => {
+  //   return Math.floor(1000 + Math.random() * 9000);
+  // };
+
   return (
     <>
       <div className="btn-group btn-rounded btn-lg">
@@ -198,18 +203,19 @@ const BatchPrintOut = ({ batch, onClose }) => {
                     {batch && batch.expenditures.length !== 0
                       ? batch.expenditures.map((expenditure) => (
                           <tr key={expenditure.id}>
-                            <td>{expenditure.claim.owner.staff_no}</td>
                             <td>
-                              {expenditure.claim.owner.name.toUpperCase()}
+                              {expenditure.claim !== null &&
+                              expenditure.claim.owner
+                                ? expenditure.claim.owner.staff_no
+                                : "NULL"}
                             </td>
+                            <td>{expenditure.beneficiary.toUpperCase()}</td>
                             <td>
-                              {new Intl.NumberFormat().format(
-                                expenditure.claim.total_amount
-                              )}
+                              {formatCurrency(expenditure.amount)}
                               .00
                             </td>
                             <td>{expenditure.subBudgetHead.budgetCode}</td>
-                            <td>{expenditure.claim.title}</td>
+                            <td>{expenditure.description.toUpperCase()}</td>
                             <td></td>
                           </tr>
                         ))

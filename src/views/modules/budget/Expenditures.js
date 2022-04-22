@@ -56,7 +56,7 @@ const Expenditures = () => {
       setState({
         ...state,
         budget_code: single[0].budgetCode,
-        available_balance: parseFloat(single[0].actual_balance),
+        available_balance: parseFloat(single[0].booked_balance),
       });
     }
   }, [state.sub_budget_head_id]);
