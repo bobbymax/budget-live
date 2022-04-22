@@ -154,8 +154,6 @@ const Approvals = (props) => {
     }
   }, []);
 
-  console.log(auth, approvalStage);
-
   const fetchExpenditureSubBudgetHead = (batch) => {
     return batch.expenditures[0].subBudgetHead.budgetCode;
   };

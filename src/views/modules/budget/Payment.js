@@ -111,8 +111,6 @@ const Payments = (props) => {
     }
   }, []);
 
-  console.log(state.batch);
-
   return (
     <>
       {loading ? <Loading /> : null}

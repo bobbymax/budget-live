@@ -19,21 +19,23 @@ const BatchPrintOut = ({ batch, onClose }) => {
   const budgetYear = useSelector((state) => state.config.value.budget_year);
   return (
     <>
-      <Pdf targetRef={ref} filename="claim.pdf" options={options}>
-        {({ toPdf }) => (
-          <button className="btn btn-success mb-4" onClick={toPdf}>
-            <i className="fa fa-print"></i> Print
-          </button>
-        )}
-      </Pdf>
+      <div className="btn-group btn-rounded btn-lg">
+        <Pdf targetRef={ref} filename="claim.pdf" options={options}>
+          {({ toPdf }) => (
+            <button className="btn btn-success btn-lg mb-4" onClick={toPdf}>
+              <i className="fa fa-print mr-2"></i> Print
+            </button>
+          )}
+        </Pdf>
 
-      <button
-        className="btn btn-danger mb-4"
-        style={{ marginLeft: 4 }}
-        onClick={() => onClose()}
-      >
-        <i className="fa fa-close"></i> Close
-      </button>
+        <button
+          className="btn btn-danger btn-lg mb-4"
+          style={{ marginLeft: 4 }}
+          onClick={() => onClose()}
+        >
+          <i className="fa fa-close mr-2"></i> Close
+        </button>
+      </div>
 
       <div id="batch" ref={ref}>
         <div className="outer">
@@ -225,7 +227,7 @@ const BatchPrintOut = ({ batch, onClose }) => {
             ) : null}
 
             <div className="approval-bar">
-              <h4>APPROVALS</h4>
+              <h4 className="text-white">APPROVALS</h4>
             </div>
             <div className="signatures">
               <div className="row mb-3">

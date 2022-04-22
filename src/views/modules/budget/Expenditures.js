@@ -74,9 +74,7 @@ const Expenditures = () => {
   }, [state.available_balance, state.amount]);
 
   const handleDestroy = (data) => {
-    // console.log(data);
     setLoading(true);
-    console.log(data);
 
     try {
       destroy("expenditures", data)
@@ -160,15 +158,6 @@ const Expenditures = () => {
     }
   };
 
-  // const subBudgetHeadsOptions = (optionsArr) => {
-  //   const arr = [];
-  //   optionsArr.length > 0 &&
-  //     optionsArr.forEach((el) => {
-  //       arr.push({ key: el.id, label: el.name });
-  //     });
-  //   return arr;
-  // };
-
   const paymentType = [
     { key: "staff-claim", label: "STAFF CLAIM" },
     { key: "touring-advance", label: "TOURING ADVANCE" },
@@ -176,8 +165,9 @@ const Expenditures = () => {
   ];
 
   const options = [
-    { key: "staff-payment", label: "STAFF PAYMENT" },
+    { key: "staff-payment", label: "STAFF" },
     { key: "third-party", label: "THIRD PARTY" },
+    { key: "others", label: "OTHERS" },
   ];
 
   useEffect(() => {
@@ -237,7 +227,7 @@ const Expenditures = () => {
                           }}
                         >
                           <CustomSelectOptions
-                            label="SELECT STAFF PAYMENT"
+                            label="SELECT PAYMENT"
                             value=""
                             disabled
                           />
@@ -264,7 +254,7 @@ const Expenditures = () => {
                           disabled={state.payment_type === "third-party"}
                         >
                           <CustomSelectOptions
-                            label="STAFF PAYMENT TYPE"
+                            label="SELECT PAYMENT TYPE"
                             value=""
                             disabled
                           />
@@ -292,7 +282,11 @@ const Expenditures = () => {
                             errors && errors.code && errors.code.length > 0
                           }
                           errorMessage={errors && errors.code && errors.code[0]}
-                          readOnly={state.payment_type === "third-party"}
+                          readOnly={
+                            state.payment_type === "third-party" ||
+                            state.payment_type === "others" ||
+                            state.type === "other"
+                          }
                         />
                       </div>
 
@@ -388,7 +382,10 @@ const Expenditures = () => {
                             errors.new_balance &&
                             errors.new_balance[0]
                           }
-                          readOnly={state.payment_type === "staff-payment"}
+                          readOnly={
+                            state.payment_type === "staff-payment" &&
+                            state.type !== "other"
+                          }
                         />
                       </div>
 
@@ -432,7 +429,10 @@ const Expenditures = () => {
                             errors.beneficiary &&
                             errors.beneficiary[0]
                           }
-                          readOnly={state.payment_type === "staff-payment"}
+                          readOnly={
+                            state.payment_type === "staff-payment" &&
+                            state.type !== "other"
+                          }
                         />
                       </div>
 
@@ -445,7 +445,10 @@ const Expenditures = () => {
                           onChange={(e) =>
                             setState({ ...state, title: e.target.value })
                           }
-                          readOnly={state.payment_type === "staff-payment"}
+                          readOnly={
+                            state.payment_type === "staff-payment" &&
+                            state.type !== "other"
+                          }
                         />
                       </div>
 
