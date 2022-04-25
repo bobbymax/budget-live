@@ -32,10 +32,11 @@ export const Claim = (props) => {
     navigate("/claims");
   };
 
-  const handlePrintClaim = (data, paymentType) => {
+  const handlePrintClaim = (data, paymentType, totalAmountInWords) => {
     try {
       const body = {
         type: paymentType,
+        amountInWords: totalAmountInWords,
       };
 
       printBatch("print/claims", data.id, body)

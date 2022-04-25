@@ -200,7 +200,8 @@ const Expenditures = () => {
             type="button"
             className="btn btn-success btn-rounded mb-4"
             onClick={() => setOpen(true)}
-            disabled={open}
+            // disabled={open}
+            disabled
           >
             <i className="fa fa-send mr-2"></i>
             CREATE EXPENDITURE
