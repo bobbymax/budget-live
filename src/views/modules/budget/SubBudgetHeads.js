@@ -15,6 +15,7 @@ import CustomSelect from "../../../components/forms/CustomSelect";
 import TextInputField from "../../../components/forms/TextInputField";
 import { validate } from "../../../services/utils/validation";
 import { CSVLink } from "react-csv";
+// import TableCard from "../../../components/commons/tables/customized/TableCard";
 
 const SubBudgetHeads = () => {
   const {
@@ -47,12 +48,17 @@ const SubBudgetHeads = () => {
 
   const columns = [
     {
+      label: "Code",
+      key: "budgetCode",
+    },
+    {
       label: "Name",
       key: "name",
     },
   ];
 
   const handleEdit = (data) => {
+    console.log(data);
     setState(data);
     setUpdate(true);
     setOpen(true);
@@ -67,24 +73,24 @@ const SubBudgetHeads = () => {
     return arr;
   };
 
-  const handleDestroy = (data) => {
-    Alert.flash(
-      "Are you sure?",
-      "warning",
-      "You would not be able to revert this!!"
-    ).then((result) => {
-      if (result.isConfirmed) {
-        destroy("subBudgetHeads", data.id)
-          .then((res) => {
-            setSubBudgetHeads([
-              ...subBudgetHeads.filter((sb) => sb.id !== res.data.data.id),
-            ]);
-            Alert.success("Deleted!!", res.data.message);
-          })
-          .catch((err) => console.log(err.message));
-      }
-    });
-  };
+  // const handleDestroy = (data) => {
+  //   Alert.flash(
+  //     "Are you sure?",
+  //     "warning",
+  //     "You would not be able to revert this!!"
+  //   ).then((result) => {
+  //     if (result.isConfirmed) {
+  //       destroy("subBudgetHeads", data.id)
+  //         .then((res) => {
+  //           setSubBudgetHeads([
+  //             ...subBudgetHeads.filter((sb) => sb.id !== res.data.data.id),
+  //           ]);
+  //           Alert.success("Deleted!!", res.data.message);
+  //         })
+  //         .catch((err) => console.log(err.message));
+  //     }
+  //   });
+  // };
 
   const handleSearch = (str) => {
     setSearchTerm(str);
@@ -124,17 +130,17 @@ const SubBudgetHeads = () => {
 
   const rules = [
     { name: "budget_head_id", rules: ["required", "integer"] },
-    { name: "department_id", rules: ["required", "integer"] },
+    { name: "department_id", rules: ["required"] },
     { name: "budgetCode", rules: ["required"] },
     { name: "name", rules: ["required"] },
     { name: "description", rules: ["required"] },
     { name: "type", rules: ["required"] },
-    { name: "logisticsBudget", rules: ["required"] },
   ];
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    // console.log("here");
     const data = {
       budget_head_id: state.budget_head_id,
       department_id: state.department_id,
@@ -149,6 +155,8 @@ const SubBudgetHeads = () => {
     setErrors(formErrors);
     const status =
       Object.keys(formErrors).length === 0 && formErrors.constructor === Object;
+
+    // console.log(status);
 
     if (status) {
       if (update) {
@@ -196,7 +204,7 @@ const SubBudgetHeads = () => {
 
   const optionsType = [
     { key: "capital", label: "Capital" },
-    { key: "recursive", label: "Recursive" },
+    { key: "recursive", label: "Recurrent" },
     { key: "personnel", label: "Personnel" },
   ];
 
@@ -212,6 +220,8 @@ const SubBudgetHeads = () => {
     { label: "Expected Performance", key: "expected_performance" },
     { label: "Type", key: "type" },
   ];
+
+  // console.log(errors);
 
   return (
     <div className="row">
@@ -287,7 +297,7 @@ const SubBudgetHeads = () => {
                             onChange={(e) => {
                               setState({
                                 ...state,
-                                department_id: e.target.value,
+                                department_id: parseInt(e.target.value),
                               });
                             }}
                             errorMessage={
@@ -445,16 +455,23 @@ const SubBudgetHeads = () => {
       )}
 
       <div className="col-lg-12">
-        <DataTableComponent
-          pageName="Sub Budget Heads"
-          columns={columns}
-          rows={searchTerm.length < 1 ? subBudgetHeads : results}
-          handleEdit={handleEdit}
-          handleDelete={handleDestroy}
-          term={searchTerm}
-          searchKeyWord={handleSearch}
-          isFetching={isLoading}
-        />
+        <>
+          {/* <TableCard
+            columns={columns}
+            rows={subBudgetHeads}
+            handleEdit={handleEdit}
+          /> */}
+          <DataTableComponent
+            pageName="Sub Budget Heads"
+            columns={columns}
+            rows={searchTerm.length < 1 ? subBudgetHeads : results}
+            handleEdit={handleEdit}
+            // handleDelete={handleDestroy}
+            term={searchTerm}
+            searchKeyWord={handleSearch}
+            isFetching={isLoading}
+          />
+        </>
       </div>
     </div>
   );

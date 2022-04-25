@@ -40,3 +40,16 @@ export const batchRequests = async (...arrRequests) => {
   const result = await axios.all(...arrRequests);
   return Promise.resolve(result);
 };
+
+export const printBatch = async (entity, id, body) => {
+  return await axios.post(`${ENDPOINT.url + entity}/${id}`, body, {
+    headers: authHeader(),
+  });
+};
+
+export const getPrinted = async (entity, id) => {
+  return await axios.get(`${ENDPOINT.url + entity}/${id}`, {
+    responseType: "blob",
+    headers: authHeader(),
+  });
+};

@@ -1,45 +1,32 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
+import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import BatchPrintOut from "../../../components/commons/BatchPrintOut";
 import Loading from "../../../components/commons/Loading";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
 import Alert from "../../../services/classes/Alert";
-// import useApi from "../../../services/hooks/useApi";
-import { collection, destroy } from "../../../services/utils/controllers";
+import {
+  collection,
+  destroy,
+  getPrinted,
+  printBatch,
+} from "../../../services/utils/controllers";
+import { saveAs } from "file-saver";
 
 const Payments = (props) => {
-  // const { request, data: batches, loading } = useApi(collection);
-
   const initialState = {
     batch: null,
     isPrinting: false,
   };
 
   const stats = [
-    {
-      value: "pending",
-      label: "warning",
-    },
-    {
-      value: "registered",
-      label: "info",
-    },
-    {
-      value: "queried",
-      label: "danger",
-    },
-    {
-      value: "paid",
-      label: "success",
-    },
-    {
-      value: "archived",
-      label: "secondary",
-    },
+    { value: "pending", label: "warning" },
+    { value: "registered", label: "info" },
+    { value: "queried", label: "danger" },
+    { value: "paid", label: "success" },
+    { value: "archived", label: "secondary" },
   ];
 
   const columns = [
@@ -96,6 +83,63 @@ const Payments = (props) => {
     }
   };
 
+  // const handlePrintBatch = (data, paymentType) => {
+  //   try {
+  //     const body = {
+  //       payment_type: paymentType,
+  //     };
+
+  //     printBatch("print/batches", data.id, body)
+  //       .then((res) => {
+  //         const url = window.URL.createObjectURL(
+  //           new Blob(["https://budget.test" + res.data.data.path])
+  //         );
+  //         const link = document.createElement("a");
+  //         link.href = url;
+  //         link.setAttribute("download", res.data.data.name);
+  //         document.body.appendChild(link);
+  //         link.click();
+
+  //         Alert.success("Printed!!", "Document printed successfully!!");
+  //         setState({
+  //           ...state,
+  //           batch: null,
+  //           isPrinting: !state.isPrinting,
+  //         });
+  //       })
+  //       .catch((err) => console.log(err.message));
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const handlePrintBatch = (data, paymentType) => {
+    try {
+      const body = {
+        payment_type: paymentType,
+      };
+
+      printBatch("print/batches", data.id, body)
+        .then(() => getPrinted("download/batches", data.id))
+        .then((res) => {
+          const pdfBlob = new Blob([res.data.data], {
+            type: "application/pdf",
+          });
+
+          saveAs(pdfBlob, `${data.batch_no}.pdf`);
+          Alert.success("Printed!!", "Document printed successfully!!");
+          setState({
+            ...state,
+            batch: null,
+            isPrinting: !state.isPrinting,
+          });
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     try {
       collection("batches")
@@ -111,6 +155,8 @@ const Payments = (props) => {
     }
   }, []);
 
+  console.log(batches);
+
   return (
     <>
       {loading ? <Loading /> : null}
@@ -125,7 +171,11 @@ const Payments = (props) => {
           reverseBatch={handleReverse}
         />
       ) : (
-        <BatchPrintOut batch={state.batch} onClose={printingDone} />
+        <BatchPrintOut
+          handlePrintBatch={handlePrintBatch}
+          batch={state.batch}
+          onClose={printingDone}
+        />
       )}
     </>
   );

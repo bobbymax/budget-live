@@ -114,6 +114,11 @@ export const getPaymentType = (code) => {
   return type === "SP" ? "STAFF PAYMENT" : "THIRD PARTY PAYMENT";
 };
 
+export const getPaymentTypeSmall = (code) => {
+  const type = code.substring(0, 2);
+  return type === "SP" ? "staff-payment" : "third-party";
+};
+
 export const formatDate = (date) => {
   return moment(date).format("DD-MMM-YY");
 };

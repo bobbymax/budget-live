@@ -95,27 +95,30 @@ const DataTableComponent = ({
                         {handleEdit !== undefined && (
                           <td>
                             <span>
-                              <Link
-                                to="#"
-                                onClick={() => handleEdit(row)}
-                                className="mr-4"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Edit"
-                              >
-                                <i className="fa fa-pencil color-muted"></i>
-                              </Link>
-
-                              <Link
-                                to="#"
-                                onClick={() => handleDelete(row)}
-                                className="mr-4"
-                                data-toggle="tooltip"
-                                data-placement="top"
-                                title="Edit"
-                              >
-                                <i className="fa fa-trash color-muted"></i>
-                              </Link>
+                              {handleEdit !== undefined && (
+                                <Link
+                                  to="#"
+                                  onClick={() => handleEdit(row)}
+                                  className="mr-4"
+                                  data-toggle="tooltip"
+                                  data-placement="top"
+                                  title="Edit"
+                                >
+                                  <i className="fa fa-pencil color-muted"></i>
+                                </Link>
+                              )}
+                              {handleDelete !== undefined && (
+                                <Link
+                                  to="#"
+                                  onClick={() => handleDelete(row)}
+                                  className="mr-4"
+                                  data-toggle="tooltip"
+                                  data-placement="top"
+                                  title="Edit"
+                                >
+                                  <i className="fa fa-trash color-muted"></i>
+                                </Link>
+                              )}
                             </span>
                           </td>
                         )}

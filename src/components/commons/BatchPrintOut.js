@@ -1,30 +1,42 @@
 import React from "react";
 import "./batch.css";
-import Pdf from "react-to-pdf";
-// import { FiPrinter, FiX } from "react-icons/fi";
+// import Pdf from "react-to-pdf";
 import logo from "../../assets/images/batch_logo.png";
-// import { Row, Col, Table } from "react-bootstrap";
-import { formatCurrency, getPaymentType } from "../../services/utils/helpers";
+import {
+  formatCurrency,
+  getPaymentType,
+  getPaymentTypeSmall,
+} from "../../services/utils/helpers";
 import { useSelector } from "react-redux";
+import Alert from "../../services/classes/Alert";
 
 const ref = React.createRef();
 
-const options = {
-  orientation: "portrait",
-  unit: "in",
-  format: [8.27, 11.69],
-};
+// const options = {
+//   orientation: "portrait",
+//   unit: "in",
+//   format: [8.27, 11.69],
+// };
 
-const BatchPrintOut = ({ batch, onClose }) => {
+const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
   const budgetYear = useSelector((state) => state.config.value.budget_year);
 
-  // const generateFourRandomNumbers = () => {
-  //   return Math.floor(1000 + Math.random() * 9000);
-  // };
+  const printBatch = (batch) => {
+    Alert.flash("Print Batch!!", "info", "Do you wish to continue?")
+      .then((result) => {
+        if (result.isConfirmed) {
+          const paymentType = getPaymentTypeSmall(batch.batch_no);
+          handlePrintBatch(batch, paymentType);
+        }
+      })
+      .catch((err) => console.log(err.message));
+  };
+
+  console.log(getPaymentType(batch.batch_no));
 
   return (
     <>
-      <div className="btn-group btn-rounded btn-lg">
+      {/* <div className="btn-group btn-rounded btn-lg">
         <Pdf targetRef={ref} filename="claim.pdf" options={options}>
           {({ toPdf }) => (
             <button className="btn btn-success btn-lg mb-4" onClick={toPdf}>
@@ -34,6 +46,25 @@ const BatchPrintOut = ({ batch, onClose }) => {
         </Pdf>
 
         <button
+          className="btn btn-danger btn-lg mb-4"
+          style={{ marginLeft: 4 }}
+          onClick={() => onClose()}
+        >
+          <i className="fa fa-close mr-2"></i> Close
+        </button>
+      </div> */}
+
+      <div className="btn-group btn-rounded btn-lg">
+        <button
+          type="button"
+          className="btn btn-success btn-lg mb-4"
+          onClick={() => printBatch(batch)}
+        >
+          <i className="fa fa-print mr-2"></i> Print
+        </button>
+
+        <button
+          type="button"
           className="btn btn-danger btn-lg mb-4"
           style={{ marginLeft: 4 }}
           onClick={() => onClose()}
