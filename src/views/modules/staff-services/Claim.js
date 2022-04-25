@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import ClaimDetails from "../../../components/commons/widgets/ClaimDetails";
+import Alert from "../../../services/classes/Alert";
+import { printBatch } from "../../../services/utils/controllers";
 import { amountToWords } from "../../../services/utils/helpers";
 // import ExportClaimPDF from "../../exports/ExportClaimPDF";
 import ExportClaim from "./ExportClaim";
@@ -28,6 +30,34 @@ export const Claim = (props) => {
     });
 
     navigate("/claims");
+  };
+
+  const handlePrintClaim = (data, paymentType) => {
+    try {
+      const body = {
+        type: paymentType,
+      };
+
+      printBatch("print/claims", data.id, body)
+        .then((res) => {
+          const link = document.createElement("a");
+          link.href = res.data.data;
+          link.setAttribute("download", res.data.data);
+          link.setAttribute("target", "_blank");
+          document.body.appendChild(link);
+          link.click();
+
+          Alert.success("Printed!!", "Document printed successfully!!");
+          setState({
+            ...state,
+            batch: null,
+            isPrinting: !state.isPrinting,
+          });
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -119,7 +149,12 @@ export const Claim = (props) => {
           </div>
         </>
       ) : (
-        <ExportClaim claim={state.claim} auth={auth} onClose={handleDownload} />
+        <ExportClaim
+          claim={state.claim}
+          handlePrintClaim={handlePrintClaim}
+          auth={auth}
+          onClose={handleDownload}
+        />
         // <ExportClaimPDF />
       )}
     </>

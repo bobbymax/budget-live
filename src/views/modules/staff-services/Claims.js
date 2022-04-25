@@ -45,9 +45,12 @@ const Claims = (props) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
+    const code = Math.floor(Math.random() * 90000) + 10000;
+
     const data = {
       title: state.title,
       type: state.type,
+      reference_no: "SC" + code,
     };
 
     const formErrors = validate(rules, data);

@@ -32,7 +32,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
       .catch((err) => console.log(err.message));
   };
 
-  console.log(getPaymentType(batch.batch_no));
+  // console.log(getPaymentType(batch.batch_no));
 
   return (
     <>

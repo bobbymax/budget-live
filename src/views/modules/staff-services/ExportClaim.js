@@ -1,21 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import Pdf from "react-to-pdf";
+// import Pdf from "react-to-pdf";
 import logo from "../../../assets/images/claim_logo.png";
+import Alert from "../../../services/classes/Alert";
 import { formatDate, amountToWords } from "../../../services/utils/helpers";
 import "./Claim.css";
 
 const ref = React.createRef();
 
-const options = {
-  orientation: "potrait",
-  unit: "in",
-  format: [8.27, 11.69],
-};
+// const options = {
+//   orientation: "potrait",
+//   unit: "in",
+//   format: [8.27, 11.69],
+// };
 
-const ExportClaim = ({ claim, auth, onClose }) => {
+const ExportClaim = ({ claim, auth, handlePrintClaim, onClose }) => {
   const [state, setState] = useState(null);
   // const [user, setUser] = useState(null);
+
+  const printClaim = (claim) => {
+    Alert.flash("Print Claim!!", "info", "Do you wish to continue?")
+      .then((result) => {
+        if (result.isConfirmed) {
+          handlePrintClaim(claim, "staff-claim");
+        }
+      })
+      .catch((err) => console.log(err.message));
+  };
 
   const styles = {
     container: {
@@ -78,7 +89,7 @@ const ExportClaim = ({ claim, auth, onClose }) => {
 
   return (
     <>
-      <div className="btn-group btn-rounded btn-lg">
+      {/* <div className="btn-group btn-rounded btn-lg">
         <Pdf targetRef={ref} filename="claim.pdf" options={options}>
           {({ toPdf }) => (
             <button className="btn btn-success btn-lg mb-4" onClick={toPdf}>
@@ -86,6 +97,23 @@ const ExportClaim = ({ claim, auth, onClose }) => {
             </button>
           )}
         </Pdf>
+
+        <button
+          className="btn btn-danger btn-lg mb-4"
+          style={{ marginLeft: 4 }}
+          onClick={() => onClose()}
+        >
+          <i className="fa fa-close mr-2"></i> Close
+        </button>
+      </div> */}
+
+      <div className="btn-group btn-rounded btn-lg">
+        <button
+          className="btn btn-success btn-lg mb-4"
+          onClick={() => printClaim(claim)}
+        >
+          <i className="fa fa-print mr-2"></i> Print
+        </button>
 
         <button
           className="btn btn-danger btn-lg mb-4"

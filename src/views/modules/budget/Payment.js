@@ -1,6 +1,5 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import BatchPrintOut from "../../../components/commons/BatchPrintOut";
@@ -10,10 +9,8 @@ import Alert from "../../../services/classes/Alert";
 import {
   collection,
   destroy,
-  getPrinted,
   printBatch,
 } from "../../../services/utils/controllers";
-import { saveAs } from "file-saver";
 
 const Payments = (props) => {
   const initialState = {
@@ -83,36 +80,6 @@ const Payments = (props) => {
     }
   };
 
-  // const handlePrintBatch = (data, paymentType) => {
-  //   try {
-  //     const body = {
-  //       payment_type: paymentType,
-  //     };
-
-  //     printBatch("print/batches", data.id, body)
-  //       .then((res) => {
-  //         const url = window.URL.createObjectURL(
-  //           new Blob(["https://budget.test" + res.data.data.path])
-  //         );
-  //         const link = document.createElement("a");
-  //         link.href = url;
-  //         link.setAttribute("download", res.data.data.name);
-  //         document.body.appendChild(link);
-  //         link.click();
-
-  //         Alert.success("Printed!!", "Document printed successfully!!");
-  //         setState({
-  //           ...state,
-  //           batch: null,
-  //           isPrinting: !state.isPrinting,
-  //         });
-  //       })
-  //       .catch((err) => console.log(err.message));
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
   const handlePrintBatch = (data, paymentType) => {
     try {
       const body = {
@@ -120,13 +87,22 @@ const Payments = (props) => {
       };
 
       printBatch("print/batches", data.id, body)
-        .then(() => getPrinted("download/batches", data.id))
         .then((res) => {
-          const pdfBlob = new Blob([res.data.data], {
-            type: "application/pdf",
-          });
+          // const url = window.URL.createObjectURL(
+          //   new Blob([res.data.data], {
+          //     type: "application/pdf",
+          //   })
+          // );
 
-          saveAs(pdfBlob, `${data.batch_no}.pdf`);
+          const link = document.createElement("a");
+          link.href = res.data.data;
+          link.setAttribute("download", res.data.data);
+          link.setAttribute("target", "_blank");
+          document.body.appendChild(link);
+          link.click();
+
+          // console.log(link);
+
           Alert.success("Printed!!", "Document printed successfully!!");
           setState({
             ...state,
