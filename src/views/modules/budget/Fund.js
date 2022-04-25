@@ -13,6 +13,7 @@ import {
 import TextInputField from "../../../components/forms/TextInputField";
 import CustomSelect from "../../../components/forms/CustomSelect";
 import Alert from "../../../services/classes/Alert";
+import TableCard from "../../../components/commons/tables/customized/TableCard";
 
 const Fund = () => {
   const initialState = {
@@ -56,6 +57,7 @@ const Fund = () => {
     {
       label: "Approved Amount",
       key: "approved_amount",
+      format: "currency",
     },
   ];
 
@@ -81,7 +83,7 @@ const Fund = () => {
       "You would not be able to revert this!!"
     ).then((result) => {
       if (result.isConfirmed) {
-        destroy("creditBudgetHeads", data.id)
+        destroy("creditBudgetHeads", data)
           .then((res) => {
             setFunds([...funds.filter((role) => role.id !== res.data.data.id)]);
             Alert.success("Deleted!!", res.data.message);
@@ -330,7 +332,13 @@ const Fund = () => {
       )}
 
       <div className="col-md-12">
-        <DataTableComponent
+        <TableCard
+          columns={columns}
+          rows={funds}
+          handleEdit={handleEdit}
+          handleDelete={handleDestroy}
+        />
+        {/* <DataTableComponent
           pageName="Credit Sub Budget Head"
           columns={columns}
           rows={searchTerm.length < 1 ? funds : results}
@@ -339,7 +347,7 @@ const Fund = () => {
           term={searchTerm}
           searchKeyWord={handleSearch}
           isFetching={isLoading}
-        />
+        /> */}
       </div>
     </div>
   );
