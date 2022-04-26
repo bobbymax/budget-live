@@ -182,7 +182,7 @@ const Expenditures = () => {
             const subs = res[1].data.data;
 
             setExpenditures(exp);
-            setSubBudgetHeads(subs);
+            setSubBudgetHeads(subs.filter((budget) => budget.fund !== null));
           })
         )
         .catch((err) => console.log(err.message));
@@ -200,8 +200,8 @@ const Expenditures = () => {
             type="button"
             className="btn btn-success btn-rounded mb-4"
             onClick={() => setOpen(true)}
-            // disabled={open}
-            disabled
+            disabled={open}
+            // disabled
           >
             <i className="fa fa-send mr-2"></i>
             CREATE EXPENDITURE
