@@ -56,7 +56,7 @@ const Approvals = (props) => {
         (batc) => batc.batch_no === state.batch_code
       );
 
-      // console.log(batch[0]);
+      console.log(batch[0]);
 
       const stage = approvals.filter(
         (approval) =>
