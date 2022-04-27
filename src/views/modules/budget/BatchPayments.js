@@ -113,7 +113,6 @@ const BatchPayment = (props) => {
         setBoard([]);
         setState(initialState);
         navigate("/payments");
-        // console.log(data);
       })
       .catch((err) => console.log(err.message));
   };

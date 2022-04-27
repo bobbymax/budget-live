@@ -82,17 +82,14 @@ const Payments = (props) => {
 
   const handlePrintBatch = (data, paymentType) => {
     try {
+      setLoading(true);
       const body = {
         payment_type: paymentType,
       };
 
       printBatch("print/batches", data.id, body)
         .then((res) => {
-          // const url = window.URL.createObjectURL(
-          //   new Blob([res.data.data], {
-          //     type: "application/pdf",
-          //   })
-          // );
+          setLoading(false);
 
           const link = document.createElement("a");
           link.href = res.data.data;
@@ -101,8 +98,6 @@ const Payments = (props) => {
           document.body.appendChild(link);
           link.click();
 
-          // console.log(link);
-
           Alert.success("Printed!!", "Document printed successfully!!");
           setState({
             ...state,
@@ -110,7 +105,10 @@ const Payments = (props) => {
             isPrinting: !state.isPrinting,
           });
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
     } catch (error) {
       console.log(error);
     }
@@ -118,12 +116,15 @@ const Payments = (props) => {
 
   useEffect(() => {
     try {
+      setLoading(true);
       collection("batches")
         .then((res) => {
           const result = res.data.data;
+          setLoading(false);
           setBatches(result.filter((batch) => batch.user_id == auth.id));
         })
         .catch((err) => {
+          setLoading(false);
           console.log(err.message);
         });
     } catch (error) {
@@ -131,7 +132,7 @@ const Payments = (props) => {
     }
   }, []);
 
-  console.log(batches);
+  // console.log(batches);
 
   return (
     <>

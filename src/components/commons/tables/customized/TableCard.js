@@ -198,7 +198,9 @@ const TableCard = ({
                   <TableRow>
                     <td
                       colSpan={
-                        handleEdit !== undefined || manageStaff !== undefined
+                        handleEdit !== undefined ||
+                        manageStaff !== undefined ||
+                        handleBatchPrint !== undefined
                           ? columns.length + 1
                           : columns.length
                       }

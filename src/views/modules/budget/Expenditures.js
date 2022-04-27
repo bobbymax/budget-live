@@ -14,6 +14,7 @@ import CustomSelectOptions from "../../../components/forms/select/CustomSelectOp
 import axios from "axios";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
 import Loading from "../../../components/commons/Loading";
+import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
 
 const Expenditures = () => {
   const initialState = {
@@ -343,12 +344,14 @@ const Expenditures = () => {
                       <div className="col-md-6">
                         <TextInputField
                           placeholder="AVAILABLE BALANCE"
-                          type="number"
-                          value={state.available_balance}
+                          type="text"
+                          value={formatCurrencyWithoutSymbol(
+                            state.available_balance
+                          )}
                           onChange={(e) =>
                             setState({
                               ...state,
-                              available_balance: e.target.value,
+                              available_balance: parseFloat(e.target.value),
                             })
                           }
                           error={
@@ -369,7 +372,6 @@ const Expenditures = () => {
                         <TextInputField
                           placeholder="AMOUNT"
                           value={state.amount}
-                          min={0}
                           onChange={(e) =>
                             setState({ ...state, amount: e.target.value })
                           }
@@ -393,10 +395,12 @@ const Expenditures = () => {
                       <div className="col-md-6">
                         <TextInputField
                           placeholder="NEW BALANCE"
-                          type="number"
-                          value={state.new_balance}
+                          value={formatCurrencyWithoutSymbol(state.new_balance)}
                           onChange={(e) =>
-                            setState({ ...state, new_balance: e.target.value })
+                            setState({
+                              ...state,
+                              new_balance: parseFloat(e.target.value),
+                            })
                           }
                           error={
                             errors &&
