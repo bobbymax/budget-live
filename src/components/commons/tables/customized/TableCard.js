@@ -162,10 +162,13 @@ const TableCard = ({
                                 <Link
                                   to="#"
                                   onClick={() => reverseBatch(row)}
+                                  // className={`mr-4 btn btn-danger btn-rounded btn-xs ${
+                                  //   (row.status !== "pending" ||
+                                  //     elapsed(row.created_at)) &&
+                                  //   "disabled"
+                                  // }`}
                                   className={`mr-4 btn btn-danger btn-rounded btn-xs ${
-                                    (row.status !== "pending" ||
-                                      elapsed(row.created_at)) &&
-                                    "disabled"
+                                    row.status !== "pending" && "disabled"
                                   }`}
                                   data-toggle="tooltip"
                                   data-placement="top"
