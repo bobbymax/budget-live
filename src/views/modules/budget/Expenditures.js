@@ -100,7 +100,7 @@ const Expenditures = () => {
   };
 
   const handleChange = (value) => {
-    if (value.length >= 8) {
+    if (value.length >= 7) {
       collection(`fetch/claims/${value}`)
         .then((res) => {
           const claim = res.data.data;
