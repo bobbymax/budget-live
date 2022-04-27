@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import * as Icon from "react-feather";
 import TableHeader from "./tables/TableHeader";
@@ -203,7 +204,8 @@ const TableCard = ({
                       colSpan={
                         handleEdit !== undefined ||
                         manageStaff !== undefined ||
-                        handleBatchPrint !== undefined
+                        handleBatchPrint !== undefined ||
+                        destroyExpenditure !== undefined
                           ? columns.length + 1
                           : columns.length
                       }

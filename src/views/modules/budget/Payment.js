@@ -60,7 +60,7 @@ const Payments = (props) => {
   };
 
   const handleReverse = (data) => {
-    console.log(data);
+    // console.log(data);
     setLoading(true);
     try {
       destroy("batches", data.id)

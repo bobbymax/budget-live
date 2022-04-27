@@ -119,9 +119,9 @@ const BatchPayment = (props) => {
 
   const handleDelete = (expenditure) => {
     if (board.length >= 1) {
-      const claimChoosen = board.filter((b) => expenditure.id === b.id);
+      const claimChoosen = board.filter((b) => expenditure.id == b.id);
 
-      const boardState = board.filter((b) => expenditure.id !== b.id);
+      const boardState = board.filter((b) => expenditure.id != b.id);
 
       if (boardState.length > 0) {
         const newExpenditure = [...expenditures, claimChoosen[0]];
