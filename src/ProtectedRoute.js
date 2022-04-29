@@ -1,9 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-// import ChatBox from "./components/commons/ChatBox"
 import Aside from "./components/layout/partials/Aside";
 import Footer from "./components/layout/partials/Footer";
 import Header from "./components/layout/partials/Header";
@@ -66,15 +64,6 @@ const ProtectedRoute = ({ children }) => {
 
         <div className="content-body">
           <div className="container-fluid">
-            {/* {auth ? (
-              dashboardState ? (
-                <AdminDashboard />
-              ) : (
-                children
-              )
-            ) : (
-              <Navigate to="/login" />
-            )} */}
             {auth ? (
               auth.hasChangedPassword ? (
                 dashboardState ? (

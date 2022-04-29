@@ -169,7 +169,7 @@ const TableCard = ({
                                   //   "disabled"
                                   // }`}
                                   className={`mr-4 btn btn-danger btn-rounded btn-xs ${
-                                    row.status !== "pending" && "disabled"
+                                    !row.reverseable && "disabled"
                                   }`}
                                   data-toggle="tooltip"
                                   data-placement="top"

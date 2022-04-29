@@ -1,10 +1,9 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ClaimTable from "../../../components/commons/widgets/ClaimTable";
 import { validate } from "../../../services/utils/validation";
-import useApi from "../../../services/hooks/useApi";
 import Alert from "../../../services/classes/Alert";
 import {
   collection,
@@ -27,30 +26,32 @@ const Claims = (props) => {
     isUpdating: false,
   };
 
-  const {
-    request,
-    data: claims,
-    setData: setClaims,
-    loading,
-  } = useApi(collection);
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState([]);
+  const [claims, setClaims] = useState([]);
   const [state, setState] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
   const [collectables, setCollectables] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const unique = () => {
+    const min = 10000;
+    const max = 90000;
+    const num = Math.floor(Math.random() * max) + min;
+    return num;
+  };
+
+  // console.log(unique());
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const code = Math.floor(Math.random() * 90000) + 10000;
+    setLoading(true);
 
     const data = {
       title: state.title,
       type: state.type,
-      reference_no: "SC" + code,
+      reference_no: "SC" + unique(),
     };
 
     const formErrors = validate(rules, data);
@@ -65,7 +66,7 @@ const Claims = (props) => {
           alter("claims", state.id, data)
             .then((res) => {
               const result = res.data.data;
-
+              setLoading(false);
               setClaims(
                 claims.map((el) => {
                   if (result.id === el.id) {
@@ -77,7 +78,10 @@ const Claims = (props) => {
               );
               Alert.success("Updated", res.data.message);
             })
-            .catch((err) => console.log(err.message));
+            .catch((err) => {
+              setLoading(false);
+              console.log(err.message);
+            });
         } catch (error) {
           console.log(error);
         }
@@ -86,10 +90,14 @@ const Claims = (props) => {
           store("claims", data)
             .then((res) => {
               const result = res.data.data;
+              setLoading(false);
               setClaims([result, ...claims]);
               Alert.success("Created!!", res.data.message);
             })
-            .catch((err) => console.log(err.message));
+            .catch((err) => {
+              setLoading(false);
+              console.log(err.message);
+            });
         } catch (error) {
           console.log(error);
         }
@@ -100,6 +108,8 @@ const Claims = (props) => {
       setUpdate(false);
       setState(initialState);
       setOpen(false);
+    } else {
+      setLoading(false);
     }
   };
 
@@ -143,28 +153,45 @@ const Claims = (props) => {
       "You would not be able to revert this!!"
     ).then((result) => {
       if (result.isConfirmed) {
+        setLoading(true);
         destroy("claims", claim.id)
           .then((res) => {
-            setClaims([
-              ...claims.filter((claim) => claim.id !== res.data.data.id),
-            ]);
-            Alert.success("Deleted!!", res.data.message);
+            const result = res.data;
+            setLoading(false);
+            const newData = claims.filter((cla) => cla.id != result.data.id);
+            console.log(newData);
+            setClaims(newData);
+            Alert.success("Deleted!!", result.message);
           })
-          .catch((err) => console.log(err.message));
+          .catch((err) => {
+            setLoading(false);
+            console.log(err.message);
+          });
       }
     });
   };
 
   useEffect(() => {
-    request("claims");
+    setLoading(true);
+    try {
+      collection("claims")
+        .then((res) => {
+          setLoading(false);
+          setClaims(res.data.data);
+        })
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   }, []);
 
   useEffect(() => {
-    if (claims.length > 0) {
-      setCollectables(
-        claims.filter((claim) => claim && claim.type !== "touring-advance")
-      );
-    }
+    setCollectables(
+      claims.filter((claim) => claim && claim.type !== "touring-advance")
+    );
   }, [claims]);
 
   return (

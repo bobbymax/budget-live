@@ -1,5 +1,7 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
+import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,6 +9,7 @@ import Loading from "../../../components/commons/Loading";
 import InstructionWidget from "../../../components/commons/widgets/InstructionWidget";
 import TextInputField from "../../../components/forms/TextInputField";
 import { alter, collection, store } from "../../../services/utils/controllers";
+import { formatCurrency } from "../../../services/utils/helpers";
 import AddInstruction from "./AddInstruction";
 
 export const Instructions = (props) => {
@@ -50,25 +53,40 @@ export const Instructions = (props) => {
   };
 
   const handleInstructionDestroy = (value) => {
+    const newArr = state.instructions.filter(
+      (instruction) => instruction.id != value.id
+    );
+    const newSum = newArr.reduce(
+      (sum, instruction) => sum + parseFloat(instruction.amount),
+      0
+    );
     setState({
       ...state,
-      instructions: state.instructions.filter(
-        (instruction) => instruction.id !== value.id
-      ),
+      instructions: newArr,
     });
+
+    updateGrandTotal(newSum);
   };
 
   const updateGrandTotal = (sum) => {
     return setTotal(sum);
   };
 
-  const registerClaim = () => {
+  const registerClaim = (status) => {
     setLoading(true);
+
+    const instructions = state.instructions.filter(
+      (elem) => !state.claim.instructions.find(({ id }) => elem.id == id)
+    );
+
     const data = {
       claim_id: state.claim_id,
-      instructions: state.instructions,
-      status: "registered",
+      status: status,
+      instructions,
+      claim: state.claim,
     };
+
+    // console.log(data);
 
     try {
       store("claim/instructions", data)
@@ -89,6 +107,8 @@ export const Instructions = (props) => {
   useEffect(() => {
     if (params.path && params.state) {
       const claim = params.state.claim;
+
+      // console.log(claim);
 
       setState({
         ...state,
@@ -117,12 +137,26 @@ export const Instructions = (props) => {
     if (params.pathname && params.state) {
       const claim = params.state.claim;
       const status = params.state.actionType;
+      const ins = [];
+
+      // console.log(claim);
+
+      const instructions =
+        claim.instructions.length > 0
+          ? claim.instructions.map((instruction) => {
+              ins.push(instruction);
+              return ins;
+            })
+          : [];
+
+      console.log(ins);
 
       setState({
         ...state,
         claim: claim,
         claim_id: claim.id,
         title: claim.title,
+        instructions: ins,
       });
     }
 
@@ -203,24 +237,31 @@ export const Instructions = (props) => {
               </tbody>
             </table>
             <h4 className="mb-4 pull-right">
-              TOTAL: <span style={{ marginLeft: 25 }}>NGN {total}</span>
+              TOTAL:{" "}
+              <span style={{ marginLeft: 25 }}>{formatCurrency(total)}</span>
             </h4>
           </div>
         </div>
       </div>
 
-      <div className="">
+      <div className="btn-group btn-rounded">
         <button
-          className="btn btn-success btn-lg btn-rounded"
+          className="btn btn-success"
           type="button"
-          onClick={registerClaim}
+          onClick={() => registerClaim("registered")}
           disabled={state.instructions.length === 0 || loading}
         >
-          <i
-            className="fa fa-paper-plane mr-2"
-            style={{ marginRight: "2px" }}
-          ></i>
+          <i className="fa fa-paper-plane mr-2"></i>
           Submit
+        </button>
+        <button
+          type="button"
+          className="btn btn-info"
+          onClick={() => registerClaim("draft")}
+          disabled={state.instructions.length < 1}
+        >
+          <i className="fa fa-floppy-o mr-2"></i>
+          Save Claim
         </button>
       </div>
     </>

@@ -100,11 +100,13 @@ const Expenditures = () => {
   };
 
   const handleChange = (value) => {
+    setLoading(true);
     if (value.length >= 7) {
       collection(`fetch/claims/${value}`)
         .then((res) => {
           const claim = res.data.data;
-
+          setLoading(false);
+          Alert.success("Found!!", res.data.message);
           setState({
             ...state,
             code: claim.reference_no,
@@ -115,7 +117,11 @@ const Expenditures = () => {
             claim_id: claim.id,
           });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          setLoading(false);
+          Alert.error("Not Found!!", "Claim does not exist");
+          console.log(err.message);
+        });
     }
   };
 

@@ -132,7 +132,7 @@ const Payments = (props) => {
     }
   }, []);
 
-  // console.log(batches);
+  console.log(batches);
 
   return (
     <>
