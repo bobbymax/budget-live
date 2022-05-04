@@ -167,6 +167,8 @@ const Fund = () => {
     });
   }, [state.amount]);
 
+  // console.log(funds);
+
   useEffect(() => {
     if (state.isFunded) {
       setUpdate(true);

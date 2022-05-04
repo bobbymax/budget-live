@@ -81,6 +81,7 @@ const Overview = (props) => {
     "es",
     "fad-manager",
     "fad-admin",
+    "budget-office-officer",
   ];
 
   const handleSearch = (term) => {

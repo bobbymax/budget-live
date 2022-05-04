@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useMemo, useState } from "react";
 import Pagination from "react-bootstrap/Pagination";
@@ -25,7 +26,7 @@ const CustomPagination = ({
       pages.push(
         <Pagination.Item
           key={i}
-          active={i === currentPage}
+          active={i == currentPage}
           onClick={() => onPageChange(i)}
         >
           {i}
@@ -36,18 +37,18 @@ const CustomPagination = ({
     return pages;
   }, [totalPages, currentPage]);
 
-  if (totalPages === 0) return null;
+  if (totalPages == 0) return null;
 
   return (
     <Pagination>
       <Pagination.Prev
         onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+        disabled={currentPage == 1}
       />
       {paginationItems}
       <Pagination.Next
         onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
+        disabled={currentPage == totalPages}
       />
     </Pagination>
   );

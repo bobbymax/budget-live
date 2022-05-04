@@ -4,13 +4,14 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Loading from "../../../components/commons/Loading";
 import TextInputField from "../../../components/forms/input/TextInputField";
+import Alert from "../../../services/classes/Alert";
 import {
   alter,
   collection,
   fetch,
   store,
 } from "../../../services/utils/controllers";
-import { formatCurrency } from "../../../services/utils/helpers";
+import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
 
 const TouringAdvance = () => {
   const initialState = {
@@ -42,11 +43,11 @@ const TouringAdvance = () => {
     setLoading(true);
 
     const code = Math.floor(Math.random() * 90000) + 10000;
-    const subs = state.beneficiary.substring(0, 2);
+    // const subs = state.beneficiary.substring(0, 2);
 
     const data = {
       user_id: state.user_id,
-      reference_no: "TA" + code + subs.toUpperCase(),
+      reference_no: "TA" + code,
       start_date: state.start_date,
       end_date: state.end_date,
       amount: state.amount,
@@ -118,11 +119,11 @@ const TouringAdvance = () => {
     try {
       alter("raise/touringAdvances", data.id, { status: "raised" })
         .then((res) => {
-          const data = res.data.data;
+          const data = res.data;
 
           setTourings(
             tourings.map((tour) => {
-              if (tour.id === data.id) {
+              if (tour.id === data.data.id) {
                 return data;
               }
 
@@ -130,10 +131,12 @@ const TouringAdvance = () => {
             })
           );
           setLoading(false);
+          Alert.success("Payment Raised!!", data.message);
         })
         .catch((err) => {
           console.log(err.message);
           setLoading(false);
+          Alert.error("Oops!!", "Something went wrong");
         });
     } catch (error) {
       console.log(error);
@@ -225,14 +228,15 @@ const TouringAdvance = () => {
                             <div className="col-md-5">
                               <TextInputField
                                 label="Amount"
-                                type="number"
                                 value={state.amount}
-                                onChange={(e) =>
+                                onChange={(e) => {
+                                  const value =
+                                    e.target.value !== "" ? e.target.value : 0;
                                   setState({
                                     ...state,
-                                    amount: e.target.value,
-                                  })
-                                }
+                                    amount: value,
+                                  });
+                                }}
                               />
                             </div>
                             <div className="col-md-12">
@@ -346,7 +350,9 @@ const TouringAdvance = () => {
                         <td>{tour.claim && tour.claim.title.toUpperCase()}</td>
                         <td>
                           {tour.claim &&
-                            formatCurrency(tour.claim.total_amount)}
+                            formatCurrencyWithoutSymbol(
+                              tour.claim.total_amount
+                            )}
                         </td>
                         <td>{moment(tour.start_date).format("LL")}</td>
                         <td>

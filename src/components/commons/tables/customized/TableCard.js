@@ -72,7 +72,7 @@ const TableCard = ({
             </div>
           </div>
           <div className="table-responsive">
-            <table className="table table-striped table-hover">
+            <table className="table table-striped table-hover table-responsive-sm">
               <TableHeader
                 columns={columns}
                 handleDelete={handleDelete}
@@ -169,7 +169,9 @@ const TableCard = ({
                                   //   "disabled"
                                   // }`}
                                   className={`mr-4 btn btn-danger btn-rounded btn-xs ${
-                                    !row.reverseable && "disabled"
+                                    (!row.reverseable ||
+                                      row.status !== "pending") &&
+                                    "disabled"
                                   }`}
                                   data-toggle="tooltip"
                                   data-placement="top"

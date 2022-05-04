@@ -91,8 +91,6 @@ const Logistics = (props) => {
   };
 
   const handleStaffSelect = (e) => {
-    // console.log(e.key);
-
     setState({
       ...state,
       user_id: e.key,
