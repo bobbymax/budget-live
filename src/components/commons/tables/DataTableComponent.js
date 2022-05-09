@@ -41,7 +41,6 @@ const DataTableComponent = ({
       <div className="card">
         <div className="card-header">
           <h4 className="card-title">{pageName}</h4>
-
           {downloadButton}
         </div>
 

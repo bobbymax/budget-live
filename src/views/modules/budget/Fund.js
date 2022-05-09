@@ -154,7 +154,6 @@ const Fund = () => {
 
     setUpdate(false);
     setState(initialState);
-    // resetForm();
     setOpen(false);
   };
 

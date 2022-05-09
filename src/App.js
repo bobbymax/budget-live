@@ -42,6 +42,7 @@ import ChangePassword from "./views/auth/ChangePassword";
 import PreviousBudget from "./views/modules/budget/PreviousBudget";
 import StaffLoginVerification from "./views/auth/StaffLoginVerification";
 import Reversals from "./views/modules/budget/Reversals";
+import ReportManagement from "./views/modules/reports/ReportManagement";
 
 const App = () => {
   return (
@@ -383,6 +384,16 @@ const App = () => {
           element={
             <ProtectedRoute>
               <Dependencies />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          exact
+          path="/generate/report"
+          element={
+            <ProtectedRoute>
+              <ReportManagement />
             </ProtectedRoute>
           }
         />

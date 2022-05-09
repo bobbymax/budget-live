@@ -135,23 +135,6 @@ const Overview = (props) => {
         } else {
           setDepartments(result);
         }
-        // if (userHasRole(auth, "budget-controller")) {
-        //   setDepartments(
-        //     result.filter((dept) => dept.id == auth.department_id)
-        //   );
-        // } else if (
-        //   auth.roles &&
-        //   auth.roles.length > 0 &&
-        //   auth.roles.some((role) => allowedRoles.includes(role.label))
-        // ) {
-        //   setDepartments(result);
-        // } else if (userHasRole(auth, "budget-owner")) {
-        //   setDepartments(
-        //     result.filter((dept) => dept.budget_owner == auth.id)
-        //   );
-        // } else {
-        //   setDepartments(result);
-        // }
       })
       .catch((err) => console.log(err));
   }, []);
