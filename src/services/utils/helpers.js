@@ -196,35 +196,43 @@ export const months = {
 
 export const approvals = [
   {
+    name: "Budget Office",
     stage: "budget-office",
     role: "budget-office-officer",
     level: 1,
     action: "Clear",
     canQuery: true,
+    clearQuery: false,
     canModify: false,
   },
   {
+    name: "Treasury",
     stage: "treasury",
     role: "treasury",
     level: 2,
     action: "Clear",
     canQuery: false,
+    clearQuery: false,
     canModify: true,
   },
   {
+    name: "Audit",
     stage: "audit",
     role: "audit",
     level: 3,
     action: "Clear",
     canQuery: true,
+    clearQuery: true,
     canModify: true,
   },
   {
+    name: "Treasury",
     stage: "treasury",
     role: "treasury",
     level: 4,
     action: "Post",
     canQuery: false,
+    clearQuery: false,
     canModify: false,
   },
 ];

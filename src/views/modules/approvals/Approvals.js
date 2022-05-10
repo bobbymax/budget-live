@@ -1,5 +1,4 @@
 /* eslint-disable eqeqeq */
-/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import moment from "moment";
 import React, { useEffect, useState } from "react";
@@ -18,7 +17,7 @@ import {
   getPaymentType,
   userHasRole,
 } from "../../../services/utils/helpers";
-import CryptoJS from "crypto-js";
+// import CryptoJS from "crypto-js";
 
 const Approvals = (props) => {
   const auth = useSelector((state) => state.auth.value.user);
@@ -46,6 +45,7 @@ const Approvals = (props) => {
   const [state, setState] = useState(initialState);
   const [approvalStage, setApprovalStage] = useState({});
   const [batches, setBatches] = useState();
+  const [tracking, setTracking] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchPaymentBatch = (e) => {
@@ -56,14 +56,15 @@ const Approvals = (props) => {
         (batc) => batc.batch_no === state.batch_code
       );
 
-      // console.log(batch[0]);
-
       const stage = approvals.filter(
         (approval) =>
           approval.stage === batch[0].level && approval.level == batch[0].steps
       );
 
+      // console.log(stage[0]);
+
       setApprovalStage(stage[0]);
+      setTracking(batch[0].tracks);
 
       setState({
         ...state,
@@ -74,18 +75,6 @@ const Approvals = (props) => {
         grandTotal: parseFloat(batch[0].amount),
       });
     }
-  };
-
-  const getStageStatus = () => {
-    const batch = state.batch;
-    const trac =
-      batch !== null && batch.tracks.filter((trk) => trk.stage === batch.level);
-    const track = trac[0];
-
-    const steps = batch !== undefined && batch.steps;
-    const level = batch !== undefined && batch.level;
-
-    return steps == 4 && level === "treasury" ? "pending" : track.status;
   };
 
   const handleExpenditureUpdate = (e) => {
@@ -158,10 +147,6 @@ const Approvals = (props) => {
     return batch.expenditures[0].subBudgetHead.budgetCode;
   };
 
-  const fetchExpenditureSubBudgetHeadDesc = (batch) => {
-    return batch.expenditures[0].subBudgetHead.description;
-  };
-
   const modifyExpenditure = (exp) => {
     setState({
       ...state,
@@ -205,10 +190,12 @@ const Approvals = (props) => {
     }
 
     setState(initialState);
+    setApprovalStage({});
+    setTracking([]);
   };
 
   const handleClearQuery = (batch) => {
-    const id = batch && batch.id;
+    const id = batch.id;
 
     fetch("batches/clear/query", id)
       .then((res) => {
@@ -240,7 +227,14 @@ const Approvals = (props) => {
   return (
     <>
       {loading ? <Loading /> : null}
-      <h4 className="mb-4">Approve Payments</h4>
+      <h4 className="mb-4">
+        Approve Payments{" "}
+        {approvalStage !== undefined ? (
+          <span className="badge badge-pill badge-default badge-rounded badge-sm">
+            {approvalStage.name}
+          </span>
+        ) : null}
+      </h4>
 
       <form onSubmit={fetchPaymentBatch}>
         <div className="row">
@@ -368,7 +362,7 @@ const Approvals = (props) => {
                 approvalStage !== undefined &&
                 userHasRole(auth, approvalStage.role) ? (
                   <>
-                    {state.batch.queried && (
+                    {state.batch.queried && approvalStage.clearQuery && (
                       <button
                         type="button"
                         className="btn btn-primary btn-uppercase btn-sm"
@@ -543,6 +537,38 @@ const Approvals = (props) => {
           </div>
         ) : null}
       </div>
+
+      {state.batch && state.showDetails ? (
+        <div className="tracking">
+          <div className="card">
+            <div className="card-header">
+              <h5 className="card-title">Tracking</h5>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-12">
+                  {tracking.length > 0 &&
+                    tracking.map((track) => (
+                      <div
+                        key={track.id}
+                        className={`alert alert-${
+                          track.controller === null ? "danger" : "light"
+                        }`}
+                        role="alert"
+                      >
+                        {track.controller === null
+                          ? `Batch has not been cleared by ${track.stage.toUpperCase()}`
+                          : `${track.remarks} BY ${
+                              track.controller && track.controller.name
+                            }`}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </>
   );
 };
