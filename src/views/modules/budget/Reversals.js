@@ -90,11 +90,13 @@ const Reversals = () => {
           console.log(err.message);
           Alert.error("Oops!!", "Something went wrong");
         });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
-    if (state.batch_code !== "" && state.batch_code.length > 6) {
+    if (state.batch_code !== "" && state.batch_code.length >= 6) {
       try {
         fetch("batches", state.batch_code)
           .then((res) => {
