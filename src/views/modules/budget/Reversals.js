@@ -97,6 +97,7 @@ const Reversals = () => {
 
   useEffect(() => {
     if (state.batch_code !== "" && state.batch_code.length >= 6) {
+      setLoading(true);
       try {
         fetch("batches", state.batch_code)
           .then((res) => {
@@ -109,8 +110,12 @@ const Reversals = () => {
               amount: parseFloat(result.amount),
               batch: result,
             });
+            setLoading(false);
           })
-          .catch((err) => console.log(err.message));
+          .catch((err) => {
+            setLoading(false);
+            console.log(err.message);
+          });
       } catch (error) {
         console.log(error);
       }

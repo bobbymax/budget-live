@@ -24,6 +24,7 @@ const Payments = (props) => {
     { value: "queried", label: "danger" },
     { value: "paid", label: "success" },
     { value: "archived", label: "secondary" },
+    { value: "reversed", label: "danger" },
   ];
 
   const columns = [
@@ -40,7 +41,7 @@ const Payments = (props) => {
 
   const currentStat = (stat) => {
     const curr = stats.filter((s) => stat === s.value);
-    return curr[0].label;
+    return curr && curr.length > 0 && curr[0].label;
   };
 
   const handleBatchPrint = (batch) => {

@@ -11,6 +11,8 @@ import makeAnimated from "react-select/animated";
 import { batchRequests, collection } from "../../../services/utils/controllers";
 import "./reports.css";
 import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
+import { months } from "../../../services/utils/helpers";
+import TextInputField from "../../../components/forms/input/TextInputField";
 
 const ReportManagement = () => {
   const initialState = {
@@ -21,9 +23,13 @@ const ReportManagement = () => {
     actualBalance: 0,
     expectedPerformance: 0,
     actualPerformance: 0,
+    startDate: "",
+    endDate: "",
   };
   const year = useSelector((state) => parseInt(state.config.value.budget_year));
   const [state, setState] = useState(initialState);
+  const [month, setMonth] = useState("");
+  const [budgetHeads, setBudgetHeads] = useState([]);
   const [funds, setFunds] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
   const [budgetYear, setBudgetYear] = useState(0);
@@ -65,10 +71,6 @@ const ReportManagement = () => {
   ];
 
   const handleDepartmentSelect = (e) => {
-    // setState({
-    //   ...state,
-    //   department: e.key,
-    // });
     setDepartment(e.key);
   };
 
@@ -94,16 +96,62 @@ const ReportManagement = () => {
     return exps;
   };
 
+  const prepareReport = (budgetHeads, funds, startDate, endDate) => {
+    const report = [];
+    const from = Date.parse(startDate);
+    const to = Date.parse(endDate);
+
+    budgetHeads.length > 0 &&
+      budgetHeads.map((budgetHead) => {
+        let budgetFunds =
+          funds.length > 0 &&
+          funds.filter(
+            (fund) =>
+              fund.budgetHeadId == budgetHead.id &&
+              to >= Date.parse(fund.updated_at) &&
+              Date.parse(fund.updated_at) >= from
+          );
+
+        const sum = budgetFunds
+          .map((fun) => parseFloat(fun.approved_amount))
+          .reduce((sum, prev) => sum + prev, 0);
+
+        const actualExpense = budgetFunds
+          .map((fun) => parseFloat(fun.actual_expenditure))
+          .reduce((sum, prev) => sum + prev, 0);
+
+        const actualBalance = budgetFunds
+          .map((fun) => parseFloat(fun.actual_balance))
+          .reduce((sum, prev) => sum + prev, 0);
+
+        const perf = (actualExpense / sum) * 100;
+
+        return report.push({
+          budgetHeadId: budgetHead.id,
+          budgetHeadName: budgetHead.name,
+          approvedAmount: sum.toFixed(2),
+          amountSpent: actualExpense.toFixed(2),
+          balance: actualBalance.toFixed(2),
+          totalPerf: perf.toFixed(2),
+          funds: budgetFunds,
+        });
+      });
+
+    return report;
+  };
+
   useEffect(() => {
     if (budgetYear > 0 && department !== "") {
       try {
         setLoading(true);
         const fundsData = collection("fetch/creditBudgetHeads");
+        const budgetHeadsData = collection("budgetHeads");
 
-        batchRequests([fundsData])
+        batchRequests([fundsData, budgetHeadsData])
           .then(
             axios.spread((...res) => {
               const funds = res[0].data.data;
+              const budgetHeads = res[1].data.data;
               let fundsForYear = funds.filter(
                 (fund) => fund.budget_year == budgetYear
               );
@@ -115,7 +163,7 @@ const ReportManagement = () => {
                     )
                   : fundsForYear;
 
-              console.log(fundsForYear);
+              // console.log(fundsForYear, budgetHeads);
 
               const exps = getExpenditures(fundsForYear);
 
@@ -132,7 +180,10 @@ const ReportManagement = () => {
               const expPerf = (booked / approved) * 100;
               const actPerf = (actual / approved) * 100;
 
+              // console.log(prepareReport(budgetHeads, fundsForYear));
+
               setFunds(fundsForYear);
+              setBudgetHeads(budgetHeads);
               setExpenditures(exps);
               setLoading(false);
 
@@ -161,6 +212,16 @@ const ReportManagement = () => {
       }
     }
   }, [budgetYear, department]);
+
+  // console.log(budgetHeads, funds);
+
+  useEffect(() => {
+    if (state.startDate !== "" && state.endDate !== "") {
+      console.log(
+        prepareReport(budgetHeads, funds, state.startDate, state.endDate)
+      );
+    }
+  }, [state.startDate, state.endDate]);
 
   useEffect(() => {
     if (year > 0) {
@@ -214,7 +275,7 @@ const ReportManagement = () => {
                     ))}
                   </CustomSelect>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-9">
                   <Select
                     styles={{ height: "100%" }}
                     defaultValue={{ key: "ALL", label: "ALL DDD" }}
@@ -226,13 +287,33 @@ const ReportManagement = () => {
                     isSearchable
                   />
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-6">
+                  <TextInputField
+                    type="date"
+                    value={state.startDate}
+                    onChange={(e) =>
+                      setState({ ...state, startDate: e.target.value })
+                    }
+                  />
+                </div>
+                <div className="col-md-6">
+                  <TextInputField
+                    type="date"
+                    value={state.endDate}
+                    onChange={(e) =>
+                      setState({ ...state, endDate: e.target.value })
+                    }
+                  />
+                </div>
+
+                <div className="col-md-12 mt-3">
                   <button
                     className="btn btn-success btn-block btn-rounded"
                     type="button"
+                    disabled={state.startDate === "" || state.endDate === ""}
                   >
                     <i className="fa fa-file-pdf-o mr-2"></i>
-                    CONFIGURE REPORT
+                    GENERATE REPORT
                   </button>
                 </div>
               </div>
