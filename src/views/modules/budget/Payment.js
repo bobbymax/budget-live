@@ -133,8 +133,6 @@ const Payments = (props) => {
     }
   }, []);
 
-  console.log(batches);
-
   return (
     <>
       {loading ? <Loading /> : null}

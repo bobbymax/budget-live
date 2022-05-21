@@ -158,9 +158,6 @@ const Dependencies = () => {
             <div className="card-body">
               <form onSubmit={importData} className="mb-5">
                 <div className="row">
-                  <div className="col-md-12">
-                    <TextInputField type="file" />
-                  </div>
                   <div className="col-md-6">
                     <TextInputField
                       type="file"

@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import CustomCard from "../../components/commons/cards/CustomCard";
 
 const BudgetController = ({ userDashboardData }) => {
@@ -29,7 +30,7 @@ const BudgetController = ({ userDashboardData }) => {
         "super-administrator",
       ],
       count: paymentForms,
-      path: "",
+      path: "/payments",
     },
     {
       title: "Third-Party",
@@ -41,7 +42,7 @@ const BudgetController = ({ userDashboardData }) => {
         "super-administrator",
       ],
       count: thirdParty,
-      path: "",
+      path: "/expenditures",
     },
     {
       title: "Staff Payments",
@@ -53,7 +54,7 @@ const BudgetController = ({ userDashboardData }) => {
         "super-administrator",
       ],
       count: staffPayment,
-      path: "",
+      path: "/expenditures",
     },
     {
       title: "AEF",
@@ -77,7 +78,7 @@ const BudgetController = ({ userDashboardData }) => {
         "super-administrator",
       ],
       count: logisticsRefund,
-      path: "",
+      path: "/logistics/refund",
     },
     {
       title: "Pending Reversals",
@@ -89,7 +90,7 @@ const BudgetController = ({ userDashboardData }) => {
         "super-administrator",
       ],
       count: reversals,
-      path: "",
+      path: "/reversals",
     },
     {
       title: "Pending Transactions",
@@ -101,7 +102,7 @@ const BudgetController = ({ userDashboardData }) => {
         "super-administrator",
       ],
       count: pendingTransactions,
-      path: "",
+      path: "/payments",
     },
     {
       title: "Paid Transactions",
@@ -113,19 +114,19 @@ const BudgetController = ({ userDashboardData }) => {
         "super-administrator",
       ],
       count: paidTransactions,
-      path: "",
+      path: "/payments",
     },
     {
       title: "Registered Claims",
       roles: ["staff"],
       count: claims,
-      path: "",
+      path: "/claims",
     },
     {
       title: "Claims to be Retired",
       roles: ["staff"],
       count: retirement,
-      path: "",
+      path: "/retirement",
     },
   ];
 
@@ -135,7 +136,18 @@ const BudgetController = ({ userDashboardData }) => {
         {cards.map(
           (card, i) =>
             auth &&
-            auth.roles.some((role) => card.roles.includes(role.label)) && (
+            auth.roles.some((role) => card.roles.includes(role.label)) &&
+            (card.path !== "" ? (
+              <div className="col-sm-6 col-md-3" key={i}>
+                <Link to={card.path}>
+                  <CustomCard
+                    title={card.title}
+                    count={card.count}
+                    path={card.path}
+                  />
+                </Link>
+              </div>
+            ) : (
               <div className="col-sm-6 col-md-3" key={i}>
                 <CustomCard
                   title={card.title}
@@ -143,7 +155,7 @@ const BudgetController = ({ userDashboardData }) => {
                   path={card.path}
                 />
               </div>
-            )
+            ))
         )}
       </div>
     </>

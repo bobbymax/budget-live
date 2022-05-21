@@ -53,7 +53,6 @@ const Expenditures = () => {
       subBudgetHeads.filter((sub) => sub.id == state.sub_budget_head_id && sub);
 
     if (single.length > 0) {
-      console.log(single[0]);
       setState({
         ...state,
         budget_code: single[0].budgetCode,
@@ -179,6 +178,7 @@ const Expenditures = () => {
 
   useEffect(() => {
     try {
+      setLoading(true);
       const expenditureData = collection("expenditures");
       const subBudgetHeadsData = collection("subBudgetHeads");
 
@@ -188,13 +188,19 @@ const Expenditures = () => {
             const exp = res[0].data.data;
             const subs = res[1].data.data;
 
+            setLoading(false);
+
             setExpenditures(exp);
             setSubBudgetHeads(subs.filter((budget) => budget.fund !== null));
           })
         )
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }, []);
 

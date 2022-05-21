@@ -120,20 +120,26 @@ const Overview = (props) => {
       .then((res) => {
         const result = res.data.data;
 
+        const newDepts = result.filter(
+          (dept) => dept.subBudgetHeads && dept.subBudgetHeads.length > 0
+        );
+
         if (
           auth.roles &&
           auth.roles.length > 0 &&
           auth.roles.some((role) => allowedRoles.includes(role.label))
         ) {
-          setDepartments(result);
+          setDepartments(newDepts);
         } else if (userHasRole(auth, "budget-controller")) {
           setDepartments(
-            result.filter((dept) => dept.id == auth.department_id)
+            newDepts.filter((dept) => dept.id == auth.department_id)
           );
         } else if (userHasRole(auth, "budget-owner")) {
-          setDepartments(result.filter((dept) => dept.budget_owner == auth.id));
+          setDepartments(
+            newDepts.filter((dept) => dept.budget_owner == auth.id)
+          );
         } else {
-          setDepartments(result);
+          setDepartments(newDepts);
         }
       })
       .catch((err) => console.log(err));
@@ -156,7 +162,7 @@ const Overview = (props) => {
       collection("departments/" + value + "/budget/summary")
         .then((res) => {
           setData(res.data.data);
-          console.log(res.data.data);
+          // console.log(res.data.data);
         })
         .catch((err) => console.log(err.message));
     }
@@ -166,7 +172,7 @@ const Overview = (props) => {
     const arr = [];
     optionsArr.length > 0 &&
       optionsArr.forEach((el) => {
-        arr.push({ key: el.id, label: el.name });
+        arr.push({ key: el.id, label: el.code });
       });
     return arr;
   };

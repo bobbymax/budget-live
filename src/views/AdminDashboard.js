@@ -9,6 +9,7 @@ import { batchRequests, collection } from "../services/utils/controllers";
 import { formatCurrencyWithoutSymbol } from "../services/utils/helpers";
 import { CSVLink } from "react-csv";
 import "./modules/dashboard.css";
+import Loading from "../components/commons/Loading";
 
 const AdminDashboard = () => {
   const initialState = {
@@ -27,6 +28,7 @@ const AdminDashboard = () => {
   const [trackings, setTrackings] = useState([]);
   const [state, setState] = useState(initialState);
   const [showCard, setShowCard] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const headers = [
     { key: "budgetHead", label: "BUDGET HEAD" },
@@ -47,14 +49,9 @@ const AdminDashboard = () => {
       .reduce((sum, prev) => sum + prev, 0);
   };
 
-  // useEffect(() => {
-  //   if (subs.length > 0) {
-
-  //   }
-  // }, [])
-
   useEffect(() => {
     try {
+      setLoading(true);
       const subBudgetHeadsData = collection("subBudgetHeads/admin");
       const expendituresData = collection("dashboard/expenditures");
       const trackingData = collection("trackings");
@@ -102,21 +99,27 @@ const AdminDashboard = () => {
               totalAmountClearedByTreasury: getGrandTotal(treasury, "amount"),
               totalAmountClearedByAudit: getGrandTotal(audit, "amount"),
             });
+            setLoading(false);
           })
         )
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }, []);
 
-  console.log(subs);
+  // console.log(subs);
 
   return (
     <>
+      {loading ? <Loading /> : null}
       <div className="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
         <div className="mr-auto  d-lg-block">
-          <h2 className="text-black font-w600">
+          <h2 className="text-black font-w600 mb-4">
             {"Admin Dashboard".toUpperCase()}
           </h2>
           <CSVLink
@@ -124,8 +127,10 @@ const AdminDashboard = () => {
             filename={"budget-overview.csv"}
             target="_blank"
             headers={headers}
+            className="btn btn-warning btn-rounded"
           >
-            Download
+            <i className="fa fa-download mr-2"></i>
+            DOWNLOAD GENERAL OVERVIEW
           </CSVLink>
         </div>
       </div>

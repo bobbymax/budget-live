@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable eqeqeq */
 import axios from "axios";
@@ -213,7 +214,7 @@ const ReportManagement = () => {
     }
   }, [budgetYear, department]);
 
-  // console.log(budgetHeads, funds);
+  console.log(budgetHeads, funds);
 
   useEffect(() => {
     if (state.startDate !== "" && state.endDate !== "") {

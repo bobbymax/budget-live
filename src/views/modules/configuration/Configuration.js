@@ -97,7 +97,7 @@ const Configuration = () => {
     }
   }, []);
 
-  console.log(state);
+  // console.log(state);
 
   return (
     <>
