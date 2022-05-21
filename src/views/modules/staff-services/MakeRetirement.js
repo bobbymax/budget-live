@@ -481,7 +481,7 @@ const MakeRetirement = () => {
                     setBenefits([]);
                     setState(initialState);
                     setInstruction(instructionState);
-                    navigate("/retire");
+                    navigate("/retirement");
                   }}
                 >
                   <i className="fa fa-close mr-2"></i>
