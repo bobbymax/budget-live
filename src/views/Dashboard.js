@@ -10,6 +10,7 @@ import BudgetController from "./controller/BudgetController";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import "../components/commons/cards/custom-card.css";
+import Loading from "../components/commons/Loading";
 
 const Dashboard = () => {
   const overviewState = {
@@ -31,6 +32,7 @@ const Dashboard = () => {
   const auth = useSelector((state) => state.auth.value.user);
   // const dash = useSelector((state) => state.auth.value.dashboardState);
   const [state, setState] = useState(overviewState);
+  const [loading, setLoading] = useState(false);
   // const [dashboardState, setDashboardState] = useState(false);
 
   const allowedRoles = [
@@ -40,12 +42,9 @@ const Dashboard = () => {
     "ict-manager",
   ];
 
-  // useEffect(() => {
-  //   setDashboardState(dash);
-  // }, [dash]);
-
   useEffect(() => {
     if (auth !== null) {
+      setLoading(true);
       const expenditureRequest = collection("expenditures");
       const claimsRequest = collection("department/claims");
       const overviews = collection("dashboard/overview");
@@ -100,11 +99,17 @@ const Dashboard = () => {
                 performance: overview.performance,
                 summary: overview.summary,
               });
+
+              setLoading(false);
             })
           )
-          .catch((err) => console.log(err.message));
+          .catch((err) => {
+            setLoading(false);
+            console.log(err.message);
+          });
       } catch (error) {
         console.log(error);
+        setLoading(false);
       }
     }
     return () => {
@@ -126,6 +131,7 @@ const Dashboard = () => {
 
   return (
     <>
+      {loading ? <Loading /> : null}
       <div className="form-head d-md-flex mb-sm-4 mb-3 align-items-start">
         <div className="mr-auto  d-lg-block">
           <h2 className="text-black font-w600">Dashboard</h2>
