@@ -2,6 +2,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import BatchPrintOut from "../../../components/commons/BatchPrintOut";
 import Loading from "../../../components/commons/Loading";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
@@ -13,6 +14,8 @@ import {
 } from "../../../services/utils/controllers";
 
 const Payments = (props) => {
+  const navigate = useNavigate();
+
   const initialState = {
     batch: null,
     isPrinting: false,
@@ -57,6 +60,15 @@ const Payments = (props) => {
       ...state,
       batch: null,
       isPrinting: !state.isPrinting,
+    });
+  };
+
+  const handleTracking = (data) => {
+    // tracking payment
+    navigate(`/track/payment/${data.batch_no}`, {
+      state: {
+        batch: data,
+      },
     });
   };
 
@@ -145,6 +157,7 @@ const Payments = (props) => {
           handleBatchPrint={handleBatchPrint}
           badge={currentStat}
           reverseBatch={handleReverse}
+          trackPayment={handleTracking}
         />
       ) : (
         <BatchPrintOut

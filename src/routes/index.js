@@ -76,6 +76,10 @@ const ReportManagement = lazy(() =>
   import("../views/modules/reports/ReportManagement")
 );
 
+const TrackPayment = lazy(() =>
+  import("../views/modules/tracking/TrackPayment")
+);
+
 export const routes = {
   guest: [
     {
@@ -269,6 +273,11 @@ export const routes = {
       name: "Dashboard",
       component: <Dashboard />,
       path: "/",
+    },
+    {
+      name: "Track Payment",
+      component: <TrackPayment />,
+      path: "/track/payment/:id",
     },
   ],
 };

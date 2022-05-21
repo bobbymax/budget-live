@@ -23,6 +23,7 @@ const TableCard = ({
   handleBatchPrint = undefined,
   reverseBatch = undefined,
   destroyExpenditure = undefined,
+  trackPayment = undefined,
   badge = undefined,
   batchData = false,
   expenditureData = false,
@@ -81,6 +82,7 @@ const TableCard = ({
                 manageStaff={manageStaff}
                 reverseBatch={reverseBatch}
                 destroyExpenditure={destroyExpenditure}
+                trackPayment={trackPayment}
               />
               <TableBody>
                 {computed.length > 0 ? (
@@ -198,6 +200,22 @@ const TableCard = ({
                             )}
                           </td>
                         )}
+                        {trackPayment !== undefined && (
+                          <td>
+                            <button
+                              type="button"
+                              className="btn btn-xs btn-rounded btn-info"
+                              onClick={() => trackPayment(row)}
+                              disabled={
+                                row.status === "paid" ||
+                                row.status === "reversed"
+                              }
+                            >
+                              <i className="fa fa-truck mr-2"></i>
+                              track payment
+                            </button>
+                          </td>
+                        )}
                       </TableRow>
                     ))
                 ) : (
@@ -207,7 +225,8 @@ const TableCard = ({
                         handleEdit !== undefined ||
                         manageStaff !== undefined ||
                         handleBatchPrint !== undefined ||
-                        destroyExpenditure !== undefined
+                        destroyExpenditure !== undefined ||
+                        trackPayment !== undefined
                           ? columns.length + 1
                           : columns.length
                       }

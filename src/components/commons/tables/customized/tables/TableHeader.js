@@ -8,6 +8,7 @@ const TableHeader = ({
   manageStaff,
   reverseBatch,
   destroyExpenditure,
+  trackPayment,
 }) => {
   return (
     <thead>
@@ -22,6 +23,7 @@ const TableHeader = ({
           destroyExpenditure !== undefined) && (
           <th>{manageStaff !== undefined ? "Manage" : "Action"}</th>
         )}
+        {trackPayment !== undefined && <th>Track</th>}
       </tr>
     </thead>
   );

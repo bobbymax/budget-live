@@ -37,7 +37,9 @@ const OverviewExpenditure = () => {
       setState({
         ...state,
         subBudgetHead: subBudgetHead,
-        expenditures: subBudgetHead.expenditures,
+        expenditures: subBudgetHead.expenditures.filter(
+          (exp) => exp.status !== "reversed"
+        ),
       });
     }
   }, []);

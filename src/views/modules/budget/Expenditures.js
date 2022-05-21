@@ -15,8 +15,10 @@ import axios from "axios";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
 import Loading from "../../../components/commons/Loading";
 import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
+import { useNavigate } from "react-router-dom";
 
 const Expenditures = () => {
+  const navigate = useNavigate();
   const initialState = {
     claim: null,
     code: "",
@@ -208,7 +210,7 @@ const Expenditures = () => {
     <>
       {loading ? <Loading /> : null}
       <div className="row">
-        <div className="col-md-12">
+        <div className="col-md-6">
           <button
             type="button"
             className="btn btn-success btn-rounded mb-4"
@@ -218,6 +220,18 @@ const Expenditures = () => {
           >
             <i className="fa fa-send mr-2"></i>
             CREATE EXPENDITURE
+          </button>
+        </div>
+        <div className="col-md-6">
+          <button
+            type="button"
+            className="btn btn-warning btn-rounded mb-4 float-right"
+            onClick={() => navigate("/batch/claim")}
+            disabled={open}
+            // disabled
+          >
+            <i className="fa fa-object-group mr-2"></i>
+            BATCH EXPENDITURES
           </button>
         </div>
         {open && (
