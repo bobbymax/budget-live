@@ -112,7 +112,7 @@ export const routes = {
     {
       name: "Retirement",
       component: <Retirement />,
-      path: "/retirement",
+      path: "/retire",
     },
     {
       name: "Fill Retirement",
