@@ -126,7 +126,7 @@ const BudgetController = ({ userDashboardData }) => {
       title: "Claims to be Retired",
       roles: ["staff"],
       count: retirement,
-      path: "/retirement",
+      path: "/retire",
     },
   ];
 
