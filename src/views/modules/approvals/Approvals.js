@@ -1,16 +1,11 @@
-/* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable eqeqeq */
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Loading from "../../../components/commons/Loading";
 import Alert from "../../../services/classes/Alert";
-import {
-  alter,
-  collection,
-  fetch,
-  store,
-} from "../../../services/utils/controllers";
+import { alter, fetch, store } from "../../../services/utils/controllers";
 import {
   approvals,
   formatCurrency,
@@ -21,9 +16,6 @@ import {
 
 const Approvals = (props) => {
   const auth = useSelector((state) => state.auth.value.user);
-  const budgetYear = useSelector((state) =>
-    parseInt(state.config.value.budget_year)
-  );
 
   const initialState = {
     batch_code: "",
@@ -44,7 +36,6 @@ const Approvals = (props) => {
 
   const [state, setState] = useState(initialState);
   const [approvalStage, setApprovalStage] = useState({});
-  const [batches, setBatches] = useState();
   const [tracking, setTracking] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -52,28 +43,41 @@ const Approvals = (props) => {
     e.preventDefault();
 
     if (state.batch_code !== "") {
-      const batch = batches.filter(
-        (batc) => batc.batch_no === state.batch_code
-      );
+      setLoading(true);
+      try {
+        fetch("batches", state.batch_code)
+          .then((res) => {
+            const result = res.data;
 
-      const stage = approvals.filter(
-        (approval) =>
-          approval.stage === batch[0].level && approval.level == batch[0].steps
-      );
+            const stage = approvals.filter(
+              (approval) =>
+                approval.stage === result.data.level &&
+                approval.level == result.data.steps
+            );
 
-      // console.log(stage[0]);
-
-      setApprovalStage(stage[0]);
-      setTracking(batch[0].tracks);
-
-      setState({
-        ...state,
-        batch: batch[0],
-        batch_id: batch[0].id,
-        batch_code: "",
-        showDetails: true,
-        grandTotal: parseFloat(batch[0].amount),
-      });
+            setApprovalStage(stage[0]);
+            setTracking(result.data.tracks);
+            setState({
+              ...state,
+              batch: result.data,
+              batch_id: result.data.id,
+              batch_code: "",
+              showDetails: true,
+              grandTotal: parseFloat(result.data.amount),
+            });
+            setLoading(false);
+            Alert.success("Found!", result.message);
+          })
+          .catch((err) => {
+            console.log(err.message);
+            setLoading(false);
+            Alert.error("Oops!", "Something has gone wrong");
+          });
+      } catch (error) {
+        console.log(error);
+        setLoading(false);
+        Alert.error("Oops!", "Something has gone terribly wrong");
+      }
     }
   };
 
@@ -114,34 +118,7 @@ const Approvals = (props) => {
     } catch (error) {
       console.log(error);
     }
-
-    console.log(data);
   };
-
-  useEffect(() => {
-    setLoading(true);
-    try {
-      collection("batches")
-        .then((res) => {
-          const result = res.data.data;
-          setBatches(
-            result.filter(
-              (batch) =>
-                (batch.status !== "paid" || batch.status !== "archived") &&
-                moment(batch.created_at).year() == budgetYear
-            )
-          );
-          setLoading(false);
-          // console.log(result);
-        })
-        .catch((err) => {
-          setLoading(false);
-          console.log(err.message);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
 
   const fetchExpenditureSubBudgetHead = (batch) => {
     return batch.expenditures[0].subBudgetHead.budgetCode;
@@ -170,23 +147,22 @@ const Approvals = (props) => {
     };
 
     try {
+      setLoading(true);
       store("clear/payments", data)
         .then((res) => {
           const data = res.data;
-          setBatches(
-            batches.map((batch) => {
-              if (batch.id == data.data.id) {
-                return data.data;
-              }
-
-              return batch;
-            })
-          );
+          setLoading(false);
           Alert.success("Payment Status!!", data.message);
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          setLoading(false);
+          Alert.error("Oops!", "Something went wrong!!");
+        });
     } catch (error) {
       console.log(error);
+      setLoading(false);
+      Alert.error("Oops!", "Something went terribly wrong!!");
     }
 
     setState(initialState);
@@ -221,8 +197,6 @@ const Approvals = (props) => {
       });
     }
   }, [state.batch, state.showDetails]);
-
-  // console.log(getStageStatus());
 
   return (
     <>

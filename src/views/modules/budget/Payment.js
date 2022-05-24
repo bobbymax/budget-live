@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import BatchPrintOut from "../../../components/commons/BatchPrintOut";
 import Loading from "../../../components/commons/Loading";
@@ -40,7 +40,7 @@ const Payments = (props) => {
   const [batches, setBatches] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const auth = useSelector((state) => state.auth.value.user);
+  // const auth = useSelector((state) => state.auth.value.user);
 
   const currentStat = (stat) => {
     const curr = stats.filter((s) => stat === s.value);
@@ -134,7 +134,7 @@ const Payments = (props) => {
         .then((res) => {
           const result = res.data.data;
           setLoading(false);
-          setBatches(result.filter((batch) => batch.user_id == auth.id));
+          setBatches(result);
         })
         .catch((err) => {
           setLoading(false);
