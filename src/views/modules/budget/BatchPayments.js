@@ -156,9 +156,7 @@ const BatchPayment = (props) => {
 
   useEffect(() => {
     if (expenditures.length > 0) {
-      setBatchable(
-        expenditures.filter((exp) => !exp.batched || exp.status !== "reversed")
-      );
+      setBatchable(expenditures.filter((exp) => exp.status === "cleared"));
     }
   }, [expenditures]);
 
