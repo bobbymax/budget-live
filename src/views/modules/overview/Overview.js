@@ -163,7 +163,6 @@ const Overview = (props) => {
       collection("departments/" + value + "/budget/summary")
         .then((res) => {
           setData(res.data.data);
-          // console.log(res.data.data);
         })
         .catch((err) => console.log(err.message));
     }

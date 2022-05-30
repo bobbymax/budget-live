@@ -8,7 +8,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Loading from "../../../components/commons/Loading";
 import InstructionWidget from "../../../components/commons/widgets/InstructionWidget";
 import TextInputField from "../../../components/forms/TextInputField";
-import { alter, collection, store } from "../../../services/utils/controllers";
+import {
+  alter,
+  collection,
+  destroy,
+  store,
+} from "../../../services/utils/controllers";
 import { formatCurrency } from "../../../services/utils/helpers";
 import AddInstruction from "./AddInstruction";
 
@@ -53,19 +58,29 @@ export const Instructions = (props) => {
   };
 
   const handleInstructionDestroy = (value) => {
-    const newArr = state.instructions.filter(
-      (instruction) => instruction.id != value.id
-    );
-    const newSum = newArr.reduce(
-      (sum, instruction) => sum + parseFloat(instruction.amount),
-      0
-    );
-    setState({
-      ...state,
-      instructions: newArr,
-    });
-
-    updateGrandTotal(newSum);
+    try {
+      destroy(`claims/${state.claim_id}/instructions`, value.id)
+        .then((res) => {
+          if (res.status != 204) {
+            console.log(res.data.data);
+          }
+          const newArr = state.instructions.filter(
+            (instruction) => instruction.id != value.id
+          );
+          const newSum = newArr.reduce(
+            (sum, instruction) => sum + parseFloat(instruction.amount),
+            0
+          );
+          setState({
+            ...state,
+            instructions: newArr,
+          });
+          updateGrandTotal(newSum);
+        })
+        .catch((err) => console.log(err.message));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const updateGrandTotal = (sum) => {
@@ -104,11 +119,11 @@ export const Instructions = (props) => {
     }
   };
 
+  // console.log(state.instructions);
+
   useEffect(() => {
     if (params.path && params.state) {
       const claim = params.state.claim;
-
-      // console.log(claim);
 
       setState({
         ...state,
