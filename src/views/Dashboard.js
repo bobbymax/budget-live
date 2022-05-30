@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import "../components/commons/cards/custom-card.css";
 import Loading from "../components/commons/Loading";
+// import { months } from "../services/utils/helpers";
 
 const Dashboard = () => {
   const overviewState = {
@@ -48,21 +49,25 @@ const Dashboard = () => {
       const expenditureRequest = collection("expenditures");
       const claimsRequest = collection("department/claims");
       const overviews = collection("dashboard/overview");
+      const fundsData = collection("creditBudgetHeads");
 
       try {
-        batchRequests([expenditureRequest, claimsRequest, overviews])
+        batchRequests([expenditureRequest, claimsRequest, overviews, fundsData])
           .then(
             axios.spread((...res) => {
               const expenditures = res[0].data.data;
               const claims = res[1].data.data;
               const overview = res[2].data.data;
+              const funds = res[3].data.data;
               const paymentForms = expenditures.filter(
                 (exp) =>
                   exp && exp.subBudgetHead.department_id == auth.department_id
               );
               const aef = claims.filter(
                 (claim) =>
-                  claim && claim.owner.department_id == auth.department_id
+                  claim &&
+                  claim.owner.department_id == auth.department_id &&
+                  (claim.status !== "pending" || claim.status !== "draft")
               );
               const personal = claims.filter(
                 (claim) =>
@@ -76,6 +81,32 @@ const Dashboard = () => {
                   claim.owner.id == auth.id &&
                   !claim.rettired
               );
+
+              const approved = funds
+                .map((fund) => parseFloat(fund.approved_amount))
+                .reduce((sum, prev) => sum + prev, 0);
+
+              const booked = funds
+                .map((fund) => parseFloat(fund.booked_expenditure))
+                .reduce((sum, prev) => sum + prev, 0);
+
+              const actual = funds
+                .map((fund) => parseFloat(fund.actual_expenditure))
+                .reduce((sum, prev) => sum + prev, 0);
+
+              const summary = {
+                approvedAmount: approved,
+                actualBalance: funds
+                  .map((fund) => parseFloat(fund.actual_balance))
+                  .reduce((sum, prev) => sum + prev, 0),
+                actualExpenditure: actual,
+                bookedBalance: funds
+                  .map((fund) => parseFloat(fund.booked_balance))
+                  .reduce((sum, prev) => sum + prev, 0),
+                bookedExpenditure: booked,
+                expectedPerformance: (booked / approved) * 100,
+                actualPerformance: (actual / approved) * 100,
+              };
 
               setState({
                 ...state,
@@ -95,9 +126,9 @@ const Dashboard = () => {
                 paidTransactions: paymentForms.filter(
                   (exp) => exp.status === "paid"
                 ).length,
-                overview: overview.utilization,
+                overview: summary,
                 performance: overview.performance,
-                summary: overview.summary,
+                summary: summary,
               });
 
               setLoading(false);
@@ -116,8 +147,6 @@ const Dashboard = () => {
       setState(overviewState);
     };
   }, [auth]);
-
-  // console.log(auth);
 
   const {
     approvedAmount,
@@ -148,7 +177,7 @@ const Dashboard = () => {
             ].includes(role.label)
           ) && (
             <Link to="/import/dependencies" className="btn btn-primary rounded">
-              <i className="flaticon-381-settings-2 mr-0"> </i>
+              <i className="flaticon-381-settings-2 mr-0"></i>
             </Link>
           )}
       </div>
@@ -200,11 +229,15 @@ const Dashboard = () => {
                       </li>
                       <li className="list-group-item d-flex justify-content-between">
                         <span className="mb-0">Expected Performance :</span>
-                        <strong>{Math.round(expectedPerformance) + "%"}</strong>
+                        <strong>
+                          {parseFloat(expectedPerformance).toFixed(2) + "%"}
+                        </strong>
                       </li>
                       <li className="list-group-item d-flex justify-content-between">
                         <span className="mb-0">Actual Performance :</span>
-                        <strong>{Math.round(actualPerformance) + "%"}</strong>
+                        <strong>
+                          {parseFloat(actualPerformance).toFixed(2) + "%"}
+                        </strong>
                       </li>
                     </ul>
                   </div>

@@ -1,6 +1,6 @@
 import React from "react";
 import Lottie from "lottie-react";
-import loaderAnimation from "../../assets/animations/lf30_editor_dv61jfyj.json";
+import loaderAnimation from "../../assets/animations/loader-one.json";
 
 const Loading = () => {
   return (

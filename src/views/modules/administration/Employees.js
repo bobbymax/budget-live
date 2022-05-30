@@ -13,14 +13,16 @@ import makeAnimated from "react-select/animated";
 import Alert from "../../../services/classes/Alert";
 // import BasicTable from "../../../components/commons/tables/BasicTable";
 import { Link } from "react-router-dom";
-import { formatDate } from "../../../services/utils/helpers";
+import { formatDate, userHasRole } from "../../../services/utils/helpers";
 import AddStaffRole from "./AddStaffRole";
 import ModifyUser from "./ModifyUser";
 import Loading from "../../../components/commons/Loading";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
 import PasswordReset from "./PasswordReset";
+import { useSelector } from "react-redux";
 
 const Employees = () => {
+  const auth = useSelector((state) => state.auth.value.user);
   const initialState = {
     id: 0,
     staff_no: "",
@@ -95,6 +97,33 @@ const Employees = () => {
         label: role.name,
       }))
     );
+  };
+
+  const detachRole = (staff, role) => {
+    setLoading(false);
+
+    const data = {
+      role_id: role.id,
+    };
+
+    try {
+      alter("detach/roles", staff.id, data)
+        .then((res) => {
+          const result = res.data;
+
+          setStaff(result.data);
+          setLoading(false);
+          Alert.success("Role Revoked!!", result.message);
+        })
+        .catch((err) => {
+          setLoading(false);
+          Alert.success("Oops!!", "Something went wrong!!");
+          console.log(err.message);
+        });
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -249,8 +278,8 @@ const Employees = () => {
     try {
       store(`users/${staff.id}/roles`, data)
         .then((res) => {
-          setLoading(false);
           const result = res.data;
+          setLoading(false);
           setStaff(result.data);
           Alert.success("Role", result.message);
         })
@@ -658,6 +687,9 @@ const Employees = () => {
                         <th>Description</th>
                         <th>Start Date</th>
                         <th>End Date</th>
+                        {userHasRole(auth, "super-administrator") && (
+                          <th>Action</th>
+                        )}
                       </tr>
                     </thead>
 
@@ -672,6 +704,17 @@ const Employees = () => {
                                 ? formatDate(role.expiry_date)
                                 : "Cannot Expire"}
                             </td>
+                            {userHasRole(auth, "super-administrator") && (
+                              <td>
+                                <button
+                                  className="btn btn-rounded btn-danger btn-xs text-uppercase"
+                                  onClick={() => detachRole(staff, role)}
+                                  disabled={role.label === "staff"}
+                                >
+                                  <i className="fa fa-close"></i>
+                                </button>
+                              </td>
+                            )}
                           </tr>
                         ))
                       ) : (

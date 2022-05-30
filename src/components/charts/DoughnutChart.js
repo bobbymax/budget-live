@@ -7,8 +7,7 @@ const DoughnutChart = ({ chartData, totalApproved }) => {
   const { actualExpenditure, actualBalance } = chartData;
 
   const act = Math.round((actualExpenditure / totalApproved) * 100);
-  const bala = totalApproved - actualExpenditure;
-  const bal = Math.round((bala / totalApproved) * 100);
+  const bal = Math.round((actualBalance / totalApproved) * 100);
 
   const format = {
     labels: ["Expenditure", "Balance"],
