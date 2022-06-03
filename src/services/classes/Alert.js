@@ -24,6 +24,15 @@ class Alert {
     });
   };
 
+  warning = (title, mssg) => {
+    Swal.fire({
+      icon: "warning",
+      title: title,
+      text: mssg,
+      timer: 3000,
+    });
+  };
+
   error = (title, mssg) => {
     Swal.fire({
       icon: "error",

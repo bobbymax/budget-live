@@ -107,16 +107,25 @@ const Expenditures = () => {
         .then((res) => {
           const claim = res.data.data;
           setLoading(false);
-          Alert.success("Found!!", res.data.message);
-          setState({
-            ...state,
-            code: claim.reference_no,
-            claim: claim,
-            title: claim.title,
-            beneficiary: claim.owner.name.toUpperCase(),
-            amount: claim.total_amount,
-            claim_id: claim.id,
-          });
+
+          if (res.status == 204) {
+            console.log(res);
+            Alert.warning(
+              "Warning!!",
+              "This claim exists but has already been cleared!!"
+            );
+          } else {
+            Alert.success("Details!!", res.data.message);
+            setState({
+              ...state,
+              code: claim.reference_no,
+              claim: claim,
+              title: claim.title,
+              beneficiary: claim.owner.name.toUpperCase(),
+              amount: claim.total_amount,
+              claim_id: claim.id,
+            });
+          }
         })
         .catch((err) => {
           setLoading(false);
