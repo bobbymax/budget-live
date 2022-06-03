@@ -12,7 +12,7 @@ node_modules/
 /build
 
 # index live
-src/services/utils/index.js
+/src/services/utils/index.js
 
 # misc
 .DS_Store
