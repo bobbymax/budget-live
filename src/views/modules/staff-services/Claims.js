@@ -118,6 +118,7 @@ const Claims = (props) => {
       state: {
         claim: claim,
         actionType: "print",
+        type: "staff-claim",
       },
     });
   };

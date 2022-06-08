@@ -23,6 +23,16 @@ const Retirement = () => {
     });
   };
 
+  const handlePrintOut = (claim) => {
+    navigate(`/claims/${claim.reference_no}/print`, {
+      state: {
+        claim: claim,
+        actionType: "print",
+        type: "touring-advance",
+      },
+    });
+  };
+
   useEffect(() => {
     if (auth !== null) {
       setLoading(true);
@@ -93,15 +103,23 @@ const Retirement = () => {
                       <tr key={claim.id}>
                         <td>{claim.title}</td>
                         <td>
-                          <div className="btn-group">
+                          <div className="btn-group btn-rounded btn-sm">
                             <button
-                              className="btn btn-success btn-rounded"
+                              className="btn btn-success"
                               type="button"
                               onClick={() => handleRetirement(claim)}
                               disabled={claim && claim.rettired}
                             >
                               <i className="fa fa-skyatlas mr-2"></i>
                               RETIRE
+                            </button>
+                            <button
+                              className="btn btn-info"
+                              type="button"
+                              onClick={() => handlePrintOut(claim)}
+                            >
+                              <i className="fa fa-eye mr-2"></i>
+                              VIEW
                             </button>
                           </div>
                         </td>

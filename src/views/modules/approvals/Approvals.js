@@ -39,6 +39,33 @@ const Approvals = (props) => {
   const [tracking, setTracking] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  const canReverseStage = (stage) => {
+    let status = false;
+
+    switch (stage) {
+      case "treasury":
+        if (state.batch && state.batch.steps == 2) {
+          status = userHasRole(auth, "budget-office-officer");
+        } else {
+          status =
+            state.batch && state.batch.status === "paid"
+              ? userHasRole(auth, "treasury")
+              : userHasRole(auth, "audit");
+        }
+        break;
+
+      case "audit":
+        status = userHasRole(auth, "treasury");
+        break;
+
+      default:
+        status = false;
+        break;
+    }
+
+    return status;
+  };
+
   const fetchPaymentBatch = (e) => {
     e.preventDefault();
 
@@ -65,6 +92,7 @@ const Approvals = (props) => {
               showDetails: true,
               grandTotal: parseFloat(result.data.amount),
             });
+
             setLoading(false);
             Alert.success("Found!", result.message);
           })
@@ -79,6 +107,50 @@ const Approvals = (props) => {
         Alert.error("Oops!", "Something has gone terribly wrong");
       }
     }
+  };
+
+  const reverseStage = (data) => {
+    Alert.flash(
+      "Are you sure?",
+      "warning",
+      "You are about to revert back a stage!!"
+    ).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          setLoading(true);
+          fetch("stage/reversals", data.id)
+            .then((res) => {
+              const result = res.data;
+              const stage = approvals.filter(
+                (approval) =>
+                  approval.stage === result.data.level &&
+                  approval.level == result.data.steps
+              );
+
+              setApprovalStage(stage[0]);
+              setTracking(result.data.tracks);
+              setState({
+                ...state,
+                batch: result.data,
+                batch_id: result.data.id,
+                batch_code: "",
+                showDetails: true,
+                grandTotal: parseFloat(result.data.amount),
+              });
+
+              setLoading(false);
+              Alert.success("All Done!!", result.message);
+            })
+            .catch((err) => {
+              setLoading(false);
+              Alert.error("Oops", "Something went wrong!!");
+              console.log(err.message);
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
   };
 
   const handleExpenditureUpdate = (e) => {
@@ -201,14 +273,29 @@ const Approvals = (props) => {
   return (
     <>
       {loading ? <Loading /> : null}
-      <h4 className="mb-4">
-        Approve Payments{" "}
-        {approvalStage !== undefined ? (
-          <span className="badge badge-pill badge-default badge-rounded badge-sm">
-            {approvalStage.name}
-          </span>
-        ) : null}
-      </h4>
+      <div className="row">
+        <div className="col-md-9">
+          <h4 className="mb-4">
+            Approve Payments{" "}
+            {approvalStage !== undefined ? (
+              <span className="badge badge-pill badge-default badge-rounded badge-sm">
+                {approvalStage.name}
+              </span>
+            ) : null}
+          </h4>
+        </div>
+        <div className="col-md-3">
+          <button
+            className="btn btn-info btn-rounded btn-xs float-right"
+            disabled={approvalStage && !canReverseStage(approvalStage.stage)}
+            onClick={() => state.batch && reverseStage(state.batch)}
+            type="button"
+          >
+            <i className="fa fa-undo mr-2"></i>
+            Revert Back
+          </button>
+        </div>
+      </div>
 
       <form onSubmit={fetchPaymentBatch}>
         <div className="row">

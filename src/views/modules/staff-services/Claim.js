@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-// import { PDFViewer } from "@react-pdf/renderer";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -7,9 +6,7 @@ import ClaimDetails from "../../../components/commons/widgets/ClaimDetails";
 import Alert from "../../../services/classes/Alert";
 import { printBatch } from "../../../services/utils/controllers";
 import { amountToWords } from "../../../services/utils/helpers";
-// import ExportClaimPDF from "../../exports/ExportClaimPDF";
 import ExportClaim from "./ExportClaim";
-// import ExportClaimPDF from "../../exports/ExportClaimPDF";
 
 export const Claim = (props) => {
   const params = useLocation();
@@ -18,6 +15,7 @@ export const Claim = (props) => {
 
   const initialState = {
     claim: null,
+    type: "staff-claim",
     printed: false,
   };
 
@@ -29,7 +27,9 @@ export const Claim = (props) => {
       printed: false,
     });
 
-    navigate("/claims");
+    const redect = state.type === "staff-claim" ? "/claims" : "/retire";
+
+    navigate(redect);
   };
 
   const handlePrintClaim = (data, paymentType, totalAmountInWords) => {
@@ -64,10 +64,12 @@ export const Claim = (props) => {
   useEffect(() => {
     if (params.pathname && params.state) {
       const claim = params.state.claim;
+      const type = params.state.type;
 
       setState({
         ...state,
         claim,
+        type,
       });
     }
   }, []);

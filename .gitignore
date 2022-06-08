@@ -11,9 +11,6 @@ node_modules/
 # production
 /build
 
-# index live
-/src/services/utils/index.js
-
 # misc
 .DS_Store
 .env.local
