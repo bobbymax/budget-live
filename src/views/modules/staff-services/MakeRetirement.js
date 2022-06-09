@@ -398,7 +398,7 @@ const MakeRetirement = () => {
                         }
                         disabled={
                           instruction.benefit &&
-                          instruction.benefit.label !== "others"
+                          instruction.benefit.label !== "other"
                         }
                       />
                     </div>
