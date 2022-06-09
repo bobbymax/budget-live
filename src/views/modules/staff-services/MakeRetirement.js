@@ -389,7 +389,7 @@ const MakeRetirement = () => {
                     <div className="col-md-12">
                       <TextInputField
                         label="Amount"
-                        value={formatCurrency(instruction.amount)}
+                        value={instruction.amount}
                         onChange={(e) =>
                           setInstruction({
                             ...instruction,
