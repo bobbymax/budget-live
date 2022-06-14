@@ -9,11 +9,18 @@ import CustomSelect from "../../../components/forms/select/CustomSelect";
 import CustomSelectOptions from "../../../components/forms/select/CustomSelectOptions";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
-import { batchRequests, collection } from "../../../services/utils/controllers";
+import {
+  batchRequests,
+  collection,
+  store,
+} from "../../../services/utils/controllers";
 import "./reports.css";
 import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
 import { months } from "../../../services/utils/helpers";
 import TextInputField from "../../../components/forms/input/TextInputField";
+import moment from "moment";
+import LineChart from "../../../components/charts/LineChart";
+import Alert from "../../../services/classes/Alert";
 
 const ReportManagement = () => {
   const initialState = {
@@ -35,6 +42,7 @@ const ReportManagement = () => {
   const [expenditures, setExpenditures] = useState([]);
   const [budgetYear, setBudgetYear] = useState(0);
   const [departments, setDepartments] = useState([]);
+  const [selectedMonth, setSelectedMonth] = useState("all");
   const [department, setDepartment] = useState("ALL");
   const [loading, setLoading] = useState(false);
 
@@ -164,8 +172,6 @@ const ReportManagement = () => {
                     )
                   : fundsForYear;
 
-              // console.log(fundsForYear, budgetHeads);
-
               const exps = getExpenditures(fundsForYear);
 
               const approved = fundsForYear
@@ -178,8 +184,11 @@ const ReportManagement = () => {
                 .map((fund) => parseFloat(fund.actual_expenditure))
                 .reduce((sum, prev) => sum + prev, 0);
 
-              const expPerf = (booked / approved) * 100;
-              const actPerf = (actual / approved) * 100;
+              const expected = (booked / approved) * 100;
+              const actually = (actual / approved) * 100;
+
+              const expPerf = isNaN(parseFloat(expected)) ? 0 : expected;
+              const actPerf = isNaN(parseFloat(actually)) ? 0 : actually;
 
               // console.log(prepareReport(budgetHeads, fundsForYear));
 
@@ -214,15 +223,101 @@ const ReportManagement = () => {
     }
   }, [budgetYear, department]);
 
-  console.log(budgetHeads, funds);
+  const reportGeneration = () => {
+    if (funds.length > 0 && budgetHeads.length > 0) {
+      let report = [];
 
-  useEffect(() => {
-    if (state.startDate !== "" && state.endDate !== "") {
-      console.log(
-        prepareReport(budgetHeads, funds, state.startDate, state.endDate)
-      );
+      budgetHeads.map((head) => {
+        let flikes = funds.filter((fund) => fund.budgetHead === head.name);
+        const approved = flikes
+          .map((flk) => parseFloat(flk.approved_amount))
+          .reduce((sum, prev) => sum + prev, 0);
+        const spent = flikes
+          .map((flk) => parseFloat(flk.actual_expenditure))
+          .reduce((sum, prev) => sum + prev, 0);
+
+        const actualPerf = (spent / approved) * 100;
+        return report.push({
+          budgetHead: head.name,
+          totalApproved: approved,
+          totalSpent: spent,
+          funds: flikes,
+          balance: flikes
+            .map((flk) => parseFloat(flk.actual_balance))
+            .reduce((sum, prev) => sum + prev, 0),
+          totalPerf: isNaN(actualPerf) ? 0 : actualPerf,
+        });
+      });
+
+      return report;
     }
-  }, [state.startDate, state.endDate]);
+  };
+
+  // console.log(reportGeneration());
+
+  const handleReportGeneration = () => {
+    const data = {
+      reports: reportGeneration(),
+    };
+
+    setLoading(true);
+
+    try {
+      store("generate/monthly/report", data)
+        .then((res) => {
+          const link = document.createElement("a");
+          link.href = res.data.data;
+          link.setAttribute("download", res.data.data);
+          link.setAttribute("target", "_blank");
+          document.body.appendChild(link);
+          link.click();
+          setLoading(false);
+          Alert.success("Printed!!", "Document printed successfully!!");
+        })
+        .catch((err) => {
+          console.log(err.message);
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchMonthly = (month) => {
+    const monthly =
+      funds &&
+      funds.filter((fund) => moment(fund.updated_at).format("MMMM") === month);
+
+    const booked = monthly
+      .map((fund) => parseFloat(fund.booked_expenditure))
+      .reduce((sum, prev) => sum + prev, 0);
+
+    const actual = monthly
+      .map((fund) => parseFloat(fund.actual_expenditure))
+      .reduce((sum, prev) => sum + prev, 0);
+
+    return {
+      booked: parseFloat(booked.toFixed(2)),
+      actual: parseFloat(actual.toFixed(2)),
+    };
+  };
+
+  const chartReport = (mnt) => {
+    // loop through months
+    let figures = [];
+    const selections =
+      mnt !== "all" ? months.long.filter((mnth) => mnth === mnt) : months.long;
+    selections.map((month) => figures.push(fetchMonthly(month)));
+    return figures;
+  };
+
+  // useEffect(() => {
+  //   if (state.startDate !== "" && state.endDate !== "") {
+  //     console.log(
+  //       prepareReport(budgetHeads, funds, state.startDate, state.endDate)
+  //     );
+  //   }
+  // }, [state.startDate, state.endDate]);
 
   useEffect(() => {
     if (year > 0) {
@@ -288,7 +383,7 @@ const ReportManagement = () => {
                     isSearchable
                   />
                 </div>
-                <div className="col-md-6">
+                {/* <div className="col-md-6">
                   <TextInputField
                     type="date"
                     value={state.startDate}
@@ -305,13 +400,15 @@ const ReportManagement = () => {
                       setState({ ...state, endDate: e.target.value })
                     }
                   />
-                </div>
+                </div> */}
 
                 <div className="col-md-12 mt-3">
                   <button
                     className="btn btn-success btn-block btn-rounded"
                     type="button"
-                    disabled={state.startDate === "" || state.endDate === ""}
+                    // disabled={state.startDate === "" || state.endDate === ""}
+                    disabled={loading}
+                    onClick={() => handleReportGeneration()}
                   >
                     <i className="fa fa-file-pdf-o mr-2"></i>
                     GENERATE REPORT
@@ -343,6 +440,43 @@ const ReportManagement = () => {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="row">
+        <div className="col-md-12">
+          <div className="card">
+            <div className="card-header align-items-center border-0 pb-0">
+              <div className="row">
+                <div className="col-md-9">
+                  <h3 className="fs-20 text-black">Monthly Actual Expenses</h3>
+                </div>
+                <div className="col-md-3">
+                  <CustomSelect
+                    value={selectedMonth}
+                    onChange={(e) => setSelectedMonth(e.target.value)}
+                  >
+                    <CustomSelectOptions label="ALL" value="all" />
+                    {months.long.map((month, i) => (
+                      <CustomSelectOptions
+                        key={i}
+                        label={month}
+                        value={month}
+                      />
+                    ))}
+                  </CustomSelect>
+                </div>
+              </div>
+            </div>
+            <div className="card-body pb-0 pt-0">
+              <div className="d-flex align-items-center mb-3">
+                <LineChart
+                  month={selectedMonth}
+                  dataset={chartReport(selectedMonth)}
+                />
+              </div>
             </div>
           </div>
         </div>

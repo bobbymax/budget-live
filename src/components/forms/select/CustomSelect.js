@@ -9,6 +9,7 @@ const CustomSelect = ({
   errorMessage = null,
   additionalClasses = "",
   name = "",
+  fullWidth = false,
   ...otherProps
 }) => {
   return (
