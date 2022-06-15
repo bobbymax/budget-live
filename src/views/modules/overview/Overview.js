@@ -87,6 +87,16 @@ const Overview = (props) => {
     "head-of-budget",
   ];
 
+  const allowedRolesDownload = [
+    "ict-manager",
+    "dfpm",
+    "es",
+    "fad-manager",
+    "fad-admin",
+    "head-of-budget",
+    "super-administrator",
+  ];
+
   const handleSearch = (term) => {
     setSearchTerm(term);
 
@@ -259,19 +269,23 @@ const Overview = (props) => {
             <h2>Overview</h2>
           </div>
         </div>
-        <div className="col-md-3">
-          <CSVLink
-            className="btn btn-success btn-rounded float-right"
-            data={downloadExpenditures()}
-            headers={expenditureHeaders}
-            filename="Expenditure Breakdown"
-            onClick={() => downloadExpenditures()}
-            disabled={data.length == 0}
-          >
-            <i className="fa fa-download mr-2"></i>
-            Expenditures CSV
-          </CSVLink>
-        </div>
+        {auth.roles.some((role) =>
+          allowedRolesDownload.includes(role.label)
+        ) && (
+          <div className="col-md-3">
+            <CSVLink
+              className="btn btn-success btn-rounded float-right"
+              data={downloadExpenditures()}
+              headers={expenditureHeaders}
+              filename="Expenditure Breakdown"
+              onClick={() => downloadExpenditures()}
+              disabled={data.length < 1}
+            >
+              <i className="fa fa-download mr-2"></i>
+              Expenditures CSV
+            </CSVLink>
+          </div>
+        )}
 
         <div className="col-md-12">
           <CustomSelect
