@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
@@ -71,6 +72,7 @@ const Overview = (props) => {
   const [results, setResults] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [department, setDepartment] = useState(0);
+  const [subBudgetHeads, setSubBudgetHeads] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const auth = useSelector((state) => state.auth.value.user);
@@ -146,6 +148,17 @@ const Overview = (props) => {
       .catch((err) => console.log(err));
   }, []);
 
+  // eslint-disable-next-line no-unused-vars
+  const downloadExpenditures = () => {
+    let exps = [];
+    if (data.length > 0) {
+      data.map((sub) => sub.expenditures && exps.push(...sub.expenditures));
+    }
+
+    // console.log(exps);
+    return exps;
+  };
+
   const getTotal = (data, key) => {
     if (data.length == 0) {
       return 0;
@@ -162,11 +175,15 @@ const Overview = (props) => {
     if (value > 0) {
       collection("departments/" + value + "/budget/summary")
         .then((res) => {
-          setData(res.data.data);
+          const depty = res.data.data;
+          // console.log(depty);
+          setData(depty);
         })
         .catch((err) => console.log(err.message));
     }
   };
+
+  // console.log(department);
 
   const filterOptions = (optionsArr) => {
     const arr = [];
@@ -176,6 +193,17 @@ const Overview = (props) => {
       });
     return arr;
   };
+
+  const expenditureHeaders = [
+    { label: "BATCH NO.", key: "batch_no" },
+    { label: "BUDGET CODE", key: "subBudgetHeadCode" },
+    { label: "BENEFICIARY", key: "beneficiary" },
+    { label: "DESCRIPTION", key: "description" },
+    { label: "AMOUNT", key: "amount" },
+    { label: "PAYMENT TYPE", key: "payment_type" },
+    { label: "STATUS", key: "status" },
+    { label: "DATE", key: "updated_at" },
+  ];
 
   const headers = [
     { label: "Budget Head Id", key: "budget_head_id" },
@@ -226,10 +254,23 @@ const Overview = (props) => {
       {loading ? <Loading /> : null}
 
       <div className="row">
-        <div className="col-md-12">
+        <div className="col-md-9">
           <div className="page-titles">
             <h2>Overview</h2>
           </div>
+        </div>
+        <div className="col-md-3">
+          <CSVLink
+            className="btn btn-success btn-rounded float-right"
+            data={downloadExpenditures()}
+            headers={expenditureHeaders}
+            filename="Expenditure Breakdown"
+            onClick={() => downloadExpenditures()}
+            disabled={data.length == 0}
+          >
+            <i className="fa fa-download mr-2"></i>
+            Expenditures CSV
+          </CSVLink>
         </div>
 
         <div className="col-md-12">
