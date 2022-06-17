@@ -10,8 +10,10 @@ const ClaimTracker = (props) => {
   };
 
   useEffect(() => {
-    if (props.claim !== undefined) {
-      setTracks(props.claim.tracking);
+    if (props.claim !== undefined || props.claim !== null) {
+      props.claim && props.claim.tracking
+        ? setTracks(props.claim.tracking)
+        : setTracks([]);
     }
   }, [props.claim]);
 
