@@ -13,6 +13,7 @@ import {
 } from "../../../services/utils/controllers";
 import TextInputField from "../../../components/forms/TextInputField";
 import Loading from "../../../components/commons/Loading";
+import ClaimTracker from "../../../components/commons/modals/ClaimTracker";
 
 const Claims = (props) => {
   const navigate = useNavigate();
@@ -32,6 +33,10 @@ const Claims = (props) => {
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
   const [collectables, setCollectables] = useState([]);
+  const [modalState, setModalState] = useState({
+    open: false,
+    claim: null,
+  });
   const [loading, setLoading] = useState(false);
 
   const unique = () => {
@@ -40,8 +45,6 @@ const Claims = (props) => {
     const num = Math.floor(Math.random() * max) + min;
     return num;
   };
-
-  // console.log(unique());
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -147,6 +150,16 @@ const Claims = (props) => {
     });
   };
 
+  const handleTracking = (claim) => {
+    // console.log(claim);
+
+    setModalState({
+      ...modalState,
+      open: true,
+      claim,
+    });
+  };
+
   const deleteClaim = (claim) => {
     Alert.flash(
       "Are you sure?",
@@ -212,6 +225,12 @@ const Claims = (props) => {
           </div>
         </div>
 
+        <ClaimTracker
+          show={modalState.open}
+          claim={modalState.claim}
+          onHide={() => setModalState({ ...modalState, open: false })}
+        />
+
         {open && (
           <>
             <div className="col-md-12">
@@ -275,6 +294,7 @@ const Claims = (props) => {
             addDetails={handleAddDetails}
             onDestroy={deleteClaim}
             loading={loading}
+            track={handleTracking}
           />
         </div>
       </div>

@@ -7,6 +7,7 @@ const ClaimTable = ({
   onView,
   addDetails,
   loading,
+  track,
 }) => {
   return (
     <>
@@ -34,13 +35,22 @@ const ClaimTable = ({
                         {claim.status === "registered" ||
                         claim.status === "cleared" ||
                         claim.status === "batched" ? (
-                          <button
-                            className="btn-sm btn btn-primary btn-rounded"
-                            onClick={() => onView(claim)}
-                          >
-                            <i className="fa fa-eye mr-2"></i>
-                            VIEW CLAIM
-                          </button>
+                          <div className="btn-group btn-rounded">
+                            <button
+                              className="btn-sm btn btn-primary"
+                              onClick={() => onView(claim)}
+                            >
+                              <i className="fa fa-eye mr-2"></i>
+                              VIEW CLAIM
+                            </button>
+                            <button
+                              className="btn btn-sm btn-secondary"
+                              onClick={() => track(claim)}
+                            >
+                              <i className="fa fa-bus mr-2"></i>
+                              TRACK
+                            </button>
+                          </div>
                         ) : (
                           <div className="btn-group btn-rounded">
                             <button

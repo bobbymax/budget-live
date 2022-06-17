@@ -110,7 +110,11 @@ const Logistics = (props) => {
             const staff = res[1].data.data;
             const subs = res[2].data.data;
 
-            setSubBudgetHeads(subs);
+            const data = auth.administrator
+              ? subs
+              : subs.filter((sub) => sub.department_id == auth.department_id);
+
+            setSubBudgetHeads(data);
             setUsers(staff);
             setDepartments(depts);
           })

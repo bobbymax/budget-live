@@ -82,20 +82,29 @@ const RefundRequests = (props) => {
 
   const loadRefunds = () => {
     collection("refunds")
-      .then((res) => setRefunds(res.data.data))
+      .then((res) => {
+        const result = res.data.data;
+        console.log(result);
+        setRefunds(result);
+      })
       .catch((err) => console.log(err.message));
   };
 
   const loadSubBudgetHeads = () => {
     collection("subBudgetHeads")
       .then((res) => {
-        setSubBudgetHeads(res.data.data);
+        const result = res.data.data;
+
+        const data = auth.isAdministrator && [];
+
+        setSubBudgetHeads(data);
       })
       .catch((err) => console.log(err.message));
   };
 
   useEffect(() => {
     loadRefunds();
+    // console.log(loadRefunds());
     loadSubBudgetHeads();
   }, []);
 
