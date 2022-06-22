@@ -68,10 +68,17 @@ const Expenditures = () => {
       const value =
         parseFloat(state.available_balance) - parseFloat(state.amount);
 
-      setState({
-        ...state,
-        new_balance: value,
-      });
+      if (value < 0) {
+        Alert.error(
+          "Oops!!",
+          "It seems you have entered an amount greater than what is available!!"
+        );
+      } else {
+        setState({
+          ...state,
+          new_balance: value,
+        });
+      }
     }
   }, [state.available_balance, state.amount]);
 
@@ -517,7 +524,16 @@ const Expenditures = () => {
 
                       <div className="col-md-12 mt-3">
                         <div className="btn-group btn-rounded">
-                          <button type="submit" className="btn btn-success">
+                          <button
+                            type="submit"
+                            className="btn btn-success"
+                            disabled={
+                              state.amount == 0 ||
+                              state.beneficiary === "" ||
+                              state.payment_type === "" ||
+                              state.description
+                            }
+                          >
                             <i className="fa fa-send mr-2"></i> Submit
                           </button>
                           <button

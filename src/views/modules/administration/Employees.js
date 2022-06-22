@@ -3,6 +3,7 @@ import CustomSelect from "../../../components/forms/CustomSelect";
 import TextInputField from "../../../components/forms/TextInputField";
 import {
   alter,
+  batchRequests,
   collection,
   // destroy,
   store,
@@ -20,6 +21,7 @@ import Loading from "../../../components/commons/Loading";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
 import PasswordReset from "./PasswordReset";
 import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Employees = () => {
   const auth = useSelector((state) => state.auth.value.user);
@@ -125,55 +127,6 @@ const Employees = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    try {
-      collection("users")
-        .then((res) => {
-          setEmployees(res.data.data);
-          setLoading(false);
-        })
-        .catch((err) => console.log(err.message));
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      collection("gradeLevels")
-        .then((res) => {
-          setLevels(res.data.data);
-        })
-        .catch((err) => console.log(err.message));
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      collection("departments")
-        .then((res) => {
-          setDepartments(res.data.data);
-        })
-        .catch((err) => console.log(err.message));
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
-  useEffect(() => {
-    try {
-      collection("roles")
-        .then((res) => {
-          setRoles(res.data.data);
-        })
-        .catch((err) => console.log(err.message));
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
 
   const manageStaff = (user) => {
     setState({
@@ -325,6 +278,39 @@ const Employees = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    try {
+      setLoading(true);
+      const usersData = collection("users");
+      const levelsData = collection("gradeLevels");
+      const departmentsData = collection("departments");
+      const rolesData = collection("roles");
+
+      batchRequests([usersData, levelsData, departmentsData, rolesData])
+        .then(
+          axios.spread((...res) => {
+            const staff = res[0].data.data;
+            const levels = res[1].data.data;
+            const depts = res[2].data.data;
+            const roles = res[3].data.data;
+
+            setRoles(roles);
+            setDepartments(depts);
+            setEmployees(staff);
+            setLevels(levels);
+            setLoading(false);
+          })
+        )
+        .catch((err) => {
+          setLoading(false);
+          console.log(err.message);
+        });
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  }, []);
 
   // const handleDestroy = (data) => {
   //   Alert.flash(
