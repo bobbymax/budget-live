@@ -194,7 +194,7 @@ const TableCard = ({
                                   data-placement="top"
                                   title="Manage"
                                 >
-                                  <i className="fa fa-user-plus color-muted"></i>
+                                  <i className="fa fa-cog color-muted"></i>
                                 </Link>
                               </span>
                             )}

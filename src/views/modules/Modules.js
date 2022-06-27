@@ -28,6 +28,8 @@ const Modules = () => {
       .catch((err) => console.log(err.message));
   }, []);
 
+  // console.log(modules);
+
   useEffect(() => {
     if (auth !== null && modules.length > 0) {
       if (auth.administrator) {

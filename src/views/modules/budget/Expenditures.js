@@ -82,6 +82,8 @@ const Expenditures = () => {
     }
   }, [state.available_balance, state.amount]);
 
+  // console.log(subBudgetHeads);
+
   const handleDestroy = (data) => {
     setLoading(true);
 

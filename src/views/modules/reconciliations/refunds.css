@@ -1,0 +1,7 @@
+.custom-card {
+  padding: 10px 12px;
+  background: rgba(9, 17, 9, 0.9);
+  border-radius: 9px;
+  color: rgb(255, 198, 111);
+  filter: drop-shadow(2px 9px 11px #000);
+}

@@ -65,6 +65,12 @@ const Logistics = lazy(() => import("../views/modules/refunds/Logistics"));
 const RefundRequests = lazy(() =>
   import("../views/modules/refunds/RefundRequests")
 );
+const Fulfillments = lazy(() =>
+  import("../views/modules/reconciliations/Fulfillments")
+);
+const LogisticsRefund = lazy(() =>
+  import("../views/modules/reconciliations/LogisticsRefund")
+);
 
 const Overview = lazy(() => import("../views/modules/overview/Overview"));
 const OverviewExpenditure = lazy(() =>
@@ -163,6 +169,16 @@ export const routes = {
       name: "Logistics Refund",
       component: <Logistics />,
       path: "/logistics/refund",
+    },
+    {
+      name: "Logistics Request",
+      component: <LogisticsRefund />,
+      path: "/reconciliations/logistics",
+    },
+    {
+      name: "Logistics Fulfillment",
+      component: <Fulfillments />,
+      path: "/reconciliations/fulfillments",
     },
     {
       name: "Approve Payments",
