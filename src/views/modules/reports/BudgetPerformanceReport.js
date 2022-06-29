@@ -9,6 +9,7 @@ import "../../../components/commons/cards/custom-card.css";
 import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
 import PieChart from "../../../components/charts/PieChart";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
+import moment from "moment";
 
 const BudgetPerformanceReport = () => {
   const initialState = {
@@ -231,14 +232,17 @@ const BudgetPerformanceReport = () => {
     }
   }, []);
 
-  console.log(funds);
+  //   console.log(funds);
 
   return (
     <>
       {loading ? <Loading /> : null}
       <div className="row">
         <div className="col-12">
-          <h3 className="title">Budget Performance</h3>
+          <h3 className="title">
+            Budget Performance as at{" "}
+            {moment().format("MMMM Do YYYY, h:mm:ss a")}
+          </h3>
           <br />
         </div>
         <div className="col-12">
