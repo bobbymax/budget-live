@@ -22,6 +22,8 @@ const BudgetHeads = () => {
     }
   }, []);
 
+  console.log(budgetHeads);
+
   return (
     <>
       {loading ? <Loading /> : null}

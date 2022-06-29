@@ -200,6 +200,8 @@ const Fund = () => {
     fetch("creditBudgetHeads");
   }, []);
 
+  console.log(funds);
+
   useEffect(() => {
     collection("subBudgetHeads")
       .then((res) => setSubBudgetHeads(res.data.data))

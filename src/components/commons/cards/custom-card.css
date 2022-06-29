@@ -11,3 +11,42 @@
   -webkit-box-shadow: 16px 17px 31px -18px rgba(0, 0, 0, 0.61);
   -moz-box-shadow: 16px 17px 31px -18px rgba(0, 0, 0, 0.61);
 }
+
+.perf-cards {
+  padding: 20px 25px;
+  overflow: hidden;
+  text-align: center;
+  border-radius: 12px;
+  -webkit-box-shadow: 0px 10px 13px -7px #000000,
+    5px 5px 15px 5px rgba(0, 0, 0, 0);
+  box-shadow: 0px 10px 13px -7px #000000, 5px 5px 15px 5px rgba(0, 0, 0, 0);
+}
+
+.perf-cards p {
+  margin-bottom: 0;
+  font-size: 18px;
+}
+
+.perf-cards h6 {
+  color: antiquewhite;
+}
+
+.perf-cards__primary {
+  background-color: #2ecc71;
+  color: aliceblue;
+}
+
+.perf-cards__warning {
+  background-color: #f39c12;
+  color: aliceblue;
+}
+
+.perf-cards__info {
+  background-color: #3498db;
+  color: aliceblue;
+}
+
+.perf-cards__danger {
+  background-color: #e74c3c;
+  color: aliceblue;
+}

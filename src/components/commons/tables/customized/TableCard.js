@@ -41,6 +41,21 @@ const TableCard = ({
     }
   }, [rows, searchKey]);
 
+  const setColumn = (format, value) => {
+    let result;
+    switch (format) {
+      case "currency":
+        result = formatCurrency(value);
+        break;
+      case "percent":
+        result = isNaN(value) ? 0?.toFixed(2) + "%" : value?.toFixed(2) + "%";
+        break;
+      default:
+        break;
+    }
+    return result;
+  };
+
   return (
     <div className="col-md-12">
       <div className="card">
@@ -73,7 +88,7 @@ const TableCard = ({
             </div>
           </div>
           <div className="table-responsive">
-            <table className="table table-striped table-hover table-responsive-sm">
+            <table className="table table-striped table-hover table-responsive-sm table-bordered">
               <TableHeader
                 columns={columns}
                 handleDelete={handleDelete}
@@ -110,19 +125,21 @@ const TableCard = ({
                               col.format === "button" &&
                               row[col.key]}
 
-                            {"format" in col
-                              ? col.format === "currency"
-                                ? formatCurrency(row[col.key])
-                                : col.format === "badge" && (
-                                    <span
-                                      className={`text-white badge badge-rounded badge-xs badge-${badge(
-                                        row[col.key]
-                                      )}`}
-                                    >
-                                      {row[col.key].toUpperCase()}
-                                    </span>
-                                  )
-                              : row[col.key]}
+                            {"format" in col ? (
+                              col.format === "badge" ? (
+                                <span
+                                  className={`text-white badge badge-rounded badge-xs badge-${badge(
+                                    row[col.key]
+                                  )}`}
+                                >
+                                  {row[col.key].toUpperCase()}
+                                </span>
+                              ) : (
+                                setColumn(col.format, row[col.key])
+                              )
+                            ) : (
+                              row[col.key]
+                            )}
                           </td>
                         ))}
                         {(handleEdit !== undefined ||
@@ -194,7 +211,7 @@ const TableCard = ({
                                   data-placement="top"
                                   title="Manage"
                                 >
-                                  <i className="fa fa-cog color-muted"></i>
+                                  <i className="fa fa-user-plus color-muted"></i>
                                 </Link>
                               </span>
                             )}
