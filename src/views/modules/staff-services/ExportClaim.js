@@ -22,8 +22,16 @@ const ExportClaim = ({ claim, auth, handlePrintClaim, onClose }) => {
     Alert.flash("Print Claim!!", "info", "Do you wish to continue?")
       .then((result) => {
         if (result.isConfirmed) {
-          const totalAmountInWords = amountToWords(claim.total_amount);
-          handlePrintClaim(claim, "staff-claim", totalAmountInWords);
+          const balance =
+            parseFloat(claim?.total_amount) - parseFloat(claim?.spent_amount);
+          const totalAmountInWords = amountToWords(claim?.total_amount);
+          const balanceInWords = amountToWords(balance);
+          handlePrintClaim(
+            claim,
+            claim?.type,
+            totalAmountInWords,
+            balanceInWords
+          );
         }
       })
       .catch((err) => console.log(err.message));
