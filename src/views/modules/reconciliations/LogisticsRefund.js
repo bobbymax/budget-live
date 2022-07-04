@@ -374,7 +374,6 @@ const LogisticsRefund = () => {
                                 })
                               }
                               multiline={4}
-                              readOnly
                             />
                           </div>
                           <div className="col-md-12">
