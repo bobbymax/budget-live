@@ -122,7 +122,7 @@ const LogisticsRefund = () => {
           .then((res) => {
             const result = res.data.data;
             // console.log(result);
-            if (result.status === "paid" && result.type === "sp") {
+            if (result.status === "paid" && result.type === "tpp") {
               setState({
                 ...state,
                 subBudgetHeadId: result.subBudgetHead,
@@ -326,7 +326,6 @@ const LogisticsRefund = () => {
                                   beneficiary: e.target.value,
                                 })
                               }
-                              disabled
                             />
                           </div>
                           <div className="col-md-7">
