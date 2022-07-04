@@ -122,7 +122,7 @@ const LogisticsRefund = () => {
           .then((res) => {
             const result = res.data.data;
             // console.log(result);
-            if (result.status === "paid" && result.type === "tpp") {
+            if (result?.type === "tpp") {
               setState({
                 ...state,
                 subBudgetHeadId: result.subBudgetHead,
