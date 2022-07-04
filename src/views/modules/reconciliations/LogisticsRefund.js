@@ -60,6 +60,8 @@ const LogisticsRefund = () => {
       budget_year: budgetYear,
       expenditure_id: state.expenditure_id,
       department_id: state.department_id,
+      beneficiary: state.beneficiary,
+      description: state.description,
     };
 
     setLoading(true);
