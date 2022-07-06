@@ -39,6 +39,7 @@ const LogisticsRefund = () => {
   const [state, setState] = useState(initialState);
   const [departments, setDepartments] = useState([]);
   const [reconciliations, setReconciliations] = useState([]);
+  const [errors, setErrors] = useState("");
   const [loading, setLoading] = useState(false);
 
   const budgetYear = useSelector((state) =>
@@ -62,6 +63,7 @@ const LogisticsRefund = () => {
       department_id: state.department_id,
       beneficiary: state.beneficiary,
       description: state.description,
+      amount: state.amount,
     };
 
     setLoading(true);
@@ -165,15 +167,19 @@ const LogisticsRefund = () => {
   };
 
   const loadExpenditure = (exp) => {
-    setState({
-      ...state,
-      expenditures: [],
-      expenditure_id: exp?.id,
-      amount: exp?.amount,
-      beneficiary: exp?.beneficiary,
-      description: exp?.description,
-      expLoaded: true,
-    });
+    if (exp?.status !== "refunded") {
+      setState({
+        ...state,
+        expenditures: [],
+        expenditure_id: exp?.id,
+        amount: exp?.amount,
+        beneficiary: exp?.beneficiary,
+        description: exp?.description,
+        expLoaded: true,
+      });
+    } else {
+      setErrors("This Expenditure has already been refunded!!!");
+    }
   };
 
   useEffect(() => {
@@ -216,6 +222,11 @@ const LogisticsRefund = () => {
     <>
       {loading ? <Loading /> : null}
       <div className="row">
+        {errors !== "" && (
+          <div className="col-md-12">
+            <div className="alert alert-badge alert-danger">{errors}</div>
+          </div>
+        )}
         <div className="col-md-12">
           <button
             type="button"
@@ -362,7 +373,6 @@ const LogisticsRefund = () => {
                               onChange={(e) =>
                                 setState({ ...state, amount: e.target.value })
                               }
-                              disabled
                             />
                           </div>
                           <div className="col-md-12">
