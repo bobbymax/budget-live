@@ -343,11 +343,12 @@ const Employees = () => {
             <div className="col-md-12">
               <div className="page-titles">
                 <button
-                  className="btn btn-success"
+                  className="btn btn-success btn-rounded btn-sm"
                   onClick={() => setOpen(!open)}
                   disabled={open}
+                  style={{ letterSpacing: 1.5 }}
                 >
-                  <i className="fa fa-plus"></i> Add Staff
+                  <i className="fa fa-user-plus mr-2"></i> ADD STAFF
                 </button>
               </div>
             </div>
@@ -507,13 +508,12 @@ const Employees = () => {
                 </div>
               )}
             </>
-            <div className="col-md-12">
-              <TableCard
-                columns={columns}
-                rows={employees}
-                manageStaff={manageStaff}
-              />
-            </div>
+
+            <TableCard
+              columns={columns}
+              rows={employees}
+              manageStaff={manageStaff}
+            />
           </>
         )}
 

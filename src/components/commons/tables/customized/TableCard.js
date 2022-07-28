@@ -258,6 +258,7 @@ const TableCard = ({
           </div>
           <div className="pagination justify-content-center">
             <CustomPagination
+              rows={rows}
               total={rows.length}
               itemsPerPage={itemsPerPage}
               currentPage={currentPage}

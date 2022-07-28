@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import Pagination from "react-bootstrap/Pagination";
 
 const CustomPagination = ({
+  rows = [],
   total = 0,
   itemsPerPage = 15,
   currentPage = 1,
@@ -17,6 +18,13 @@ const CustomPagination = ({
     }
   }, [total, itemsPerPage]);
 
+  useEffect(() => {
+    if (rows?.length == 0) {
+      setTotalPages(0);
+    }
+  }, [rows]);
+
+  // eslint-disable-next-line no-unused-vars
   const paginationItems = useMemo(() => {
     const pages = [];
 
@@ -40,17 +48,30 @@ const CustomPagination = ({
   if (totalPages == 0) return null;
 
   return (
-    <Pagination>
-      <Pagination.Prev
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage == 1}
-      />
-      {paginationItems}
-      <Pagination.Next
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage == totalPages}
-      />
-    </Pagination>
+    <>
+      <div className="mt-4 btn-group btn-rounded">
+        <button
+          type="button"
+          className="btn btn-success"
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage == 1}
+          style={{ fontSize: 11, letterSpacing: 2 }}
+        >
+          <i className="fa fa-arrow-left mr-2"></i>
+          PREVIOUS
+        </button>
+        <button
+          type="button"
+          className="btn btn-success"
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage == totalPages}
+          style={{ fontSize: 11, letterSpacing: 2 }}
+        >
+          NEXT
+          <i className="fa fa-arrow-right ml-2"></i>
+        </button>
+      </div>
+    </>
   );
 };
 

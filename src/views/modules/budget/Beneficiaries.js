@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
+import Loading from "../../../components/commons/Loading";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
 import TextInputField from "../../../components/forms/input/TextInputField";
 import { collection } from "../../../services/utils/controllers";
@@ -14,6 +15,7 @@ const Beneficiaries = () => {
   const [state, setState] = useState(initialState);
   const [expenditures, setExpenditures] = useState([]);
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const columns = [
     { key: "subBudgetHeadCode", label: "BUDGET CODE" },
@@ -47,22 +49,27 @@ const Beneficiaries = () => {
   }, [state.beneficiary, expenditures]);
 
   useEffect(() => {
+    setLoading(true);
     try {
       collection("dashboard/expenditures")
         .then((res) => {
           const result = res.data.data;
+          setLoading(false);
           setExpenditures(result);
         })
         .catch((err) => {
+          setLoading(false);
           console.log(err.message);
         });
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   }, []);
 
   return (
     <>
+      {loading ? <Loading /> : null}
       <div className="row">
         <div className="col-md-7">
           <TextInputField
