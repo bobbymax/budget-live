@@ -76,3 +76,23 @@
   font-weight: 500;
   font-size: 15px;
 }
+
+.total__price-card {
+  background-color: darkslategrey;
+  padding: 9px 15px;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.total__price-card p {
+  font-size: 12px;
+  margin-bottom: 0;
+  color: aliceblue;
+  letter-spacing: 1.5px;
+}
+
+.total__price-card h3 {
+  color: burlywood;
+  letter-spacing: 1.5px;
+  margin-bottom: 3px;
+}

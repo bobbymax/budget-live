@@ -46,6 +46,7 @@ const Expenditures = () => {
     { key: "subBudgetHeadCode", label: "BUDGET CODE" },
     { key: "beneficiary", label: "BENEFICIARY" },
     { key: "amount", label: "AMOUNT", format: "currency" },
+    { key: "created_at", label: "RAISED AT" },
     { key: "status", label: "STATUS" },
   ];
 

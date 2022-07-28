@@ -5,7 +5,7 @@ import DoughnutChart from "../components/charts/DoughnutChart";
 import BarChart from "../components/charts/BarChart";
 import { batchRequests, collection } from "../services/utils/controllers";
 import { Link } from "react-router-dom";
-import { formatCurrency } from "../services/utils/helpers";
+import { formatCurrency, userHasRole } from "../services/utils/helpers";
 import BudgetController from "./controller/BudgetController";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -82,25 +82,31 @@ const Dashboard = () => {
                   !claim.rettired
               );
 
-              const approved = funds
+              const filtered = userHasRole(auth, "super-administrator")
+                ? funds
+                : funds.filter(
+                    (fund) => auth?.department?.code === fund?.budget_owner
+                  );
+
+              const approved = filtered
                 .map((fund) => parseFloat(fund.approved_amount))
                 .reduce((sum, prev) => sum + prev, 0);
 
-              const booked = funds
+              const booked = filtered
                 .map((fund) => parseFloat(fund.booked_expenditure))
                 .reduce((sum, prev) => sum + prev, 0);
 
-              const actual = funds
+              const actual = filtered
                 .map((fund) => parseFloat(fund.actual_expenditure))
                 .reduce((sum, prev) => sum + prev, 0);
 
               const summary = {
                 approvedAmount: approved,
-                actualBalance: funds
+                actualBalance: filtered
                   .map((fund) => parseFloat(fund.actual_balance))
                   .reduce((sum, prev) => sum + prev, 0),
                 actualExpenditure: actual,
-                bookedBalance: funds
+                bookedBalance: filtered
                   .map((fund) => parseFloat(fund.booked_balance))
                   .reduce((sum, prev) => sum + prev, 0),
                 bookedExpenditure: booked,

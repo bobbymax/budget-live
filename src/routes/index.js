@@ -90,6 +90,10 @@ const BudgetPerformanceReport = lazy(() =>
   import("../views/modules/reports/BudgetPerformanceReport.js")
 );
 
+const Beneficiaries = lazy(() =>
+  import("../views/modules/budget/Beneficiaries")
+);
+
 export const routes = {
   guest: [
     {
@@ -303,6 +307,11 @@ export const routes = {
       name: "Budget Performance Report",
       component: <BudgetPerformanceReport />,
       path: "/budget/performance",
+    },
+    {
+      name: "Beneficiaries",
+      component: <Beneficiaries />,
+      path: "/payment/beneficiaries",
     },
   ],
 };
