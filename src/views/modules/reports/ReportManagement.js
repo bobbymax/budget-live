@@ -233,7 +233,7 @@ const ReportManagement = () => {
           .map((flk) => parseFloat(flk.approved_amount))
           .reduce((sum, prev) => sum + prev, 0);
         const spent = flikes
-          .map((flk) => parseFloat(flk.actual_expenditure))
+          .map((flk) => parseFloat(flk.booked_expenditure))
           .reduce((sum, prev) => sum + prev, 0);
 
         const actualPerf = (spent / approved) * 100;
@@ -256,9 +256,15 @@ const ReportManagement = () => {
   // console.log(reportGeneration());
 
   const handleReportGeneration = () => {
+    const reportData = reportGeneration();
     const data = {
       reports: reportGeneration(),
+      total: reportData
+        .map((rep) => parseFloat(rep?.totalApproved))
+        .reduce((sum, prev) => sum + prev, 0),
     };
+
+    // console.log(data);
 
     setLoading(true);
 
