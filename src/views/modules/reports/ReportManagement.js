@@ -264,29 +264,29 @@ const ReportManagement = () => {
         .reduce((sum, prev) => sum + prev, 0),
     };
 
-    console.log(data);
+    // console.log(data);
 
-    // setLoading(true);
+    setLoading(true);
 
-    // try {
-    //   store("generate/monthly/report", data)
-    //     .then((res) => {
-    //       const link = document.createElement("a");
-    //       link.href = res.data.data;
-    //       link.setAttribute("download", res.data.data);
-    //       link.setAttribute("target", "_blank");
-    //       document.body.appendChild(link);
-    //       link.click();
-    //       setLoading(false);
-    //       Alert.success("Printed!!", "Document printed successfully!!");
-    //     })
-    //     .catch((err) => {
-    //       console.log(err.message);
-    //       setLoading(false);
-    //     });
-    // } catch (error) {
-    //   console.log(error);
-    // }
+    try {
+      store("generate/monthly/report", data)
+        .then((res) => {
+          const link = document.createElement("a");
+          link.href = res.data.data;
+          link.setAttribute("download", res.data.data);
+          link.setAttribute("target", "_blank");
+          document.body.appendChild(link);
+          link.click();
+          setLoading(false);
+          Alert.success("Printed!!", "Document printed successfully!!");
+        })
+        .catch((err) => {
+          console.log(err.message);
+          setLoading(false);
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchMonthly = (month) => {
