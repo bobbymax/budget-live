@@ -74,6 +74,11 @@ const Expenditures = () => {
           "Oops!!",
           "It seems you have entered an amount greater than what is available!!"
         );
+        setState({
+          ...state,
+          amount: 0,
+          new_balance: 0,
+        });
       } else {
         setState({
           ...state,

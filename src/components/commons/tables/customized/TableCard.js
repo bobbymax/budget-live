@@ -108,8 +108,8 @@ const TableCard = ({
                     )
                     .map((row, i) => (
                       <TableRow key={i}>
-                        {columns.map((col) => (
-                          <td key={col.key}>
+                        {columns.map((col, idx) => (
+                          <td key={idx}>
                             {batchData &&
                               "format" in col &&
                               col.format === "button" && (
