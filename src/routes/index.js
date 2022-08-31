@@ -94,6 +94,9 @@ const Beneficiaries = lazy(() =>
   import("../views/modules/budget/Beneficiaries")
 );
 
+const Testing = lazy(() => import("../views/modules/administration/Testing"));
+const Recons = lazy(() => import("../views/modules/reconciliations/Recons"));
+
 export const routes = {
   guest: [
     {
@@ -312,6 +315,16 @@ export const routes = {
       name: "Beneficiaries",
       component: <Beneficiaries />,
       path: "/payment/beneficiaries",
+    },
+    {
+      name: "Testing",
+      component: <Testing />,
+      path: "/testing",
+    },
+    {
+      name: "Reconciliations List",
+      component: <Recons />,
+      path: "/reconciliations/list",
     },
   ],
 };

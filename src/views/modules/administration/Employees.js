@@ -18,10 +18,11 @@ import { formatDate, userHasRole } from "../../../services/utils/helpers";
 import AddStaffRole from "./AddStaffRole";
 import ModifyUser from "./ModifyUser";
 import Loading from "../../../components/commons/Loading";
-import TableCard from "../../../components/commons/tables/customized/TableCard";
 import PasswordReset from "./PasswordReset";
 import { useSelector } from "react-redux";
 import axios from "axios";
+import { columns } from "../../../resources/columns";
+import DataTables from "../../../components/DataTables";
 
 const Employees = () => {
   const auth = useSelector((state) => state.auth.value.user);
@@ -54,12 +55,6 @@ const Employees = () => {
   const [updateModalShow, setUpdateModalShow] = useState(false);
   const [staff, setStaff] = useState({});
   const [loading, setLoading] = useState(true);
-
-  const columns = [
-    { label: "Staff Number", key: "staff_no" },
-    { label: "Name", key: "name" },
-    { label: "Email", key: "email" },
-  ];
 
   const rules = [
     { name: "name", rules: ["required", "string", "min:3"] },
@@ -509,10 +504,11 @@ const Employees = () => {
               )}
             </>
 
-            <TableCard
-              columns={columns}
+            <DataTables
+              pillars={columns.staff}
               rows={employees}
-              manageStaff={manageStaff}
+              manageRow={manageStaff}
+              canManage
             />
           </>
         )}

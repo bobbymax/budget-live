@@ -74,7 +74,7 @@ const PreviousBudget = () => {
 
     setExpenditures(subBudgetHead?.expenditures);
 
-    console.log(subBudgetHead);
+    // console.log(subBudgetHead);
   };
 
   useEffect(() => {

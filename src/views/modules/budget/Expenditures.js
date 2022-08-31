@@ -58,8 +58,8 @@ const Expenditures = () => {
     if (single.length > 0) {
       setState({
         ...state,
-        budget_code: single[0].budgetCode,
-        available_balance: parseFloat(single[0].booked_balance),
+        budget_code: single[0]?.budgetCode,
+        available_balance: parseFloat(single[0]?.booked_balance),
       });
     }
   }, [state.sub_budget_head_id]);

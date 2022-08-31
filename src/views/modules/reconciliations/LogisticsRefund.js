@@ -46,7 +46,7 @@ const LogisticsRefund = () => {
     parseInt(state?.config?.value?.budget_year)
   );
   const columns = [
-    { key: "subBudgetHeadCode", label: "BUDGET CODE" },
+    { key: "expSubBudgetHead", label: "BUDGET CODE" },
     { key: "beneficiary", label: "BENEFICIARY" },
     { key: "description", label: "DESCRIPTION" },
     { key: "amount", label: "AMOUNT", format: "currency" },
@@ -216,7 +216,7 @@ const LogisticsRefund = () => {
     }
   }, []);
 
-  // console.log(departments);
+  console.log(reconciliations);
 
   return (
     <>
