@@ -39,4 +39,30 @@ export const columns = {
       accessor: "fulfilled_at",
     },
   ],
+  payments: [
+    {
+      Header: "Budget Code",
+      accessor: "subBudgetHeadCode",
+    },
+    {
+      Header: "Batch Code",
+      accessor: "batch_no",
+    },
+    {
+      Header: "Amount",
+      accessor: "amount",
+    },
+    {
+      Header: "Department",
+      accessor: "department",
+    },
+    {
+      Header: "Initiator",
+      accessor: "raised_by",
+    },
+    {
+      Header: "Date Raised",
+      accessor: "raised_at",
+    },
+  ],
 };

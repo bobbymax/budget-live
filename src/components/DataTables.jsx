@@ -26,7 +26,11 @@ const DataTables = ({
   rows,
   canManage = false,
   manageRow = undefined,
+  handleSelected = undefined,
   selectable = false,
+  printable = false,
+  exportable = false,
+  payments = false,
 }) => {
   const columns = useMemo(() => pillars, []);
   const data = useMemo(() => rows, [rows]);
@@ -77,9 +81,50 @@ const DataTables = ({
 
   const { globalFilter, pageIndex, pageSize } = state;
 
+  const handleSelectedRows = (selectedRows) => {
+    const selected = [];
+    selectedRows?.map((row) => selected.push(row.original));
+    return handleSelected(selected);
+  };
+
   return (
     <div className="col-md-12">
       <div className="card">
+        <div className="card-header">
+          <div className="btn-group btn-rounded">
+            {printable && (
+              <button
+                type="button"
+                className="btn btn-dark btn-sm"
+                disabled={selectedFlatRows?.length < 1}
+              >
+                <i className="fa fa-print mr-2"></i>
+                Print
+              </button>
+            )}
+            {exportable && (
+              <button
+                type="button"
+                className="btn btn-dark btn-sm"
+                disabled={selectedFlatRows?.length < 1}
+              >
+                <i className="fa fa-download mr-2"></i>
+                Export CSV
+              </button>
+            )}
+            {payments && (
+              <button
+                type="button"
+                className="btn btn-dark btn-sm"
+                onClick={() => handleSelectedRows(selectedFlatRows)}
+                disabled={selectedFlatRows?.length < 1}
+              >
+                <i className="fa fa-send mr-2"></i>
+                Post Payments
+              </button>
+            )}
+          </div>
+        </div>
         <div className="card-body">
           <div className="table-search mb-3">
             <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
