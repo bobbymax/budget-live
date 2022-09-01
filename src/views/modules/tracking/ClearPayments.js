@@ -6,6 +6,7 @@ import Alert from "../../../services/classes/Alert";
 
 const ClearPayments = () => {
   const [batches, setBatches] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   const handleSelected = (selected) => {
     // console.log(selected);
@@ -25,18 +26,21 @@ const ClearPayments = () => {
 
   useEffect(() => {
     try {
+      setIsFetching(true);
       collection("all/payments")
         .then((res) => {
           const result = res.data.data;
           setBatches(result.filter((batch) => batch?.shouldPost === "cleared"));
+          setIsFetching(false);
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          setIsFetching(false);
+        });
     } catch (error) {
       console.log(error);
     }
   }, []);
-
-  //   console.log(batches);
 
   return (
     <>
@@ -45,6 +49,7 @@ const ClearPayments = () => {
           pillars={columns.payments}
           rows={batches}
           handleSelected={handleSelected}
+          isFetching={isFetching}
           selectable
           exportable
           printable

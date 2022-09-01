@@ -24,6 +24,7 @@ import "./commons/tables/customized/tables/table.css";
 const DataTables = ({
   pillars,
   rows,
+  isFetching = false,
   canManage = false,
   manageRow = undefined,
   handleSelected = undefined,
@@ -86,6 +87,8 @@ const DataTables = ({
     selectedRows?.map((row) => selected.push(row.original));
     return handleSelected(selected);
   };
+
+  const columnLength = selectable ? pillars?.length + 2 : pillars?.length + 1;
 
   return (
     <div className="col-md-12">
@@ -163,7 +166,15 @@ const DataTables = ({
                 ))}
               </thead>
               <tbody {...getTableBodyProps()}>
-                {page?.length > 0 ? (
+                {isFetching && (
+                  <tr>
+                    <td colSpan={columnLength} className="text-default">
+                      Loading Please wait......
+                    </td>
+                  </tr>
+                )}
+
+                {!isFetching && page?.length > 0 ? (
                   page.map((row) => {
                     prepareRow(row);
                     return (
@@ -193,9 +204,7 @@ const DataTables = ({
                 ) : (
                   <tr>
                     <td
-                      colSpan={
-                        selectable ? pillars?.length + 2 : pillars?.length + 1
-                      }
+                      colSpan={columnLength}
                       style={{ color: "red" }}
                       className="uppercase"
                     >
