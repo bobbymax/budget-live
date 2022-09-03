@@ -93,41 +93,43 @@ const DataTables = ({
   return (
     <div className="col-md-12">
       <div className="card">
-        <div className="card-header">
-          <div className="btn-group btn-rounded">
-            {printable && (
-              <button
-                type="button"
-                className="btn btn-dark btn-sm"
-                disabled={selectedFlatRows?.length < 1}
-              >
-                <i className="fa fa-print mr-2"></i>
-                Print
-              </button>
-            )}
-            {exportable && (
-              <button
-                type="button"
-                className="btn btn-dark btn-sm"
-                disabled={selectedFlatRows?.length < 1}
-              >
-                <i className="fa fa-download mr-2"></i>
-                Export CSV
-              </button>
-            )}
-            {payments && (
-              <button
-                type="button"
-                className="btn btn-dark btn-sm"
-                onClick={() => handleSelectedRows(selectedFlatRows)}
-                disabled={selectedFlatRows?.length < 1}
-              >
-                <i className="fa fa-send mr-2"></i>
-                Post Payments
-              </button>
-            )}
+        {(printable || exportable || payments) && (
+          <div className="card-header">
+            <div className="btn-group btn-rounded">
+              {printable && (
+                <button
+                  type="button"
+                  className="btn btn-dark btn-sm"
+                  disabled={selectedFlatRows?.length < 1}
+                >
+                  <i className="fa fa-print mr-2"></i>
+                  Print
+                </button>
+              )}
+              {exportable && (
+                <button
+                  type="button"
+                  className="btn btn-dark btn-sm"
+                  disabled={selectedFlatRows?.length < 1}
+                >
+                  <i className="fa fa-download mr-2"></i>
+                  Export CSV
+                </button>
+              )}
+              {payments && (
+                <button
+                  type="button"
+                  className="btn btn-dark btn-sm"
+                  onClick={() => handleSelectedRows(selectedFlatRows)}
+                  disabled={selectedFlatRows?.length < 1}
+                >
+                  <i className="fa fa-send mr-2"></i>
+                  Post Payments
+                </button>
+              )}
+            </div>
           </div>
-        </div>
+        )}
         <div className="card-body">
           <div className="table-search mb-3">
             <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
@@ -173,45 +175,45 @@ const DataTables = ({
                     </td>
                   </tr>
                 )}
-
-                {!isFetching && page?.length > 0 ? (
-                  page.map((row) => {
-                    prepareRow(row);
-                    return (
-                      <tr
-                        {...row.getRowProps()}
-                        className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                {!isFetching &&
+                  (page?.length > 0 ? (
+                    page.map((row) => {
+                      prepareRow(row);
+                      return (
+                        <tr
+                          {...row.getRowProps()}
+                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                        >
+                          {row.cells.map((cell) => (
+                            <td {...cell.getCellProps()}>
+                              {cell.render("Cell")}
+                            </td>
+                          ))}
+                          {canManage && (
+                            <td>
+                              <button
+                                type="button"
+                                onClick={() => manageRow(row.original)}
+                                className="btn btn-dark btn-sm btn-rounded"
+                              >
+                                <FiSettings />
+                              </button>
+                            </td>
+                          )}
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={columnLength}
+                        style={{ color: "red" }}
+                        className="uppercase"
                       >
-                        {row.cells.map((cell) => (
-                          <td {...cell.getCellProps()}>
-                            {cell.render("Cell")}
-                          </td>
-                        ))}
-                        {canManage && (
-                          <td>
-                            <button
-                              type="button"
-                              onClick={() => manageRow(row.original)}
-                              className="btn btn-dark btn-sm btn-rounded"
-                            >
-                              <FiSettings />
-                            </button>
-                          </td>
-                        )}
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={columnLength}
-                      style={{ color: "red" }}
-                      className="uppercase"
-                    >
-                      No Data Found!!
-                    </td>
-                  </tr>
-                )}
+                        No Data Found!!
+                      </td>
+                    </tr>
+                  ))}
               </tbody>
             </table>
           </div>

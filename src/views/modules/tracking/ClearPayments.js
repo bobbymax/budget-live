@@ -9,8 +9,6 @@ const ClearPayments = () => {
   const [isFetching, setIsFetching] = useState(false);
 
   const handleSelected = (selected) => {
-    // console.log(selected);
-
     const data = {
       payments: selected,
     };

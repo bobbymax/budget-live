@@ -65,4 +65,14 @@ export const columns = {
       accessor: "raised_at",
     },
   ],
+  subBudgetHeads: [
+    {
+      Header: "Code",
+      accessor: "budgetCode",
+    },
+    {
+      Header: "Name",
+      accessor: "name",
+    },
+  ],
 };

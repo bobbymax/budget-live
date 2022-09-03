@@ -1,20 +1,15 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
-import DataTableComponent from "../../../components/commons/tables/DataTableComponent";
-import {
-  alter,
-  collection,
-  destroy,
-  store,
-} from "../../../services/utils/controllers";
+import { alter, collection, store } from "../../../services/utils/controllers";
 import useApi from "../../../services/hooks/useApi";
 import Alert from "../../../services/classes/Alert";
 import CustomSelect from "../../../components/forms/CustomSelect";
 import TextInputField from "../../../components/forms/TextInputField";
 import { validate } from "../../../services/utils/validation";
 import { CSVLink } from "react-csv";
+import DataTables from "../../../components/DataTables";
+import { columns } from "../../../resources/columns";
 // import TableCard from "../../../components/commons/tables/customized/TableCard";
 
 const SubBudgetHeads = () => {
@@ -27,8 +22,6 @@ const SubBudgetHeads = () => {
 
   const [departmentIDs, setDepartmentIDs] = useState([]);
   const [budgetHeads, setBudgetHeads] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
   const [errors, setErrors] = useState({});
 
@@ -46,17 +39,6 @@ const SubBudgetHeads = () => {
   const [state, setState] = useState(initialState);
   const [update, setUpdate] = useState(false);
 
-  const columns = [
-    {
-      label: "Code",
-      key: "budgetCode",
-    },
-    {
-      label: "Name",
-      key: "name",
-    },
-  ];
-
   const handleEdit = (data) => {
     console.log(data);
     setState(data);
@@ -71,42 +53,6 @@ const SubBudgetHeads = () => {
         arr.push({ key: el.id, label: el.name });
       });
     return arr;
-  };
-
-  // const handleDestroy = (data) => {
-  //   Alert.flash(
-  //     "Are you sure?",
-  //     "warning",
-  //     "You would not be able to revert this!!"
-  //   ).then((result) => {
-  //     if (result.isConfirmed) {
-  //       destroy("subBudgetHeads", data.id)
-  //         .then((res) => {
-  //           setSubBudgetHeads([
-  //             ...subBudgetHeads.filter((sb) => sb.id !== res.data.data.id),
-  //           ]);
-  //           Alert.success("Deleted!!", res.data.message);
-  //         })
-  //         .catch((err) => console.log(err.message));
-  //     }
-  //   });
-  // };
-
-  const handleSearch = (str) => {
-    setSearchTerm(str);
-
-    if (str !== "") {
-      const filtered = subBudgetHeads.filter((row) => {
-        return Object.values(row)
-          .join(" ")
-          .toLowerCase()
-          .includes(str.toLowerCase());
-      });
-
-      setResults(filtered);
-    } else {
-      setResults(subBudgetHeads);
-    }
   };
 
   useEffect(() => {
@@ -221,32 +167,30 @@ const SubBudgetHeads = () => {
     { label: "Type", key: "type" },
   ];
 
-  // console.log(errors);
-
   return (
     <div className="row">
       <div className="col-md-12">
         <div className="page-titles">
           <button
-            className="btn btn-success"
+            className="btn btn-success btn-rounded"
             onClick={() => setOpen(!open)}
             disabled={open}
           >
-            <i className="fa fa-plus-square"></i> Add Sub budget Head
+            <i className="fa fa-plus mr-2"></i> Add Sub budget Head
           </button>
 
           <div className="pull-right">
             <CSVLink
               className={
                 subBudgetHeads && subBudgetHeads.length > 0
-                  ? "btn btn-success btn-md"
-                  : `btn btn-success btn-md disabled`
+                  ? "btn btn-success btn-md btn-rounded"
+                  : `btn btn-success btn-md btn-rounded disabled`
               }
               data={subBudgetHeads}
               headers={headers}
               filename="Sub Budget Heads"
             >
-              <i className="fa fa-download"></i> Download CSV
+              <i className="fa fa-download mr-2"></i> Download CSV
             </CSVLink>
           </div>
         </div>
@@ -454,25 +398,13 @@ const SubBudgetHeads = () => {
         </>
       )}
 
-      <div className="col-lg-12">
-        <>
-          {/* <TableCard
-            columns={columns}
-            rows={subBudgetHeads}
-            handleEdit={handleEdit}
-          /> */}
-          <DataTableComponent
-            pageName="Sub Budget Heads"
-            columns={columns}
-            rows={searchTerm.length < 1 ? subBudgetHeads : results}
-            handleEdit={handleEdit}
-            // handleDelete={handleDestroy}
-            term={searchTerm}
-            searchKeyWord={handleSearch}
-            isFetching={isLoading}
-          />
-        </>
-      </div>
+      <DataTables
+        pillars={columns.subBudgetHeads}
+        rows={subBudgetHeads}
+        manageRow={handleEdit}
+        isFetching={isLoading}
+        canManage
+      />
     </div>
   );
 };
