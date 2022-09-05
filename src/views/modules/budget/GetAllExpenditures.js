@@ -1,11 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable eqeqeq */
 import React, { useEffect, useState } from "react";
-import { batchRequests, collection } from "../../../services/utils/controllers";
+import {
+  batchRequests,
+  collection,
+  store,
+} from "../../../services/utils/controllers";
 import { CSVLink } from "react-csv";
 import axios from "axios";
 import DataTables from "../../../components/DataTables";
 import { formatCurrency } from "../../../services/utils/helpers";
+import Alert from "../../../services/classes/Alert";
 
 const GetAllExpenditures = () => {
   const initialState = {
@@ -53,6 +58,23 @@ const GetAllExpenditures = () => {
     },
   ];
 
+  const updateFunds = () => {
+    const data = {
+      reports: report,
+    };
+
+    try {
+      store("fix/issues", data)
+        .then((res) => {
+          const result = res.data;
+          Alert.success("Success!!", result.message);
+        })
+        .catch((err) => console.log(err.response.data.message));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (expenditures?.length > 0 && subBudgetHeads?.length > 0) {
       const data = [];
@@ -61,19 +83,19 @@ const GetAllExpenditures = () => {
           (exp) => exp.sub_budget_head_id == sub.id
         );
         const paid = exps.filter((exp) => exp.status === "paid");
-        const booked = exps.filter((exp) => exp.status !== "paid");
         const actual = paid
           .map((exp) => parseFloat(exp?.amount))
           .reduce((sum, prev) => sum + prev, 0);
-        const sum = booked
+        const booked = exps
           .map((exp) => parseFloat(exp?.amount))
           .reduce((sum, prev) => sum + prev, 0);
         return data.push({
-          subBudgetHeadName: sub.name,
-          subBudgetHeadCode: sub.budgetCode,
-          approved: formatCurrency(sub?.fund?.approved_amount),
-          actual: formatCurrency(actual),
-          booked: formatCurrency(sum),
+          subBudgetHeadName: sub?.name,
+          subBudgetHeadCode: sub?.budgetCode,
+          sub_budget_head_id: sub?.id,
+          approved: sub?.fund?.approved_amount,
+          actual,
+          booked,
         });
       });
 
@@ -93,7 +115,7 @@ const GetAllExpenditures = () => {
   useEffect(() => {
     try {
       const exps = collection("expenditures/all");
-      const subs = collection("subBudgetHeads");
+      const subs = collection("subBudgetHeads/all");
       batchRequests([exps, subs])
         .then(
           axios.spread((...res) => {
@@ -107,15 +129,26 @@ const GetAllExpenditures = () => {
     }
   }, []);
 
-  //   console.log(report);
+  console.log(subBudgetHeads);
   return (
     <div className="row">
-      <div className="col-md-12 mb-3">
+      <div className="col-md-6 mb-3">
+        <div className="btn-group">
+          <button
+            type="button"
+            className="btn btn-primary btn-rounded"
+            onClick={() => updateFunds()}
+          >
+            Update Funds
+          </button>
+        </div>
+      </div>
+      <div className="col-md-6 mb-3">
         <CSVLink
           className={
             expenditures?.length > 0
-              ? "btn btn-success btn-rounded btn-md"
-              : "btn btn-success btn-rounded btn-md disabled"
+              ? "btn btn-success btn-rounded btn-md float-right"
+              : "btn btn-success btn-rounded btn-md disabled float-right"
           }
           data={expenditures}
           headers={expenditureHeaders}
