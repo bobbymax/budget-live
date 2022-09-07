@@ -172,6 +172,7 @@ const Expenditures = () => {
       store("expenditures", data)
         .then((res) => {
           const result = res.data;
+          // const expense = result.data
 
           setLoading(false);
 

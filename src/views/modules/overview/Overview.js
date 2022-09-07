@@ -133,26 +133,20 @@ const Overview = (props) => {
       .then((res) => {
         const result = res.data.data;
 
-        const newDepts = result.filter(
-          (dept) => dept.subBudgetHeads && dept.subBudgetHeads.length > 0
-        );
-
         if (
           auth.roles &&
           auth.roles.length > 0 &&
           auth.roles.some((role) => allowedRoles.includes(role.label))
         ) {
-          setDepartments(newDepts);
+          setDepartments(result);
         } else if (userHasRole(auth, "budget-controller")) {
           setDepartments(
-            newDepts.filter((dept) => dept.id == auth.department_id)
+            result.filter((dept) => dept?.id == auth?.department_id)
           );
         } else if (userHasRole(auth, "budget-owner")) {
-          setDepartments(
-            newDepts.filter((dept) => dept.budget_owner == auth.id)
-          );
+          setDepartments(result.filter((dept) => dept.budget_owner == auth.id));
         } else {
-          setDepartments(newDepts);
+          setDepartments(result);
         }
       })
       .catch((err) => console.log(err));

@@ -187,9 +187,7 @@ const LogisticsRefund = () => {
       collection("departments")
         .then((res) => {
           const result = res.data.data;
-          const depts = result.filter(
-            (dept) => dept?.subBudgetHeads?.length > 0 && dept?.code !== "FLD"
-          );
+          const depts = result.filter((dept) => dept?.code !== "FLD");
           setDepartments(depts);
         })
         .catch((err) => console.log(err.message));

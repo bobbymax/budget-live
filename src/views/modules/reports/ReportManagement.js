@@ -168,7 +168,7 @@ const ReportManagement = () => {
               fundsForYear =
                 department !== "ALL"
                   ? fundsForYear.filter(
-                      (fund) => fund.budget_owner === department
+                      (fund) => fund?.budget_owner === department
                     )
                   : fundsForYear;
 
@@ -334,14 +334,7 @@ const ReportManagement = () => {
   useEffect(() => {
     try {
       collection("departments")
-        .then((res) => {
-          const result = res.data.data;
-          setDepartments(
-            result.filter(
-              (dept) => dept.subBudgetHeads && dept.subBudgetHeads.length > 0
-            )
-          );
-        })
+        .then((res) => setDepartments(res.data.data))
         .catch((err) => console.log(err.message));
     } catch (error) {
       console.log(error);
