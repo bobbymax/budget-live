@@ -55,7 +55,14 @@ const Beneficiaries = () => {
         .then((res) => {
           const result = res.data.data;
           setLoading(false);
-          setExpenditures(result);
+          setExpenditures(
+            result?.filter(
+              (exp) =>
+                exp?.status === "paid" ||
+                exp?.status === "batched" ||
+                exp?.status === "cleared"
+            )
+          );
         })
         .catch((err) => {
           setLoading(false);

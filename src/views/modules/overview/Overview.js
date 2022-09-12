@@ -10,6 +10,8 @@ import CustomSelect from "../../../components/forms/CustomSelect";
 import { useSelector } from "react-redux";
 import { CSVLink } from "react-csv";
 import Loading from "../../../components/commons/Loading";
+import Select from "react-select";
+import makeAnimated from "react-select/animated";
 
 const columns = [
   {
@@ -156,34 +158,42 @@ const Overview = (props) => {
   const downloadExpenditures = () => {
     let exps = [];
     if (data.length > 0) {
-      data.map((sub) => sub.expenditures && exps.push(...sub.expenditures));
+      data.map((sub) =>
+        sub?.expenditures?.map(
+          (exp) => exp?.status !== "refunded" && exps.push(exp)
+        )
+      );
     }
-
-    // console.log(exps);
     return exps;
   };
 
   const getTotal = (data, key) => {
-    if (data.length == 0) {
-      return 0;
-    }
+    if (data.length == 0) return 0;
 
     return data
       .map((sub) => {
-        return sub.fund && parseFloat(sub.fund[key]);
+        return sub?.fund && parseFloat(sub?.fund[key]);
       })
       .reduce((sum, current) => sum + current, 0);
   };
 
-  const handleChange = (value) => {
+  const handleChange = (e) => {
+    const value = e.key;
+    // console.log(value);
     if (value > 0) {
+      setDepartment(value);
+      setLoading(true);
       collection("departments/" + value + "/budget/summary")
         .then((res) => {
           const depty = res.data.data;
           // console.log(depty);
           setData(depty);
+          setLoading(false);
         })
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          setLoading(false);
+        });
     }
   };
 
@@ -239,7 +249,7 @@ const Overview = (props) => {
   };
 
   useEffect(() => {
-    if (data.length > 0) {
+    if (data?.length > 0) {
       setState({
         ...state,
         approvedAmount: getTotal(data, "approved_amount"),
@@ -252,6 +262,8 @@ const Overview = (props) => {
       setState(initialState);
     }
   }, [data]);
+
+  console.log(data);
 
   return (
     <>
@@ -281,17 +293,16 @@ const Overview = (props) => {
           </div>
         )}
 
-        <div className="col-md-12">
-          <CustomSelect
+        <div className="col-md-12 mb-4">
+          <p className="mb-0">Departments</p>
+          <Select
+            styles={{ height: "100%" }}
+            components={makeAnimated()}
+            isLoading={loading}
             options={filterOptions(departments)}
-            defaultText="Select Department"
-            label="Departments"
-            value={department}
-            onChange={(e) => {
-              setDepartment(e.target.value);
-              handleChange(e.target.value);
-            }}
-            disabled={departments.length == 1}
+            placeholder="Select Department"
+            onChange={handleChange}
+            isSearchable
           />
         </div>
 

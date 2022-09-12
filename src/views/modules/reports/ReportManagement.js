@@ -45,6 +45,7 @@ const ReportManagement = () => {
   const [selectedMonth, setSelectedMonth] = useState("all");
   const [department, setDepartment] = useState("ALL");
   const [loading, setLoading] = useState(false);
+  const [period, setPeriod] = useState("");
 
   const cards = [
     {
@@ -149,6 +150,7 @@ const ReportManagement = () => {
     return report;
   };
 
+  // This prepares the display report
   useEffect(() => {
     if (budgetYear > 0 && department !== "") {
       try {
@@ -190,8 +192,6 @@ const ReportManagement = () => {
               const expPerf = isNaN(parseFloat(expected)) ? 0 : expected;
               const actPerf = isNaN(parseFloat(actually)) ? 0 : actually;
 
-              // console.log(prepareReport(budgetHeads, fundsForYear));
-
               setFunds(fundsForYear);
               setBudgetHeads(budgetHeads);
               setExpenditures(exps);
@@ -223,28 +223,68 @@ const ReportManagement = () => {
     }
   }, [budgetYear, department]);
 
+  // This function generates reports
   const reportGeneration = () => {
-    if (funds.length > 0 && budgetHeads.length > 0) {
+    if (funds?.length > 0 && budgetHeads?.length > 0) {
       let report = [];
+      const d = new Date(period);
 
       budgetHeads.map((head) => {
-        let flikes = funds.filter((fund) => fund.budgetHead === head.name);
+        let flikes = funds.filter((fund) => fund?.budgetHead === head?.name);
         const approved = flikes
-          .map((flk) => parseFloat(flk.approved_amount))
-          .reduce((sum, prev) => sum + prev, 0);
-        const spent = flikes
-          .map((flk) => parseFloat(flk.booked_expenditure))
+          .map((flk) => parseFloat(flk?.approved_amount))
           .reduce((sum, prev) => sum + prev, 0);
 
-        const actualPerf = (spent / approved) * 100;
+        const computed = flikes.map((fund) => {
+          const duringPeriod =
+            fund?.expenditures?.length > 0
+              ? fund?.expenditures?.filter(
+                  (exp) =>
+                    (exp?.status === "batched" ||
+                      exp?.status === "cleared" ||
+                      exp?.status === "paid") &&
+                    new Date(exp?.created_at).getTime() <= d.getTime()
+                )
+              : [];
+
+          console.log(duringPeriod);
+
+          const totalAmountSpent = duringPeriod
+            ?.map((exp) => parseFloat(exp?.amount))
+            .reduce((sum, prev) => sum + prev, 0);
+
+          const untouchedBalance =
+            parseFloat(fund?.approved_amount) - totalAmountSpent;
+
+          const performance =
+            (totalAmountSpent / parseFloat(fund?.approved_amount)) * 100;
+
+          return {
+            ...fund,
+            expenditures: duringPeriod,
+            totalAmountSpent,
+            untouchedBalance,
+            expected_performance: performance,
+          };
+        });
+
+        const totalSpent = computed
+          .map((flk) => parseFloat(flk?.totalAmountSpent))
+          .reduce((sum, prev) => sum + prev, 0);
+
+        const balance = computed
+          .map((fund) => parseFloat(fund?.untouchedBalance))
+          .reduce((sum, prev) => sum + prev, 0);
+
+        // console.log(computed);
+
+        const actualPerf = (totalSpent / approved) * 100;
         return report.push({
-          budgetHead: head.name,
+          budgetHead: head?.name,
           totalApproved: approved,
-          totalSpent: spent,
-          funds: flikes,
-          balance: flikes
-            .map((flk) => parseFloat(flk.booked_balance))
-            .reduce((sum, prev) => sum + prev, 0),
+          totalSpent,
+          funds: computed,
+          balance,
           totalPerf: isNaN(actualPerf) ? 0 : actualPerf,
         });
       });
@@ -253,7 +293,9 @@ const ReportManagement = () => {
     }
   };
 
-  // console.log(reportGeneration());
+  // console.log(funds);
+
+  // console.log(new Date("2022-09-06T09:19:19.000000Z").getTime());
 
   const handleReportGeneration = () => {
     const reportData = reportGeneration();
@@ -264,7 +306,7 @@ const ReportManagement = () => {
         .reduce((sum, prev) => sum + prev, 0),
     };
 
-    // console.log(data);
+    console.log(data.reports);
 
     setLoading(true);
 
@@ -317,17 +359,12 @@ const ReportManagement = () => {
     return figures;
   };
 
-  // useEffect(() => {
-  //   if (state.startDate !== "" && state.endDate !== "") {
-  //     console.log(
-  //       prepareReport(budgetHeads, funds, state.startDate, state.endDate)
-  //     );
-  //   }
-  // }, [state.startDate, state.endDate]);
-
   useEffect(() => {
     if (year > 0) {
+      const d = new Date();
+
       setBudgetYear(year);
+      setPeriod(moment(d).format("YYYY-MM-DD"));
     }
   }, [year]);
 
@@ -341,6 +378,8 @@ const ReportManagement = () => {
     }
   }, []);
 
+  // console.log(period);
+
   return (
     <>
       {loading ? <Loading /> : null}
@@ -353,7 +392,7 @@ const ReportManagement = () => {
             </div>
             <div className="card-body">
               <div className="row">
-                <div className="col-md-3">
+                {/* <div className="col-md-3">
                   <CustomSelect
                     value={budgetYear}
                     onChange={(e) => setBudgetYear(parseInt(e.target.value))}
@@ -369,8 +408,15 @@ const ReportManagement = () => {
                       <CustomSelectOptions key={i} value={year} label={year} />
                     ))}
                   </CustomSelect>
+                </div> */}
+                <div className="col-md-5">
+                  <TextInputField
+                    type="date"
+                    value={period}
+                    onChange={(e) => setPeriod(e.target.value)}
+                  />
                 </div>
-                <div className="col-md-9">
+                <div className="col-md-7">
                   <Select
                     styles={{ height: "100%" }}
                     defaultValue={{ key: "ALL", label: "ALL DDD" }}
