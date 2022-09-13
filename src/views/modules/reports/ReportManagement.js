@@ -31,6 +31,18 @@ const ReportManagement = () => {
     actualBalance: 0,
     expectedPerformance: 0,
     actualPerformance: 0,
+    capexApprovedAmount: 0,
+    capexCommittment: 0,
+    capexBalance: 0,
+    capexPerformance: 0,
+    recurrentApprovedAmount: 0,
+    recurrentCommittment: 0,
+    recurrentBalance: 0,
+    recurrentPerformance: 0,
+    personnelApprovedAmount: 0,
+    personnelCommittment: 0,
+    personnelBalance: 0,
+    personnelPerformance: 0,
     startDate: "",
     endDate: "",
   };
@@ -77,6 +89,81 @@ const ReportManagement = () => {
       title: "Actual Performance",
       amount: state.actualPerformance,
       type: "percentage",
+    },
+  ];
+
+  const categories = [
+    {
+      title: "Capex Amount",
+      amount: state.capexApprovedAmount,
+      type: "currency",
+      background: "primary",
+    },
+    {
+      title: "Capex Committment",
+      amount: state.capexCommittment,
+      type: "currency",
+      background: "primary",
+    },
+    {
+      title: "Capex Balance",
+      amount: state.capexBalance,
+      type: "currency",
+      background: "primary",
+    },
+    {
+      title: "Capex Performance",
+      amount: state.capexPerformance,
+      type: "percentage",
+      background: "primary",
+    },
+    {
+      title: "Recurrent Amount",
+      amount: state.recurrentApprovedAmount,
+      type: "currency",
+      background: "warning",
+    },
+    {
+      title: "Recurrent Committment",
+      amount: state.recurrentCommittment,
+      type: "currency",
+      background: "warning",
+    },
+    {
+      title: "Recurrent Balance",
+      amount: state.recurrentBalance,
+      type: "currency",
+      background: "warning",
+    },
+    {
+      title: "Recurrent Performance",
+      amount: state.recurrentPerformance,
+      type: "percentage",
+      background: "warning",
+    },
+    {
+      title: "Personnel Amount",
+      amount: state.personnelApprovedAmount,
+      type: "currency",
+      background: "danger",
+    },
+    {
+      title: "Personnel Committment",
+      amount: state.personnelCommittment,
+      type: "currency",
+      background: "danger",
+    },
+    {
+      title: "Personnel Balance",
+      amount: state.personnelBalance,
+      type: "currency",
+      background: "danger",
+    },
+    {
+      title: "Personnel Performance",
+      amount: state.personnelPerformance,
+      type: "percentage",
+      background: "danger",
     },
   ];
 
@@ -176,6 +263,7 @@ const ReportManagement = () => {
 
               const exps = getExpenditures(fundsForYear);
 
+              // Get Total Budget Summary
               const approved = fundsForYear
                 .map((fund) => parseFloat(fund.approved_amount))
                 .reduce((sum, prev) => sum + prev, 0);
@@ -191,6 +279,45 @@ const ReportManagement = () => {
 
               const expPerf = isNaN(parseFloat(expected)) ? 0 : expected;
               const actPerf = isNaN(parseFloat(actually)) ? 0 : actually;
+
+              // Get Capex Budget Summary
+              const capexFunds = fundsForYear?.filter(
+                (fund) => fund?.budget_type === "capital"
+              );
+
+              const capexApproved = capexFunds
+                .map((fund) => parseFloat(fund.approved_amount))
+                .reduce((sum, prev) => sum + prev, 0);
+              const capexBooked = capexFunds
+                .map((fund) => parseFloat(fund.booked_expenditure))
+                .reduce((sum, prev) => sum + prev, 0);
+              const capexPerf = (capexBooked / capexApproved) * 100;
+
+              // Get Recurrent Budget Summary
+              const recurrentFunds = fundsForYear?.filter(
+                (fund) => fund?.budget_type === "recursive"
+              );
+
+              const recurrentApproved = recurrentFunds
+                .map((fund) => parseFloat(fund.approved_amount))
+                .reduce((sum, prev) => sum + prev, 0);
+              const recurrentBooked = recurrentFunds
+                .map((fund) => parseFloat(fund.booked_expenditure))
+                .reduce((sum, prev) => sum + prev, 0);
+              const recurrentPerf = (recurrentBooked / recurrentApproved) * 100;
+
+              // Get Personnel Budget Summary
+              const personnelFunds = fundsForYear?.filter(
+                (fund) => fund?.budget_type === "personnel"
+              );
+
+              const personnelApproved = personnelFunds
+                .map((fund) => parseFloat(fund.approved_amount))
+                .reduce((sum, prev) => sum + prev, 0);
+              const personnelBooked = personnelFunds
+                .map((fund) => parseFloat(fund.booked_expenditure))
+                .reduce((sum, prev) => sum + prev, 0);
+              const personnelPerf = (personnelBooked / personnelApproved) * 100;
 
               setFunds(fundsForYear);
               setBudgetHeads(budgetHeads);
@@ -208,8 +335,20 @@ const ReportManagement = () => {
                 actualBalance: fundsForYear
                   .map((fund) => parseFloat(fund.actual_balance))
                   .reduce((sum, prev) => sum + prev, 0),
-                expectedPerformance: expPerf.toFixed(2),
-                actualPerformance: actPerf.toFixed(2),
+                capexApprovedAmount: capexApproved,
+                capexCommittment: capexBooked,
+                capexBalance: capexApproved - capexBooked,
+                capexPerformance: capexPerf?.toFixed(2),
+                recurrentApprovedAmount: recurrentApproved,
+                recurrentCommittment: recurrentBooked,
+                recurrentBalance: recurrentApproved - recurrentBooked,
+                recurrentPerformance: recurrentPerf?.toFixed(2),
+                personnelApprovedAmount: personnelApproved,
+                personnelCommittment: personnelBooked,
+                personnelBalance: personnelApproved - personnelBooked,
+                personnelPerformance: personnelPerf?.toFixed(2),
+                expectedPerformance: expPerf?.toFixed(2),
+                actualPerformance: actPerf?.toFixed(2),
               });
             })
           )
@@ -222,6 +361,8 @@ const ReportManagement = () => {
       }
     }
   }, [budgetYear, department]);
+
+  // console.log(funds);
 
   // This function generates reports
   const reportGeneration = () => {
@@ -428,25 +569,6 @@ const ReportManagement = () => {
                     isSearchable
                   />
                 </div>
-                {/* <div className="col-md-6">
-                  <TextInputField
-                    type="date"
-                    value={state.startDate}
-                    onChange={(e) =>
-                      setState({ ...state, startDate: e.target.value })
-                    }
-                  />
-                </div>
-                <div className="col-md-6">
-                  <TextInputField
-                    type="date"
-                    value={state.endDate}
-                    onChange={(e) =>
-                      setState({ ...state, endDate: e.target.value })
-                    }
-                  />
-                </div> */}
-
                 <div className="col-md-12 mt-3">
                   <button
                     className="btn btn-success btn-block btn-rounded"
@@ -481,6 +603,19 @@ const ReportManagement = () => {
                       {card.type === "currency"
                         ? formatCurrencyWithoutSymbol(card.amount)
                         : card.amount + "%"}
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              {categories.map((cat, i) => (
+                <div className="col-md-3 mb-3" key={i}>
+                  <div className={`sm-card-report bg-${cat.background}`}>
+                    <h4>{cat.title}</h4>
+                    <p>
+                      {cat.type === "currency"
+                        ? formatCurrencyWithoutSymbol(cat.amount)
+                        : cat.amount + "%"}
                     </p>
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 .sm-card-report {
   padding: 15px 20px;
   background-color: rgb(41, 81, 48);
+  border-radius: 11px;
 }
 
 .sm-card-report h4 {

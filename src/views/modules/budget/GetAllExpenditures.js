@@ -148,7 +148,6 @@ const GetAllExpenditures = () => {
 
       setNotCleared(newBatches);
       setExpenditures(paidExps);
-      //   console.log(newBatches?.length);
     }
   }, [batches]);
 
