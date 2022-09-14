@@ -239,9 +239,10 @@ const ReportManagement = () => {
 
   // This prepares the display report
   useEffect(() => {
-    if (budgetYear > 0 && department !== "") {
+    if (budgetYear > 0 && department !== "" && period !== "") {
       try {
         setLoading(true);
+        const d = new Date(period);
         const fundsData = collection("fetch/creditBudgetHeads");
         const budgetHeadsData = collection("budgetHeads");
 
@@ -261,17 +262,70 @@ const ReportManagement = () => {
                     )
                   : fundsForYear;
 
-              const exps = getExpenditures(fundsForYear);
+              const computed = fundsForYear.map((fund) => {
+                const duringPeriod =
+                  fund?.expenditures?.length > 0
+                    ? fund?.expenditures?.filter(
+                        (exp) =>
+                          (exp?.status === "batched" ||
+                            exp?.status === "cleared" ||
+                            exp?.status === "paid") &&
+                          new Date(exp?.created_at).getTime() <= d.getTime()
+                      )
+                    : [];
+
+                const actualDuringPeriod = fund?.expenditures?.filter(
+                  (exp) =>
+                    exp?.status === "paid" &&
+                    new Date(exp?.created_at).getTime() <= d.getTime()
+                );
+
+                // console.log(duringPeriod);
+
+                const totalAmountSpent = duringPeriod
+                  ?.map((exp) => parseFloat(exp?.amount))
+                  .reduce((sum, prev) => sum + prev, 0);
+
+                const totalActualAmountSpent = actualDuringPeriod
+                  ?.map((exp) => parseFloat(exp?.amount))
+                  .reduce((sum, prev) => sum + prev, 0);
+
+                const untouchedBalance =
+                  parseFloat(fund?.approved_amount) - totalAmountSpent;
+
+                const untouchedActualBalance =
+                  parseFloat(fund?.approved_amount) - totalActualAmountSpent;
+
+                const performance =
+                  (totalAmountSpent / parseFloat(fund?.approved_amount)) * 100;
+
+                const actualPerf =
+                  (totalActualAmountSpent / parseFloat(fund?.approved_amount)) *
+                  100;
+
+                return {
+                  ...fund,
+                  expenditures: duringPeriod,
+                  totalAmountSpent,
+                  totalActualAmountSpent,
+                  untouchedBalance,
+                  untouchedActualBalance,
+                  expected_performance: performance,
+                  actual_performance: actualPerf,
+                };
+              });
+
+              const exps = getExpenditures(computed);
 
               // Get Total Budget Summary
               const approved = fundsForYear
-                .map((fund) => parseFloat(fund.approved_amount))
+                .map((fund) => parseFloat(fund?.approved_amount))
                 .reduce((sum, prev) => sum + prev, 0);
-              const booked = fundsForYear
-                .map((fund) => parseFloat(fund.booked_expenditure))
+              const booked = computed
+                .map((fund) => parseFloat(fund?.totalAmountSpent))
                 .reduce((sum, prev) => sum + prev, 0);
-              const actual = fundsForYear
-                .map((fund) => parseFloat(fund.actual_expenditure))
+              const actual = computed
+                .map((fund) => parseFloat(fund?.totalActualAmountSpent))
                 .reduce((sum, prev) => sum + prev, 0);
 
               const expected = (booked / approved) * 100;
@@ -281,45 +335,45 @@ const ReportManagement = () => {
               const actPerf = isNaN(parseFloat(actually)) ? 0 : actually;
 
               // Get Capex Budget Summary
-              const capexFunds = fundsForYear?.filter(
+              const capexFunds = computed?.filter(
                 (fund) => fund?.budget_type === "capital"
               );
 
               const capexApproved = capexFunds
-                .map((fund) => parseFloat(fund.approved_amount))
+                .map((fund) => parseFloat(fund?.approved_amount))
                 .reduce((sum, prev) => sum + prev, 0);
               const capexBooked = capexFunds
-                .map((fund) => parseFloat(fund.booked_expenditure))
+                .map((fund) => parseFloat(fund?.totalAmountSpent))
                 .reduce((sum, prev) => sum + prev, 0);
               const capexPerf = (capexBooked / capexApproved) * 100;
 
               // Get Recurrent Budget Summary
-              const recurrentFunds = fundsForYear?.filter(
+              const recurrentFunds = computed?.filter(
                 (fund) => fund?.budget_type === "recursive"
               );
 
               const recurrentApproved = recurrentFunds
-                .map((fund) => parseFloat(fund.approved_amount))
+                .map((fund) => parseFloat(fund?.approved_amount))
                 .reduce((sum, prev) => sum + prev, 0);
               const recurrentBooked = recurrentFunds
-                .map((fund) => parseFloat(fund.booked_expenditure))
+                .map((fund) => parseFloat(fund?.totalAmountSpent))
                 .reduce((sum, prev) => sum + prev, 0);
               const recurrentPerf = (recurrentBooked / recurrentApproved) * 100;
 
               // Get Personnel Budget Summary
-              const personnelFunds = fundsForYear?.filter(
+              const personnelFunds = computed?.filter(
                 (fund) => fund?.budget_type === "personnel"
               );
 
               const personnelApproved = personnelFunds
-                .map((fund) => parseFloat(fund.approved_amount))
+                .map((fund) => parseFloat(fund?.approved_amount))
                 .reduce((sum, prev) => sum + prev, 0);
               const personnelBooked = personnelFunds
-                .map((fund) => parseFloat(fund.booked_expenditure))
+                .map((fund) => parseFloat(fund?.totalAmountSpent))
                 .reduce((sum, prev) => sum + prev, 0);
               const personnelPerf = (personnelBooked / personnelApproved) * 100;
 
-              setFunds(fundsForYear);
+              setFunds(computed);
               setBudgetHeads(budgetHeads);
               setExpenditures(exps);
               setLoading(false);
@@ -329,11 +383,11 @@ const ReportManagement = () => {
                 approvedAmount: approved,
                 expectedExpenditures: booked,
                 actualExpenditures: actual,
-                bookedBalance: fundsForYear
-                  .map((fund) => parseFloat(fund.booked_balance))
+                bookedBalance: computed
+                  .map((fund) => parseFloat(fund?.untouchedBalance))
                   .reduce((sum, prev) => sum + prev, 0),
-                actualBalance: fundsForYear
-                  .map((fund) => parseFloat(fund.actual_balance))
+                actualBalance: computed
+                  .map((fund) => parseFloat(fund?.untouchedActualBalance))
                   .reduce((sum, prev) => sum + prev, 0),
                 capexApprovedAmount: capexApproved,
                 capexCommittment: capexBooked,
@@ -360,7 +414,7 @@ const ReportManagement = () => {
         console.log(error);
       }
     }
-  }, [budgetYear, department]);
+  }, [budgetYear, department, period]);
 
   // console.log(funds);
 
@@ -388,7 +442,7 @@ const ReportManagement = () => {
                 )
               : [];
 
-          console.log(duringPeriod);
+          // console.log(duringPeriod);
 
           const totalAmountSpent = duringPeriod
             ?.map((exp) => parseFloat(exp?.amount))
@@ -441,6 +495,7 @@ const ReportManagement = () => {
   const handleReportGeneration = () => {
     const reportData = reportGeneration();
     const data = {
+      period,
       reports: reportGeneration(),
       total: reportData
         .map((rep) => parseFloat(rep?.totalApproved))
