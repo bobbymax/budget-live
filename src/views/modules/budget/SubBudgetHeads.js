@@ -61,6 +61,8 @@ const SubBudgetHeads = () => {
     getBudgetHead();
   }, []);
 
+  console.log(subBudgetHeads);
+
   const getDepartments = async () => {
     const response = await collection("departments");
     setDepartmentIDs(response.data.data);

@@ -252,7 +252,7 @@ const ReportManagement = () => {
               const funds = res[0].data.data;
               const budgetHeads = res[1].data.data;
               let fundsForYear = funds.filter(
-                (fund) => fund.budget_year == budgetYear
+                (fund) => fund.budget_year == d.getFullYear()
               );
 
               fundsForYear =
@@ -497,12 +497,35 @@ const ReportManagement = () => {
     const data = {
       period,
       reports: reportGeneration(),
+      breakdowns: [
+        {
+          description: "Capex",
+          amount: state.capexApprovedAmount,
+          balance: state.capexBalance,
+          commitment: state.capexCommittment,
+          performance: state.capexPerformance,
+        },
+        {
+          description: "Recurrent",
+          amount: state.recurrentApprovedAmount,
+          balance: state.recurrentBalance,
+          commitment: state.recurrentCommittment,
+          performance: state.recurrentPerformance,
+        },
+        {
+          description: "Personnel",
+          amount: state.personnelApprovedAmount,
+          balance: state.personnelBalance,
+          commitment: state.personnelCommittment,
+          performance: state.personnelPerformance,
+        },
+      ],
       total: reportData
         .map((rep) => parseFloat(rep?.totalApproved))
         .reduce((sum, prev) => sum + prev, 0),
     };
 
-    console.log(data.reports);
+    console.log(data.period);
 
     setLoading(true);
 
