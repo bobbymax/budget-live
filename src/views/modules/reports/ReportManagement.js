@@ -392,17 +392,17 @@ const ReportManagement = () => {
                 capexApprovedAmount: capexApproved,
                 capexCommittment: capexBooked,
                 capexBalance: capexApproved - capexBooked,
-                capexPerformance: capexPerf?.toFixed(2),
+                capexPerformance: capexPerf,
                 recurrentApprovedAmount: recurrentApproved,
                 recurrentCommittment: recurrentBooked,
                 recurrentBalance: recurrentApproved - recurrentBooked,
-                recurrentPerformance: recurrentPerf?.toFixed(2),
+                recurrentPerformance: recurrentPerf,
                 personnelApprovedAmount: personnelApproved,
                 personnelCommittment: personnelBooked,
                 personnelBalance: personnelApproved - personnelBooked,
-                personnelPerformance: personnelPerf?.toFixed(2),
-                expectedPerformance: expPerf?.toFixed(2),
-                actualPerformance: actPerf?.toFixed(2),
+                personnelPerformance: personnelPerf,
+                expectedPerformance: expPerf,
+                actualPerformance: actPerf,
               });
             })
           )
@@ -680,7 +680,7 @@ const ReportManagement = () => {
                     <p>
                       {card.type === "currency"
                         ? formatCurrencyWithoutSymbol(card.amount)
-                        : card.amount + "%"}
+                        : card?.amount?.toFixed(2) + "%"}
                     </p>
                   </div>
                 </div>

@@ -118,6 +118,7 @@ const Fulfillments = () => {
 
   useEffect(() => {
     try {
+      setLoading(true);
       const reconsData = collection("department/reconciliations");
       const subsData = collection("subBudgetHeads");
       batchRequests([reconsData, subsData])
@@ -130,11 +131,16 @@ const Fulfillments = () => {
             setSubBudgetHeads(
               subsData.filter((budget) => budget?.fund !== null)
             );
+            setLoading(false);
           })
         )
-        .catch((err) => console.log(err.message));
+        .catch((err) => {
+          console.log(err.message);
+          setLoading(false);
+        });
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   }, []);
 
