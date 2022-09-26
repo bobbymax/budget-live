@@ -16,9 +16,13 @@ import TableCard from "../../../components/commons/tables/customized/TableCard";
 import Loading from "../../../components/commons/Loading";
 import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const Expenditures = () => {
   const navigate = useNavigate();
+  const reconciliations = useSelector(
+    (state) => state?.auth?.value?.user?.department?.reconciliations
+  );
   const initialState = {
     claim: null,
     code: "",
@@ -236,16 +240,30 @@ const Expenditures = () => {
       {loading ? <Loading /> : null}
       <div className="row">
         <div className="col-md-6">
-          <button
-            type="button"
-            className="btn btn-success btn-rounded mb-4"
-            onClick={() => setOpen(true)}
-            disabled={open}
-            // disabled
-          >
-            <i className="fa fa-send mr-2"></i>
-            CREATE EXPENDITURE
-          </button>
+          {reconciliations?.length > 0 ? (
+            <div className="alert alert-danger">
+              Please you have pending logistics refund{" "}
+              <button
+                type="button"
+                className="btn btn-primary btn-sm btn-rounded mt-2"
+                onClick={() => navigate("/reconciliations/fulfillments")}
+              >
+                <i className="fa fa-send mr-2"></i>
+                Go To Refund
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn btn-success btn-rounded mb-4"
+              onClick={() => setOpen(true)}
+              disabled={open}
+              // disabled
+            >
+              <i className="fa fa-send mr-2"></i>
+              CREATE EXPENDITURE
+            </button>
+          )}
         </div>
         <div className="col-md-6">
           <button
@@ -253,7 +271,6 @@ const Expenditures = () => {
             className="btn btn-warning btn-rounded mb-4 float-right"
             onClick={() => navigate("/batch/claim")}
             disabled={open}
-            // disabled
           >
             <i className="fa fa-object-group mr-2"></i>
             BATCH EXPENDITURES
