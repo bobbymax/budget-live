@@ -70,6 +70,7 @@ export const formatCurrency = (fig) => {
   let currency = Intl.NumberFormat("en-US");
   return "NGN " + currency.format(fig);
 };
+
 export const formatCurrencyWithoutSymbol = (fig) => {
   let currency = Intl.NumberFormat("en-US");
   return currency.format(fig);
@@ -240,4 +241,205 @@ export const approvals = [
 export const uniqueNumberGenerator = (str) => {
   const paymentType = str === "staff-payment" ? "SP" : "TPP";
   return paymentType + Math.floor(Math.random() * 100000);
+};
+
+export const generateReportForPeriod = (funds, date) => {
+  let report;
+  report = funds?.map((fund) => {
+    const booked =
+      fund?.expenditures?.length > 0
+        ? fund?.expenditures?.filter(
+            (exp) =>
+              (exp?.status === "batched" ||
+                exp?.status === "cleared" ||
+                exp?.status === "paid") &&
+              new Date(exp?.created_at).getTime() <= new Date(date).getTime()
+          )
+        : [];
+
+    const actuals = fund?.expenditures?.filter(
+      (exp) =>
+        exp?.status === "paid" &&
+        new Date(exp?.created_at).getTime() <= new Date(date).getTime()
+    );
+
+    const totalBookedSpent = booked
+      ?.map((exp) => parseFloat(exp?.amount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const totalActualSpent = actuals
+      ?.map((exp) => parseFloat(exp?.amount))
+      .reduce((sum, current) => sum + current, 0);
+
+    const bookedUBalance = parseFloat(fund?.approved_amount) - totalBookedSpent;
+    const actualUBalance = parseFloat(fund?.approved_amount) - totalActualSpent;
+    const ePerformance =
+      (totalBookedSpent / parseFloat(fund?.approved_amount)) * 100;
+    const aPerformance =
+      (totalActualSpent / parseFloat(fund?.approved_amount)) * 100;
+
+    return {
+      ...fund,
+      expenditures: booked,
+      totalAmountSpent: totalBookedSpent,
+      totalActualAmountSpent: totalActualSpent,
+      untouchedBalance: bookedUBalance,
+      untouchedActualBalance: actualUBalance,
+      expected_performance: ePerformance,
+      actual_performance: aPerformance,
+    };
+  });
+
+  return report;
+};
+
+export const getBudgetSummation = (funds) => {
+  const approved = funds
+    ?.map((fund) => parseFloat(fund?.approved_amount))
+    .reduce((sum, curr) => sum + curr, 0);
+  const booked = funds
+    ?.map((fund) => parseFloat(fund?.totalAmountSpent))
+    .reduce((sum, curr) => sum + curr, 0);
+  const actual = funds
+    .map((fund) => parseFloat(fund?.totalActualAmountSpent))
+    .reduce((sum, curr) => sum + curr, 0);
+
+  const bookedBalance = funds
+    ?.map((fund) => parseFloat(fund?.untouchedBalance))
+    .reduce((sum, curr) => sum + curr, 0);
+
+  const actualBalance = funds
+    ?.map((fund) => parseFloat(fund?.untouchedActualBalance))
+    .reduce((sum, curr) => sum + curr, 0);
+
+  let ePerformance = (booked / approved) * 100;
+  let aPerformance = (actual / approved) * 100;
+  ePerformance = isNaN(parseFloat(ePerformance)) ? 0 : ePerformance;
+  aPerformance = isNaN(parseFloat(aPerformance)) ? 0 : aPerformance;
+
+  const cFunds = funds?.filter((fund) => fund?.budget_type === "capital");
+  const rFunds = funds?.filter((fund) => fund?.budget_type === "recursive");
+  const pFunds = funds?.filter((fund) => fund?.budget_type === "personnel");
+
+  // Capex Breakdown
+  const cApproved = cFunds
+    .map((fund) => parseFloat(fund?.approved_amount))
+    .reduce((sum, prev) => sum + prev, 0);
+  const cBooked = cFunds
+    .map((fund) => parseFloat(fund?.totalAmountSpent))
+    .reduce((sum, prev) => sum + prev, 0);
+  const cPerformance = (cBooked / cApproved) * 100;
+
+  // Recurrent Breakdown
+  const rApproved = rFunds
+    .map((fund) => parseFloat(fund?.approved_amount))
+    .reduce((sum, prev) => sum + prev, 0);
+  const rBooked = rFunds
+    .map((fund) => parseFloat(fund?.totalAmountSpent))
+    .reduce((sum, prev) => sum + prev, 0);
+  const rPerformance = (rBooked / rApproved) * 100;
+
+  // Recurrent Breakdown
+  const pApproved = pFunds
+    .map((fund) => parseFloat(fund?.approved_amount))
+    .reduce((sum, prev) => sum + prev, 0);
+  const pBooked = pFunds
+    .map((fund) => parseFloat(fund?.totalAmountSpent))
+    .reduce((sum, prev) => sum + prev, 0);
+  const pPerformance = (pBooked / pApproved) * 100;
+
+  return {
+    approved,
+    booked,
+    actual,
+    bookedBalance,
+    actualBalance,
+    ePerformance,
+    aPerformance,
+    capex: {
+      cApproved,
+      cBooked,
+      cPerformance,
+      balance: cApproved - cBooked,
+    },
+    recurrent: {
+      rApproved,
+      rBooked,
+      rPerformance,
+      balance: rApproved - rBooked,
+    },
+    personnel: {
+      pApproved,
+      pBooked,
+      pPerformance,
+      balance: pApproved - pBooked,
+    },
+  };
+};
+
+export const generateMonthlyReport = (funds, budgetHeads, period) => {
+  if (funds?.length < 1 || budgetHeads?.length < 1 || period === "") return [];
+
+  let report = [];
+  const d = new Date(period);
+
+  budgetHeads?.map((head) => {
+    let budgetHeadFunds = funds?.filter(
+      (fund) => fund?.budgetHead === head?.name
+    );
+    const approved = budgetHeadFunds
+      ?.map((fund) => parseFloat(fund?.approved_amount))
+      .reduce((sum, curr) => sum + curr, 0);
+
+    const computed = budgetHeadFunds.map((fund) => {
+      const duringPeriod =
+        fund?.expenditures?.length > 0
+          ? fund?.expenditures?.filter(
+              (exp) =>
+                (exp?.status === "batched" ||
+                  exp?.status === "cleared" ||
+                  exp?.status === "paid") &&
+                new Date(exp?.created_at).getTime() <= d.getTime()
+            )
+          : [];
+
+      const totalAmountSpent = duringPeriod
+        ?.map((exp) => parseFloat(exp?.amount))
+        .reduce((sum, prev) => sum + prev, 0);
+
+      const untouchedBalance =
+        parseFloat(fund?.approved_amount) - totalAmountSpent;
+
+      const performance =
+        (totalAmountSpent / parseFloat(fund?.approved_amount)) * 100;
+
+      return {
+        ...fund,
+        expenditures: duringPeriod,
+        totalAmountSpent,
+        untouchedBalance,
+        expected_performance: performance,
+      };
+    });
+
+    const totalSpent = computed
+      .map((flk) => parseFloat(flk?.totalAmountSpent))
+      .reduce((sum, prev) => sum + prev, 0);
+
+    const balance = computed
+      .map((fund) => parseFloat(fund?.untouchedBalance))
+      .reduce((sum, prev) => sum + prev, 0);
+
+    const actualPerf = (totalSpent / approved) * 100;
+    return report.push({
+      budgetHead: head?.name,
+      totalApproved: approved,
+      totalSpent,
+      funds: computed,
+      balance,
+      totalPerf: isNaN(actualPerf) ? 0 : actualPerf,
+    });
+  });
+
+  return report;
 };

@@ -33,6 +33,7 @@ const Fulfillments = () => {
   const [reconciliations, setReconciliations] = useState([]);
   const [subBudgetHeads, setSubBudgetHeads] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const columns = [
     { key: "subBudgetHeadCode", label: "BUDGET CODE" },
@@ -44,18 +45,22 @@ const Fulfillments = () => {
   ];
 
   const manageAction = (recon) => {
-    setState({
-      ...state,
-      id: recon.id,
-      expenditure_id: recon.expenditure_id,
-      amount: recon.amount,
-      description: recon.description,
-      beneficiary: recon.beneficiary,
-      expSubBudgetHeadCode: recon.expSubBudgetHead,
-      expSubBudgetHeadName: recon.expSubBudgetHeadName,
-      expSubBudgetHeadId: recon.expSubBudgetId,
-      updating: true,
-    });
+    if (recon?.status !== "fulfilled") {
+      setState({
+        ...state,
+        id: recon.id,
+        expenditure_id: recon.expenditure_id,
+        amount: recon.amount,
+        description: recon.description,
+        beneficiary: recon.beneficiary,
+        expSubBudgetHeadCode: recon.expSubBudgetHead,
+        expSubBudgetHeadName: recon.expSubBudgetHeadName,
+        expSubBudgetHeadId: recon.expSubBudgetId,
+        updating: true,
+      });
+    } else {
+      setMessage("This refund request has been fulfilled!!");
+    }
   };
 
   const handleSubmit = (e) => {
@@ -150,6 +155,9 @@ const Fulfillments = () => {
     <>
       {loading ? <Loading /> : null}
       <div className="row">
+        {message !== "" && (
+          <div className="alert alert-badge alert-info">{message}</div>
+        )}
         {state.updating && (
           <>
             <div className="col-md-12">
