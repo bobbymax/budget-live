@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Doughnut, Bar } from "react-chartjs-2";
 import { formatCurrency } from "../../../services/utils/helpers";
+import { CSVLink } from "react-csv";
 
 const labels = [
   "Jan",
@@ -18,6 +19,17 @@ const labels = [
   "Oct",
   "Nov",
   "Dec",
+];
+
+const expenditureHeaders = [
+  { label: "BATCH NO.", key: "batch_no" },
+  { label: "BUDGET CODE", key: "subBudgetHeadCode" },
+  { label: "BENEFICIARY", key: "beneficiary" },
+  { label: "DESCRIPTION", key: "description" },
+  { label: "AMOUNT", key: "amount" },
+  { label: "PAYMENT TYPE", key: "payment_type" },
+  { label: "STATUS", key: "status" },
+  { label: "DATE", key: "updated_at" },
 ];
 
 const OverviewExpenditure = () => {
@@ -102,12 +114,27 @@ const OverviewExpenditure = () => {
     }
   }, [state.expenditures]);
 
+  // console.log(state.expenditures);
+
   return (
     <div className="row">
-      <div className="col-md-12">
+      <div className="col-md-9">
         <div className="page-titles">
           <h2 className="text-black">Expenditure Overview</h2>
         </div>
+      </div>
+      <div className="col-md-3">
+        <CSVLink
+          className="btn btn-success btn-sm btn-rounded float-right"
+          data={state.expenditures}
+          headers={expenditureHeaders}
+          filename="Expenditure Breakdown"
+          onClick={() => state.expenditures}
+          disabled={state.expenditures?.length < 1}
+        >
+          <i className="fa fa-download mr-2"></i>
+          Expenditures CSV
+        </CSVLink>
       </div>
 
       <div className="col-xl-12 col-md-12 col-sm-12">
