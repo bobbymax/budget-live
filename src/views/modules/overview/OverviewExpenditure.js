@@ -5,6 +5,8 @@ import { useLocation } from "react-router-dom";
 import { Doughnut, Bar } from "react-chartjs-2";
 import { formatCurrency } from "../../../services/utils/helpers";
 import { CSVLink } from "react-csv";
+import { collection } from "../../../services/utils/controllers";
+import Loading from "../../../components/commons/Loading";
 
 const labels = [
   "Jan",
@@ -41,18 +43,31 @@ const OverviewExpenditure = () => {
   };
   const [state, setState] = useState(initialState);
   const [chartData, setChartData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (params.pathname && params.state) {
       const subBudgetHead = params.state.subBudgetHead;
-
-      setState({
-        ...state,
-        subBudgetHead: subBudgetHead,
-        expenditures: subBudgetHead.expenditures.filter(
-          (exp) => exp.status !== "reversed"
-        ),
-      });
+      setLoading(true);
+      try {
+        collection(`collect/${subBudgetHead?.id}/exps`)
+          .then((res) => {
+            const response = res.data.data;
+            setLoading(false);
+            setState({
+              ...state,
+              subBudgetHead,
+              expenditures: response,
+            });
+          })
+          .catch((err) => {
+            setLoading(false);
+            console.log(err.message);
+          });
+      } catch (error) {
+        setLoading(false);
+        console.log(error);
+      }
     }
   }, []);
 
@@ -114,89 +129,90 @@ const OverviewExpenditure = () => {
     }
   }, [state.expenditures]);
 
-  // console.log(state.expenditures);
-
   return (
-    <div className="row">
-      <div className="col-md-9">
-        <div className="page-titles">
-          <h2 className="text-black">Expenditure Overview</h2>
+    <>
+      {loading ? <Loading /> : null}
+      <div className="row">
+        <div className="col-md-9">
+          <div className="page-titles">
+            <h2 className="text-black">Expenditure Overview</h2>
+          </div>
         </div>
-      </div>
-      <div className="col-md-3">
-        <CSVLink
-          className="btn btn-success btn-sm btn-rounded float-right"
-          data={state.expenditures}
-          headers={expenditureHeaders}
-          filename="Expenditure Breakdown"
-          onClick={() => state.expenditures}
-          disabled={state.expenditures?.length < 1}
-        >
-          <i className="fa fa-download mr-2"></i>
-          Expenditures CSV
-        </CSVLink>
-      </div>
+        <div className="col-md-3">
+          <CSVLink
+            className="btn btn-success btn-sm btn-rounded float-right"
+            data={state.expenditures}
+            headers={expenditureHeaders}
+            filename="Expenditure Breakdown"
+            onClick={() => state.expenditures}
+            disabled={state.expenditures?.length < 1}
+          >
+            <i className="fa fa-download mr-2"></i>
+            Expenditures CSV
+          </CSVLink>
+        </div>
 
-      <div className="col-xl-12 col-md-12 col-sm-12">
-        <div className="row">
-          <div className="col-sm-12 col-md-4 col-lg-4">
-            <div className="card bg-light">
-              <div className="card-body">
-                <div className="media align-items-center">
-                  <Doughnut data={format} />
+        <div className="col-xl-12 col-md-12 col-sm-12">
+          <div className="row">
+            <div className="col-sm-12 col-md-4 col-lg-4">
+              <div className="card bg-light">
+                <div className="card-body">
+                  <div className="media align-items-center">
+                    <Doughnut data={format} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-sm-12 col-md-8 col-lg-8">
+              <div className="card text-white bg-white">
+                <div className="card-body pb-0 pt-0">
+                  <div className="d-flex align-items-center mb-3">
+                    <Bar data={data} />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-
-          <div className="col-sm-12 col-md-8 col-lg-8">
-            <div className="card text-white bg-white">
-              <div className="card-body pb-0 pt-0">
-                <div className="d-flex align-items-center mb-3">
-                  <Bar data={data} />
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
 
-      <div className="col-xl-12 col-md-12 col-sm-12">
-        <div className="card">
-          <div className="card-body table-responsive">
-            <table className="table table-bordered table-striped">
-              <thead>
-                <tr>
-                  <td>Budget Code</td>
-                  <td>Beneficiary</td>
-                  <td>Description</td>
-                  <td>Amount</td>
-                </tr>
-              </thead>
-
-              <tbody>
-                {state.expenditures && state.expenditures.length > 0 ? (
-                  state.expenditures.map((subBudget) => (
-                    <tr key={subBudget.id}>
-                      <td>{subBudget.subBudgetHead.budgetCode}</td>
-                      <td>{subBudget.beneficiary}</td>
-                      <td>{subBudget.description}</td>
-                      <td>{formatCurrency(parseFloat(subBudget.amount))}</td>
-                    </tr>
-                  ))
-                ) : (
+        <div className="col-xl-12 col-md-12 col-sm-12">
+          <div className="card">
+            <div className="card-body table-responsive">
+              <table className="table table-bordered table-striped">
+                <thead>
                   <tr>
-                    <td colSpan={4} className="text-danger">
-                      No Expenditures Available!!!
-                    </td>
+                    <td>Budget Code</td>
+                    <td>Beneficiary</td>
+                    <td>Description</td>
+                    <td>Amount</td>
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {state.expenditures && state.expenditures.length > 0 ? (
+                    state.expenditures.map((subBudget) => (
+                      <tr key={subBudget.id}>
+                        <td>{subBudget.subBudgetHead.budgetCode}</td>
+                        <td>{subBudget.beneficiary}</td>
+                        <td>{subBudget.description}</td>
+                        <td>{formatCurrency(parseFloat(subBudget.amount))}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="text-danger">
+                        No Expenditures Available!!!
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
