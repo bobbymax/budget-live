@@ -32,7 +32,9 @@ const Payments = (props) => {
 
   const columns = [
     { key: "batch_no", label: "Batch Code", format: "button" },
+    { key: "subBudgetHeadCode", label: "Budget Code" },
     { key: "amount", label: "Amount", format: "currency" },
+    { key: "created_at", label: "Raised" },
     { key: "status", label: "Status", format: "badge" },
   ];
 
@@ -41,6 +43,8 @@ const Payments = (props) => {
   const [loading, setLoading] = useState(false);
 
   // const auth = useSelector((state) => state.auth.value.user);
+
+  // console.log(batches);
 
   const currentStat = (stat) => {
     const curr = stats.filter((s) => stat === s.value);

@@ -109,6 +109,8 @@ const Approvals = (props) => {
     }
   };
 
+  // console.log(state.batch);
+
   const reverseStage = (data) => {
     Alert.flash(
       "Are you sure?",
