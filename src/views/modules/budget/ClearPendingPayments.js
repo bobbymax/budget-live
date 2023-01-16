@@ -20,7 +20,7 @@ const ClearPendingPayments = () => {
     console.log(batch);
 
     const data = {
-      subBudgetHeadCode: batch?.subBudgetHeadCode,
+      subHead: batch?.subBudgetHead,
       amount: batch?.amount,
       level: batch?.level,
       status: batch?.status,
