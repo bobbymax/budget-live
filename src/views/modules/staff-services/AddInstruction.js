@@ -71,7 +71,7 @@ const AddInstruction = (props) => {
 
       if (benefit && benefit.numOfDays) {
         const city =
-          benefit.label === "intra-city-shuttle" ? daysDiff - 1 : daysDiff;
+          benefit.label === "intra-city-shuttle" ? daysDiff - 2 : daysDiff;
         const amount =
           state.additional_benefit_id > 0
             ? getFee(benefit, daysDiff)

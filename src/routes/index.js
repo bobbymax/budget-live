@@ -103,6 +103,11 @@ const GetAllExpenditures = lazy(() =>
   import("../views/modules/budget/GetAllExpenditures")
 );
 
+const Alterations = lazy(() => import("../views/modules/budget/Alterations"));
+const ClearPendingPayments = lazy(() =>
+  import("../views/modules/budget/ClearPendingPayments")
+);
+
 export const routes = {
   guest: [
     {
@@ -126,6 +131,11 @@ export const routes = {
       name: "Report Management",
       component: <ReportManagement />,
       path: "/generate/report",
+    },
+    {
+      name: "Resolve Payments",
+      component: <ClearPendingPayments />,
+      path: "/resolve/pending/payments",
     },
     {
       name: "Dependencies",
@@ -166,6 +176,11 @@ export const routes = {
       name: "Overview Expenditure",
       component: <OverviewExpenditure />,
       path: "/overview/:id/expenditure",
+    },
+    {
+      name: "Alter Payments",
+      component: <Alterations />,
+      path: "/alter/payments",
     },
     {
       name: "Modules",
