@@ -1,11 +1,17 @@
 /* eslint-disable eqeqeq */
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import TableCard from "../../../components/commons/tables/customized/TableCard";
 import Alert from "../../../services/classes/Alert";
-import { alter, collection } from "../../../services/utils/controllers";
+import {
+  alter,
+  batchRequests,
+  collection,
+} from "../../../services/utils/controllers";
 
 const ClearPendingPayments = () => {
   const [payments, setPayments] = useState([]);
+  const [subs, setSubs] = useState([]);
 
   const columns = [
     { key: "subBudgetHeadCode", label: "BUDGET CODE" },
@@ -19,8 +25,12 @@ const ClearPendingPayments = () => {
   const handlePost = (batch) => {
     console.log(batch);
 
+    const subBudget = subs.filter(
+      (ss) => ss?.code === batch?.subBudgetHeadCode
+    )[0];
+
     const data = {
-      subHead: batch?.subBudgetHead,
+      subHead: subBudget?.id,
       amount: batch?.amount,
       level: batch?.level,
       status: batch?.status,
@@ -41,10 +51,16 @@ const ClearPendingPayments = () => {
 
   useEffect(() => {
     try {
-      collection("resolve/pending/payments")
-        .then((res) => {
-          setPayments(res.data.data);
-        })
+      const subBudgetHeadsData = collection("subBudgetHeads");
+      const pendingPaymentsData = collection("resolve/pending/payments");
+
+      batchRequests([subBudgetHeadsData, pendingPaymentsData])
+        .then(
+          axios.spread((...res) => {
+            setSubs(res[0].data.data);
+            setPayments(res[1].data.data);
+          })
+        )
         .catch((err) => console.log(err.message));
     } catch (error) {
       console.log(error);

@@ -12,7 +12,6 @@ import {
   getPaymentType,
   userHasRole,
 } from "../../../services/utils/helpers";
-// import CryptoJS from "crypto-js";
 
 const Approvals = (props) => {
   const auth = useSelector((state) => state.auth.value.user);

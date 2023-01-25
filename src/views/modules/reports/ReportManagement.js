@@ -53,6 +53,7 @@ const ReportManagement = () => {
   };
   const year = useSelector((state) => parseInt(state.config.value.budget_year));
   const [state, setState] = useState(initialState);
+  const [budgetYear, setBudgetYear] = useState(0);
   const [budgetHeads, setBudgetHeads] = useState([]);
   const [funds, setFunds] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
@@ -285,7 +286,7 @@ const ReportManagement = () => {
     if (funds?.length > 0 && period !== "") {
       const d = new Date(period);
       let fundsForYear = funds?.filter(
-        (fund) => fund?.budget_year == d.getFullYear()
+        (fund) => fund?.budget_year == budgetYear
       );
 
       fundsForYear =
@@ -343,6 +344,7 @@ const ReportManagement = () => {
             setBudgetHeads(res[1].data.data);
             setFunds(res[2].data.data);
             setPeriod(moment(d).format("YYYY-MM-DD"));
+            setBudgetYear(year ?? 0);
             setLoading(false);
           })
         )
@@ -354,8 +356,6 @@ const ReportManagement = () => {
       console.log(error);
     }
   }, []);
-
-  // console.log(period);
 
   return (
     <>
