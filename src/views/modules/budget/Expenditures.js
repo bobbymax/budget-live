@@ -47,6 +47,7 @@ const Expenditures = () => {
   const [exp, setExp] = useState(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [disableBttn, setDisableBttn] = useState(false);
 
   const columns = [
     { key: "subBudgetHeadCode", label: "BUDGET CODE" },
@@ -156,7 +157,7 @@ const Expenditures = () => {
     }
   };
 
-  console.log(expenditures);
+  // console.log(expenditures);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -241,6 +242,7 @@ const Expenditures = () => {
 
   useEffect(() => {
     if (exp !== null) {
+      setDisableBttn(true);
       const subBudgetHeadId = exp?.sub_budget_head_id;
 
       try {
@@ -259,6 +261,7 @@ const Expenditures = () => {
             );
 
             setExp(null);
+            setDisableBttn(false);
           })
           .catch((err) => console.log(err.message));
       } catch (error) {
@@ -289,7 +292,7 @@ const Expenditures = () => {
               type="button"
               className="btn btn-success btn-rounded mb-4"
               onClick={() => setOpen(true)}
-              disabled={open}
+              disabled={open || disableBttn}
               // disabled
             >
               <i className="fa fa-send mr-2"></i>
