@@ -5,6 +5,7 @@ import {
   batchRequests,
   collection,
   destroy,
+  fetch,
   store,
 } from "../../../services/utils/controllers";
 import CustomSelect from "../../../components/forms/select/CustomSelect";
@@ -43,6 +44,7 @@ const Expenditures = () => {
   const [errors, setErrors] = useState({});
   const [subBudgetHeads, setSubBudgetHeads] = useState([]);
   const [expenditures, setExpenditures] = useState([]);
+  const [exp, setExp] = useState(null);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -154,6 +156,8 @@ const Expenditures = () => {
     }
   };
 
+  console.log(expenditures);
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -179,7 +183,7 @@ const Expenditures = () => {
           // const expense = result.data
 
           setLoading(false);
-
+          setExp(result.data);
           setExpenditures([result.data, ...expenditures]);
           Alert.success("Expenditure", result.message);
           setState(initialState);
@@ -234,6 +238,34 @@ const Expenditures = () => {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    if (exp !== null) {
+      const subBudgetHeadId = exp?.sub_budget_head_id;
+
+      try {
+        fetch("subBudgetHeads", subBudgetHeadId)
+          .then((res) => {
+            const response = res.data.data;
+
+            setSubBudgetHeads(
+              subBudgetHeads?.map((sub) => {
+                if (sub?.id == response?.id) {
+                  return response;
+                }
+
+                return sub;
+              })
+            );
+
+            setExp(null);
+          })
+          .catch((err) => console.log(err.message));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [exp]);
 
   return (
     <>

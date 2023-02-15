@@ -357,6 +357,8 @@ const ReportManagement = () => {
     }
   }, []);
 
+  // console.log(report);
+
   return (
     <>
       {loading ? <Loading /> : null}
