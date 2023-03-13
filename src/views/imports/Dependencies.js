@@ -55,6 +55,11 @@ const Dependencies = () => {
       label: "Grade Levels",
       value: "grade-levels",
     },
+    {
+      id: 8,
+      label: "Onboard Staff",
+      value: "onboarding",
+    },
   ];
 
   const importData = (e) => {
