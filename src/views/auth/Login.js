@@ -80,6 +80,10 @@ const Login = () => {
                         </div>
                       )}
 
+                      <div className="alert alert-danger text-center">
+                        <b>Budget Has Closed!!</b>
+                      </div>
+
                       <div className="text-center mb-3">
                         <Link to="/">
                           <img
@@ -97,7 +101,8 @@ const Login = () => {
                           value={staffNo}
                           onChange={(e) => setStaffNo(e.target.value)}
                           required
-                          disabled={loading ? true : false}
+                          // disabled={loading ? true : false}
+                          disabled
                         />
 
                         <TextInputField
@@ -107,18 +112,20 @@ const Login = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           required
-                          disabled={loading ? true : false}
+                          // disabled={loading ? true : false}
+                          disabled
                         />
 
                         <ButtonField
                           type="submit"
-                          disabled={loading ? true : false}
+                          // disabled={loading ? true : false}
+                          disabled
                           variant="success"
                         >
                           {loading ? (
                             <i className="fa fa-spinner fa-spin"></i>
                           ) : (
-                            "Sign Me In"
+                            "Login"
                           )}
                         </ButtonField>
                       </form>

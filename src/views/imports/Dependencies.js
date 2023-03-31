@@ -110,7 +110,7 @@ const Dependencies = () => {
       });
       rows.push(rowData);
     });
-    // console.log(headers)
+
     return rows;
   };
 
@@ -192,7 +192,7 @@ const Dependencies = () => {
                       ))}
                     </CustomSelect>
                   </div>
-                  <div className="col-md-12 mt-3">
+                  <div className="col-md-12 mt-2">
                     <button
                       className="btn btn-success btn-sm btn-rounded"
                       type="submit"
