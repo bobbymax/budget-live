@@ -108,6 +108,8 @@ const ClearPendingPayments = lazy(() =>
   import("../views/modules/budget/ClearPendingPayments")
 );
 
+const Exports = lazy(() => import("../views/modules/administration/Exports"));
+
 export const routes = {
   guest: [
     {
@@ -171,6 +173,11 @@ export const routes = {
       name: "Overview",
       component: <Overview />,
       path: "/overview",
+    },
+    {
+      name: "Exports",
+      component: <Exports />,
+      path: "/exports",
     },
     {
       name: "Overview Expenditure",
