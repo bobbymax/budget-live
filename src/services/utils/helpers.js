@@ -477,6 +477,15 @@ export const dependencies = {
     { key: "created_at", label: "CREATED AT" },
     { key: "updated_at", label: "UPDATED AT" },
   ],
+  instructions: [
+    { key: "claim", label: "CLAIM" },
+    { key: "benefit", label: "BENEFIT" },
+    { key: "category", label: "CATEGORY" },
+    { key: "description", label: "DESCRIPTION" },
+    { key: "from", label: "START" },
+    { key: "to", label: "END" },
+    { key: "amount", label: "AMOUNT" },
+  ],
   subBudgetHeads: [
     { key: "budgetId", label: "BUDGET HEAD" },
     { key: "budget_head_name", label: "BUDGET HEAD NAME" },
@@ -583,6 +592,11 @@ export const fetchers = [
     key: "claims",
     value: "Claims",
     cloumns: dependencies.claims,
+  },
+  {
+    key: "instructions",
+    value: "Instructions",
+    cloumns: dependencies.instructions,
   },
   {
     key: "budget-heads",
