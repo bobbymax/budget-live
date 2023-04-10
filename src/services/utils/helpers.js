@@ -464,6 +464,7 @@ export const dependencies = {
     { key: "budget_year", label: "PERIOD" },
   ],
   claims: [
+    { key: "id", label: "ID" },
     { key: "staff", label: "STAFF" },
     { key: "title", label: "TITLE" },
     { key: "reference_no", label: "CODE" },
@@ -479,6 +480,7 @@ export const dependencies = {
   ],
   instructions: [
     { key: "claim", label: "CLAIM" },
+    { key: "type", label: "TYPE" },
     { key: "benefit", label: "BENEFIT" },
     { key: "category", label: "CATEGORY" },
     { key: "description", label: "DESCRIPTION" },
