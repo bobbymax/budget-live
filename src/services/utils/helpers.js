@@ -531,8 +531,10 @@ export const dependencies = {
   modules: [],
   departments: [
     { key: "name", label: "NAME" },
+    { key: "label", label: "LABEL" },
     { key: "code", label: "CODE" },
     { key: "type", label: "TYPE" },
+    { key: "parent", label: "PARENT" },
     { key: "created_at", label: "CREATED AT" },
     { key: "updated_at", label: "UPDATED AT" },
   ],
