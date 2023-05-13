@@ -40,6 +40,7 @@ const Expenditures = () => {
     status: "cleared",
     additional_info: "",
   };
+
   const [state, setState] = useState(initialState);
   const [errors, setErrors] = useState({});
   const [subBudgetHeads, setSubBudgetHeads] = useState([]);
@@ -94,8 +95,6 @@ const Expenditures = () => {
       }
     }
   }, [state.available_balance, state.amount]);
-
-  // console.log(subBudgetHeads);
 
   const handleDestroy = (data) => {
     setLoading(true);
@@ -156,8 +155,6 @@ const Expenditures = () => {
         });
     }
   };
-
-  // console.log(expenditures);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -269,6 +266,8 @@ const Expenditures = () => {
       }
     }
   }, [exp]);
+
+  console.log(expenditures);
 
   return (
     <>

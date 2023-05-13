@@ -243,25 +243,23 @@ export const uniqueNumberGenerator = (str) => {
   return paymentType + Math.floor(Math.random() * 100000);
 };
 
-export const generateReportForPeriod = (funds, date) => {
+export const generateReportForPeriod = (funds, date, exps = []) => {
   let report;
   report = funds?.map((fund) => {
-    const booked =
-      fund?.expenditures?.length > 0
-        ? fund?.expenditures?.filter(
-            (exp) =>
-              (exp?.status === "batched" ||
-                exp?.status === "cleared" ||
-                exp?.status === "paid") &&
-              new Date(exp?.created_at).getTime() <= new Date(date).getTime()
-          )
-        : [];
-
-    const actuals = fund?.expenditures?.filter(
+    const fundExps = exps?.filter(
       (exp) =>
-        exp?.status === "paid" &&
+        exp?.sub_budget_head_id === fund?.sub_budget_head_id &&
         new Date(exp?.created_at).getTime() <= new Date(date).getTime()
     );
+
+    const booked = fundExps?.filter(
+      (exp) =>
+        exp?.status === "batched" ||
+        exp?.status === "cleared" ||
+        exp?.status === "paid"
+    );
+
+    const actuals = fundExps?.filter((exp) => exp?.status === "paid");
 
     const totalBookedSpent = booked
       ?.map((exp) => parseFloat(exp?.amount))
@@ -300,6 +298,7 @@ export const getBudgetSummation = (funds) => {
   const booked = funds
     ?.map((fund) => parseFloat(fund?.totalAmountSpent))
     .reduce((sum, curr) => sum + curr, 0);
+
   const actual = funds
     .map((fund) => parseFloat(fund?.totalActualAmountSpent))
     .reduce((sum, curr) => sum + curr, 0);

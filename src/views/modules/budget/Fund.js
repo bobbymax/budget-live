@@ -59,6 +59,10 @@ const Fund = () => {
       key: "approved_amount",
       format: "currency",
     },
+    {
+      label: "Year",
+      key: "budget_year",
+    },
   ];
 
   const handleEdit = (data) => {
@@ -75,6 +79,8 @@ const Fund = () => {
       });
     return arr;
   };
+
+  // console.log(funds);
 
   const handleDestroy = (data) => {
     Alert.flash(

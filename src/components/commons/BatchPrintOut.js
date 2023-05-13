@@ -36,24 +36,6 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
 
   return (
     <>
-      {/* <div className="btn-group btn-rounded btn-lg">
-        <Pdf targetRef={ref} filename="claim.pdf" options={options}>
-          {({ toPdf }) => (
-            <button className="btn btn-success btn-lg mb-4" onClick={toPdf}>
-              <i className="fa fa-print mr-2"></i> Print
-            </button>
-          )}
-        </Pdf>
-
-        <button
-          className="btn btn-danger btn-lg mb-4"
-          style={{ marginLeft: 4 }}
-          onClick={() => onClose()}
-        >
-          <i className="fa fa-close mr-2"></i> Close
-        </button>
-      </div> */}
-
       <div className="btn-group btn-rounded btn-lg">
         <button
           type="button"
@@ -104,7 +86,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
               <div className="col-md-8">
                 <div className="boax-enter">
                   {batch
-                    ? batch.controller.department.name.toUpperCase()
+                    ? batch?.controller?.department?.name?.toUpperCase()
                     : null}
                 </div>
               </div>
@@ -118,10 +100,10 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
               <div className="col-md-8">
                 <div className="boax-enter">
                   {batch &&
-                  batch.controller.originator !== null &&
-                  batch.controller.originator.type === "directorate"
-                    ? batch.controller.originator.name.toUpperCase()
-                    : batch.controller.department.name.toUpperCase()}
+                  batch?.controller?.originator !== null &&
+                  batch?.controller?.originator?.type === "directorate"
+                    ? batch?.controller?.originator?.name?.toUpperCase()
+                    : batch?.controller?.department?.name?.toUpperCase()}
                 </div>
               </div>
             </div>
@@ -136,7 +118,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
                   <div className="col-md-8">
                     <div className="boax-enter">
                       {batch
-                        ? batch.expenditures[0].description.toUpperCase()
+                        ? batch?.expenditures[0]?.description?.toUpperCase()
                         : null}
                     </div>
                   </div>
@@ -150,7 +132,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
                   <div className="col-md-8">
                     <div className="boax-enter">
                       {batch
-                        ? batch.expenditures[0].subBudgetHead.name.toUpperCase()
+                        ? batch?.expenditures[0]?.subBudgetHeadName?.toUpperCase()
                         : null}
                     </div>
                   </div>
@@ -176,7 +158,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
 
                 <div className="col-md-8">
                   <div className="boax-enter">
-                    {batch ? batch.noOfClaim : 0}
+                    {batch ? batch?.noOfClaim : 0}
                   </div>
                 </div>
               </div>
@@ -194,7 +176,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
                     <div className="boax-enter">
                       {batch
                         ? new Intl.NumberFormat().format(
-                            batch.expenditures[0].amount
+                            batch?.expenditures[0]?.amount
                           )
                         : null}
                     </div>
@@ -208,7 +190,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
                   <div className="col-md-8">
                     <div className="boax-enter">
                       {batch
-                        ? batch.expenditures[0].beneficiary.toUpperCase()
+                        ? batch?.expenditures[0]?.beneficiary?.toUpperCase()
                         : null}
                     </div>
                   </div>
@@ -216,7 +198,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
               </>
             ) : null}
 
-            {batch && getPaymentType(batch.batch_no) === "STAFF PAYMENT" ? (
+            {batch && getPaymentType(batch?.batch_no) === "STAFF PAYMENT" ? (
               <div className="staff-list">
                 <table className="striped bordered responsive table-sm">
                   <thead id="top-headers-table">
@@ -231,22 +213,22 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
                   </thead>
 
                   <tbody>
-                    {batch && batch.expenditures.length !== 0
-                      ? batch.expenditures.map((expenditure) => (
+                    {batch && batch?.expenditures?.length !== 0
+                      ? batch?.expenditures?.map((expenditure) => (
                           <tr key={expenditure.id}>
                             <td>
-                              {expenditure.claim !== null &&
-                              expenditure.claim.owner
-                                ? expenditure.claim.owner.staff_no
+                              {expenditure?.claim !== null &&
+                              expenditure?.claim?.owner
+                                ? expenditure?.claim?.owner?.staff_no
                                 : "NULL"}
                             </td>
-                            <td>{expenditure.beneficiary.toUpperCase()}</td>
+                            <td>{expenditure?.beneficiary?.toUpperCase()}</td>
                             <td>
-                              {formatCurrency(expenditure.amount)}
+                              {formatCurrency(expenditure?.amount)}
                               .00
                             </td>
-                            <td>{expenditure.subBudgetHead.budgetCode}</td>
-                            <td>{expenditure.description.toUpperCase()}</td>
+                            <td>{expenditure?.subBudgetHead?.budgetCode}</td>
+                            <td>{expenditure?.description?.toUpperCase()}</td>
                             <td></td>
                           </tr>
                         ))
@@ -257,7 +239,7 @@ const BatchPrintOut = ({ batch, onClose, handlePrintBatch }) => {
                 <div className="grandTotal">
                   <h5>
                     TOTAL:{" "}
-                    {batch ? new Intl.NumberFormat().format(batch.amount) : 0}
+                    {batch ? new Intl.NumberFormat().format(batch?.amount) : 0}
                   </h5>
                 </div>
               </div>

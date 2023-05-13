@@ -194,7 +194,7 @@ const Approvals = (props) => {
   };
 
   const fetchExpenditureSubBudgetHead = (batch) => {
-    return batch.expenditures[0].subBudgetHead.budgetCode;
+    return batch?.subBudgetHeadCode;
   };
 
   const modifyExpenditure = (exp) => {
@@ -270,6 +270,8 @@ const Approvals = (props) => {
       });
     }
   }, [state.batch, state.showDetails]);
+
+  // console.log(state.batch);
 
   return (
     <>

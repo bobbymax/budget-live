@@ -283,7 +283,7 @@ const ReportManagement = () => {
   };
 
   useEffect(() => {
-    if (funds?.length > 0 && period !== "") {
+    if (funds?.length > 0 && period !== "" && Array.isArray(expenditures)) {
       const d = new Date(period);
       let fundsForYear = funds?.filter(
         (fund) => fund?.budget_year == budgetYear
@@ -294,11 +294,15 @@ const ReportManagement = () => {
           ? fundsForYear.filter((fund) => fund?.budget_owner === department)
           : fundsForYear;
 
-      const computed = generateReportForPeriod(fundsForYear, period);
-      const exps = getExpenditures(computed);
+      const computed = generateReportForPeriod(
+        fundsForYear,
+        period,
+        expenditures
+      );
+      // const exps = getExpenditures(computed);
       const budgetSummary = getBudgetSummation(computed);
 
-      setExpenditures(exps);
+      // setExpenditures(exps);
 
       if (budgetHeads?.length > 0) {
         setReport(generateMonthlyReport(computed, budgetHeads, period));
@@ -327,22 +331,29 @@ const ReportManagement = () => {
         actualPerformance: budgetSummary?.aPerformance,
       });
     }
-  }, [funds, department, period]);
+  }, [funds, expenditures, department, period]);
 
   useEffect(() => {
     try {
       setLoading(true);
       const departmentData = collection("departments");
       const budgetHeadsData = collection("budgetHeads");
-      const fundsData = collection("fetch/creditBudgetHeads");
+      const fundsData = collection("creditBudgetHeads");
+      const expendituresData = collection("fetch/expenditures/all");
 
-      batchRequests([departmentData, budgetHeadsData, fundsData])
+      batchRequests([
+        departmentData,
+        budgetHeadsData,
+        fundsData,
+        expendituresData,
+      ])
         .then(
           axios.spread((...res) => {
             const d = new Date();
             setDepartments(res[0].data.data);
             setBudgetHeads(res[1].data.data);
             setFunds(res[2].data.data);
+            setExpenditures(res[3].data.data);
             setPeriod(moment(d).format("YYYY-MM-DD"));
             setBudgetYear(year ?? 0);
             setLoading(false);

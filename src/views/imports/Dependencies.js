@@ -57,8 +57,8 @@ const Dependencies = () => {
     },
     {
       id: 8,
-      label: "Onboard Staff",
-      value: "onboarding",
+      label: "Budget Period",
+      value: "period",
     },
   ];
 
@@ -83,8 +83,8 @@ const Dependencies = () => {
         })
         .catch((err) => {
           setIsLoading(false);
-          console.log(err.message);
-          Alert.error("Oops!!", "Something must have f=gone wrong");
+          console.log(err.response.data.message);
+          Alert.error("Oops!!", "Something must have gone wrong");
         });
     } catch (error) {
       console.log(error);
@@ -153,6 +153,8 @@ const Dependencies = () => {
       setCols([]);
     }
   };
+
+  // console.log(data);
 
   return (
     <>
