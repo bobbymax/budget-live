@@ -26,7 +26,7 @@ function BatchWidget({
                           <div className="row">
                             <div className="col-md-10 mb-3">
                               <h4 className="budget-code text-success">
-                                BC: {item.subBudgetHead.budgetCode}
+                                BC: {item?.subBudgetHeadCode}
                               </h4>
                             </div>
                             <div className="col-md-2 mb-3">
@@ -37,9 +37,10 @@ function BatchWidget({
                                   disabled={
                                     isButtonOff ||
                                     (paymentType !== "" &&
-                                      paymentType !== item.payment_type) ||
+                                      paymentType !== item?.payment_type) ||
                                     (subBudgetHeadId > 0 &&
-                                      subBudgetHeadId != item.subBudgetHead.id)
+                                      subBudgetHeadId !=
+                                        item?.subBudgetHead?.id)
                                   }
                                 >
                                   <i className="fa fa-plus"></i>

@@ -8,16 +8,15 @@ import CustomSelect from "../../../components/forms/CustomSelect";
 import TextInputField from "../../../components/forms/TextInputField";
 import { validate } from "../../../services/utils/validation";
 import { CSVLink } from "react-csv";
-import DataTables from "../../../components/DataTables";
 import { columns } from "../../../resources/columns";
-// import TableCard from "../../../components/commons/tables/customized/TableCard";
+import CustomTable from "../../../components/commons/tables/customized/CustomTable";
 
 const SubBudgetHeads = () => {
   const {
     request,
     data: subBudgetHeads,
     setData: setSubBudgetHeads,
-    loading: isLoading,
+    // loading: isLoading,
   } = useApi(collection);
 
   const [departmentIDs, setDepartmentIDs] = useState([]);
@@ -60,8 +59,6 @@ const SubBudgetHeads = () => {
     getDepartments();
     getBudgetHead();
   }, []);
-
-  console.log(subBudgetHeads);
 
   const getDepartments = async () => {
     const response = await collection("departments");
@@ -400,12 +397,11 @@ const SubBudgetHeads = () => {
         </>
       )}
 
-      <DataTables
-        pillars={columns.subBudgetHeads}
-        rows={subBudgetHeads}
-        manageRow={handleEdit}
-        isFetching={isLoading}
-        canManage
+      <CustomTable
+        data={subBudgetHeads}
+        columns={columns.subBudgetHeads}
+        manage={handleEdit}
+        isSearchable
       />
     </div>
   );

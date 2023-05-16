@@ -67,12 +67,16 @@ export const columns = {
   ],
   subBudgetHeads: [
     {
-      Header: "Code",
-      accessor: "budgetCode",
+      field: "budgetCode",
+      header: "Code",
+      isSortable: true,
+      currency: false,
     },
     {
-      Header: "Name",
-      accessor: "name",
+      field: "name",
+      header: "Name",
+      isSortable: true,
+      currency: false,
     },
   ],
 };

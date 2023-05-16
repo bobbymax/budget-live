@@ -1,0 +1,74 @@
+.prime__table th,
+.prime__table td {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+.prime__table span {
+  font-size: 0.85rem;
+}
+.table__action__btn,
+.table__print__btn,
+.view__action__btn {
+  padding: 0.48rem;
+  border-radius: 50%;
+  color: #ececec;
+  border: 0;
+}
+
+.search__form {
+  width: 100%;
+  margin-bottom: 0.98rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.view__action__btn {
+  background-color: #282b2b;
+}
+
+.view__action__btn:hover {
+  background-color: #3a3f3f;
+}
+
+.table__action__btn {
+  background-color: #b31650;
+}
+
+.table__action__btn span,
+.table__print__btn span,
+.verified_badge span,
+.view__action__btn span {
+  display: block;
+}
+
+.table__action__btn:disabled {
+  background-color: #5b5b5b;
+}
+
+.stat_badge {
+  display: block;
+  padding: 0.23rem;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+}
+
+.stat_warning {
+  background-color: #f59f36;
+}
+
+.stat_secondary {
+  background-color: #d7245a;
+}
+
+.stat_primary {
+  background-color: #34cd48;
+}
+
+.stat_danger {
+  background-color: #d21717;
+}
+
+.stat_info {
+  background-color: #34becd;
+}

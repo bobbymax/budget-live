@@ -13,11 +13,11 @@ import TextInputField from "../../../components/forms/TextInputField";
 import Alert from "../../../services/classes/Alert";
 import CustomSelectOptions from "../../../components/forms/select/CustomSelectOptions";
 import axios from "axios";
-import TableCard from "../../../components/commons/tables/customized/TableCard";
 import Loading from "../../../components/commons/Loading";
 import { formatCurrencyWithoutSymbol } from "../../../services/utils/helpers";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import CustomTable from "../../../components/commons/tables/customized/CustomTable";
 
 const Expenditures = () => {
   const navigate = useNavigate();
@@ -51,11 +51,37 @@ const Expenditures = () => {
   const [disableBttn, setDisableBttn] = useState(false);
 
   const columns = [
-    { key: "subBudgetHeadCode", label: "BUDGET CODE" },
-    { key: "beneficiary", label: "BENEFICIARY" },
-    { key: "amount", label: "AMOUNT", format: "currency" },
-    { key: "created_at", label: "RAISED AT" },
-    { key: "status", label: "STATUS" },
+    {
+      field: "subBudgetHeadCode",
+      header: "BUDGET CODE",
+      isSortable: true,
+      currency: false,
+    },
+    {
+      field: "beneficiary",
+      header: "Beneficiary",
+      isSortable: true,
+      currency: false,
+    },
+    {
+      field: "amount",
+      header: "Amount",
+      isSortable: true,
+      currency: true,
+    },
+    {
+      field: "created_at",
+      header: "Raised At",
+      isSortable: true,
+      currency: false,
+    },
+    {
+      field: "status",
+      header: "Status",
+      isSortable: true,
+      currency: false,
+      status: true,
+    },
   ];
 
   useEffect(() => {
@@ -99,24 +125,32 @@ const Expenditures = () => {
   const handleDestroy = (data) => {
     setLoading(true);
 
-    try {
-      destroy("expenditures", data)
-        .then((res) => {
-          const result = res.data;
-          setExpenditures(
-            expenditures.filter((exp) => exp.id != result.data.id)
-          );
-          setLoading(false);
-          Alert.success("Deleted!!", result.message);
-        })
-        .catch((err) => {
-          setLoading(false);
-          Alert.error("Oops!!", "Something went wrong!!");
-          console.log(err.message);
-        });
-    } catch (error) {
-      console.log(error);
-    }
+    Alert.flash(
+      "Are you sure?",
+      "warning",
+      "You would not be able to revert this!!"
+    ).then((result) => {
+      if (result.isConfirmed) {
+        try {
+          destroy("expenditures", data)
+            .then((res) => {
+              const result = res.data;
+              setExpenditures(
+                expenditures.filter((exp) => exp.id != result.data.id)
+              );
+              setLoading(false);
+              Alert.success("Deleted!!", result.message);
+            })
+            .catch((err) => {
+              setLoading(false);
+              Alert.error("Oops!!", "Something went wrong!!");
+              console.log(err.message);
+            });
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    });
 
     setLoading(false);
   };
@@ -267,7 +301,7 @@ const Expenditures = () => {
     }
   }, [exp]);
 
-  console.log(expenditures);
+  // console.log(expenditures);
 
   return (
     <>
@@ -616,11 +650,11 @@ const Expenditures = () => {
             </div>
           </div>
         )}
-        <TableCard
+        <CustomTable
           columns={columns}
-          rows={expenditures}
-          expenditureData
-          destroyExpenditure={handleDestroy}
+          data={expenditures}
+          destroy={handleDestroy}
+          isSearchable
         />
       </div>
     </>
