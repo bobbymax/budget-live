@@ -5,14 +5,12 @@ import {
   alter,
   batchRequests,
   collection,
-  // destroy,
   store,
 } from "../../../services/utils/controllers";
 import { validate } from "../../../services/utils/validation";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import Alert from "../../../services/classes/Alert";
-// import BasicTable from "../../../components/commons/tables/BasicTable";
 import { Link } from "react-router-dom";
 import { formatDate, userHasRole } from "../../../services/utils/helpers";
 import AddStaffRole from "./AddStaffRole";
@@ -22,7 +20,7 @@ import PasswordReset from "./PasswordReset";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { columns } from "../../../resources/columns";
-import DataTables from "../../../components/DataTables";
+import CustomTable from "../../../components/commons/tables/customized/CustomTable";
 
 const Employees = () => {
   const auth = useSelector((state) => state.auth.value.user);
@@ -504,11 +502,11 @@ const Employees = () => {
               )}
             </>
 
-            <DataTables
-              pillars={columns.staff}
-              rows={employees}
-              manageRow={manageStaff}
-              canManage
+            <CustomTable
+              columns={columns.staff}
+              data={employees}
+              manage={manageStaff}
+              isSearchable
             />
           </>
         )}

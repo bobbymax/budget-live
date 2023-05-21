@@ -1,16 +1,22 @@
 export const columns = {
   staff: [
     {
-      Header: "Staff Number",
-      accessor: "staff_no",
+      field: "staff_no",
+      header: "Staff NUmber",
+      isSortable: true,
+      currency: false,
     },
     {
-      Header: "Name",
-      accessor: "name",
+      field: "name",
+      header: "Name",
+      isSortable: true,
+      currency: false,
     },
     {
-      Header: "Email",
-      accessor: "email",
+      field: "email",
+      header: "Email",
+      isSortable: true,
+      currency: false,
     },
   ],
   recons: [

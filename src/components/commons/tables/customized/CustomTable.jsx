@@ -157,7 +157,7 @@ const CustomTable = ({
 
   const percentageTemplate = (raw) => {
     const keys = Object.keys(raw);
-    console.log(keys, raw);
+    // console.log(keys, raw);
     return `${raw[getPercentageKey(keys)]}%`;
   };
 

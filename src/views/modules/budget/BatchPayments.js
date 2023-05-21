@@ -117,8 +117,6 @@ const BatchPayment = (props) => {
       .catch((err) => console.log(err.message));
   };
 
-  // console.log(defaultData);
-
   const handleDelete = (expenditure) => {
     if (board.length >= 1) {
       const claimChoosen = board.filter((b) => expenditure.id == b.id);
@@ -133,7 +131,7 @@ const BatchPayment = (props) => {
 
         setState({
           ...state,
-          buttonDisabled: state.boardType !== "" ? true : false,
+          buttonDisabled: state.boardType !== "",
         });
       } else {
         const newExpenditure = [...expenditures, claimChoosen[0]];
