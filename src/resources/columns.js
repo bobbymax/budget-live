@@ -19,6 +19,65 @@ export const columns = {
       currency: false,
     },
   ],
+  overview: [
+    {
+      field: "budgetCode",
+      header: "Code",
+      isSortable: true,
+      currency: false,
+    },
+    {
+      field: "name",
+      header: "Budget",
+      isSortable: true,
+      currency: false,
+    },
+    {
+      field: "approved_amount",
+      header: "Approved",
+      isSortable: false,
+      currency: false,
+      approved_currency: true,
+    },
+    {
+      field: "booked_expenditure",
+      header: "Commitment",
+      isSortable: false,
+      currency: true,
+    },
+    {
+      field: "actual_expenditure",
+      header: "Actual",
+      isSortable: false,
+      currency: true,
+    },
+    {
+      field: "booked_balance",
+      header: "Booked Balance",
+      isSortable: false,
+      approved_currency: true,
+    },
+    {
+      field: "actual_balance",
+      header: "Actual Balance",
+      isSortable: false,
+      currency: true,
+    },
+    {
+      field: "expected_performance",
+      header: "Expected Performance",
+      isSortable: false,
+      currency: false,
+      performance: true,
+    },
+    {
+      field: "actual_performance",
+      header: "Actual Performance",
+      isSortable: false,
+      currency: false,
+      performance: true,
+    },
+  ],
   recons: [
     {
       Header: "Budget Code",

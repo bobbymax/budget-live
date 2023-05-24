@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
-
+import { CSVLink } from "react-csv";
 import { FilterMatchMode } from "primereact/api";
 import { InputText } from "primereact/inputtext";
 import moment from "moment";
 import {
+  buildHeaders,
   formatCurrency,
   formatCurrencyWithoutSymbol,
 } from "../../../../services/utils/helpers";
@@ -22,10 +23,14 @@ const CustomTable = ({
   print = undefined,
   destroy = undefined,
   isSearchable = false,
+  downloadable = false,
+  breakdown = undefined,
 }) => {
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
+
+  const [headers, setHeaders] = useState([]);
 
   const actionBodyTemplate = (raw) => {
     return (
@@ -38,6 +43,19 @@ const CustomTable = ({
       </button>
     );
   };
+
+  const breakdownActionTemplate = (raw) => {
+    return (
+      <button
+        type="button"
+        className="table__action__btn"
+        onClick={() => breakdown(raw)}
+      >
+        <span className="material-icons-sharp">construction</span>
+      </button>
+    );
+  };
+
   const destroyBodyTemplate = (raw) => {
     return (
       <button
@@ -103,7 +121,11 @@ const CustomTable = ({
 
   const currencyTemplate = (raw) => {
     for (const property in raw) {
-      if (property === "booked_expenditure" || property === "amount") {
+      if (
+        property === "booked_expenditure" ||
+        property === "amount" ||
+        property === "actual_expenditure"
+      ) {
         return formatCurrencyWithoutSymbol(raw[property]);
       }
     }
@@ -111,7 +133,11 @@ const CustomTable = ({
 
   const specialCurrency = (raw) => {
     for (const property in raw) {
-      if (property === "approved_amount" || property === "total_amount") {
+      if (
+        property === "approved_amount" ||
+        property === "total_amount" ||
+        property === "booked_balance"
+      ) {
         return formatCurrency(raw[property]);
       }
     }
@@ -171,11 +197,33 @@ const CustomTable = ({
     }
   };
 
+  useEffect(() => {
+    if (columns?.length > 0 && data.length > 0) {
+      setHeaders(buildHeaders(columns));
+    }
+  }, [columns, data]);
+
   return (
     <div className="col-md-12">
       <div className="prime__table">
         <div className="card">
           <div className="card-body">
+            {downloadable && (
+              <div className="csv__btn">
+                <div className="pull-right">
+                  <CSVLink
+                    className="download__bttn"
+                    data={data}
+                    headers={headers}
+                    filename="Budget Overview"
+                  >
+                    <span className="material-icons-sharp">download</span>
+                    <p>Download CSV</p>
+                  </CSVLink>
+                </div>
+              </div>
+            )}
+
             <div className="table-search mb-3">
               {isSearchable && (
                 <InputText
@@ -268,6 +316,9 @@ const CustomTable = ({
                 {print !== undefined && <Column body={printBodyTemplate} />}
                 {reverse !== undefined && <Column body={reverseBodyTemplate} />}
                 {destroy !== undefined && <Column body={destroyBodyTemplate} />}
+                {breakdown !== undefined && (
+                  <Column body={breakdownActionTemplate} />
+                )}
               </DataTable>
             </div>
           </div>

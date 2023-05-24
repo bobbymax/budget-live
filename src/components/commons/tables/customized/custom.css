@@ -1,6 +1,6 @@
 .prime__table th,
 .prime__table td {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
 }
 .prime__table span {
@@ -71,4 +71,38 @@
 
 .stat_info {
   background-color: #34becd;
+}
+
+.download__bttn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #208f2e;
+  color: white;
+  gap: 0.38rem;
+  padding: 0.18rem 1.28rem;
+  border-radius: 1.9rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1.48rem;
+  text-decoration: none;
+}
+
+.download__bttn p {
+  margin: 0;
+}
+
+.download__bttn span {
+  display: block;
+}
+
+.download__bttn:hover {
+  background-color: #2bac3c;
+  color: white;
+}
+
+.download__bttn .disabled {
+  background-color: #5b5b5b;
+  color: white;
 }

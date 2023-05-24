@@ -652,3 +652,16 @@ export const fetchers = [
     cloumns: dependencies.refunds,
   },
 ];
+
+export const buildHeaders = (cols) => {
+  let headers = [];
+
+  cols?.map((col) =>
+    headers.push({
+      key: col.field,
+      label: col.header,
+    })
+  );
+
+  return headers;
+};

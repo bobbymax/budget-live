@@ -17,6 +17,7 @@ const Aside = ({ active }) => {
     "budget-owner",
     "budget-office-officer",
     "head-of-budget",
+    "director",
   ];
 
   const adminRoles = ["super-administrator", "fad-admin"];
