@@ -120,7 +120,21 @@ const Overview = (props) => {
   const handleChange = (e) => {
     const value = e.key;
     // console.log(value);
-    if (value > 0) {
+    if (value === "all") {
+      setDepartment(value)
+      setLoading(true)
+      collection("all/departments/budget/summary")
+      .then(res => {
+        const response = res.data.data
+
+        setData(response)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error(err.message)
+        setLoading(false)
+      })
+    } else if (value > 0) {
       setDepartment(value);
       setLoading(true);
       collection("departments/" + value + "/budget/summary")
@@ -137,8 +151,8 @@ const Overview = (props) => {
     }
   };
 
-  const filterOptions = (optionsArr) => {
-    const arr = [];
+  const filterOptions = (optionsArr, all = false) => {
+    const arr = all ? [{key: "all", label: "All DDD's"}] : [];
     optionsArr.length > 0 &&
       optionsArr.forEach((el) => {
         arr.push({ key: el.id, label: el.code });
@@ -214,7 +228,7 @@ const Overview = (props) => {
             styles={{ height: "100%" }}
             components={makeAnimated()}
             isLoading={loading}
-            options={filterOptions(departments)}
+            options={filterOptions(departments, true)}
             placeholder="Select Department"
             onChange={handleChange}
             isSearchable

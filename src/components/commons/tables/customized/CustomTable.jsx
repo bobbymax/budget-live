@@ -131,6 +131,10 @@ const CustomTable = ({
     }
   };
 
+  const hasCurrencyCol = (raw, col) => {
+    return formatCurrencyWithoutSymbol(raw[col?.field]);
+  };
+
   const specialCurrency = (raw) => {
     for (const property in raw) {
       if (
@@ -258,6 +262,16 @@ const CustomTable = ({
                         header={col.header}
                         sortable={col.isSortable}
                         body={currencyTemplate}
+                      />
+                    );
+                  } else if (col?.hasCurrency) {
+                    return (
+                      <Column
+                        key={i}
+                        field={col.field}
+                        header={col.header}
+                        sortable={col.isSortable}
+                        body={hasCurrencyCol}
                       />
                     );
                   } else if (col?.approved_currency) {
