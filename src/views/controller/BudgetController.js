@@ -21,7 +21,7 @@ const BudgetController = ({ userDashboardData }) => {
 
   const cards = [
     {
-      title: "Payment Forms",
+      title: "Raised Payments",
       roles: [
         "budget-controller",
         "es",

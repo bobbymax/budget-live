@@ -77,15 +77,15 @@ const BatchPayment = (props) => {
       setState({
         ...state,
         boardType: expenditure.payment_type,
-        sub_budget_head_id: expenditure.subBudgetHead.id,
+        sub_budget_head_id: expenditure?.sub_budget_head_id,
         maxSlot: availableSlots,
-        subBudgetCode: expenditure.subBudgetHead.budgetCode,
+        subBudgetCode: expenditure?.subBudgetHeadCode,
       });
     } else {
       if (
         expenditure.payment_type === state.boardType &&
         board.length <= state.maxSlot &&
-        expenditure.subBudgetHead.id == state.sub_budget_head_id
+        expenditure?.sub_budget_head_id == state.sub_budget_head_id
       ) {
         setExpenditures(newLoads);
         setBoard([expenditure, ...board]);
