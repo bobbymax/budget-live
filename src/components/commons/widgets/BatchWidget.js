@@ -3,11 +3,13 @@ import React from "react";
 import { formatCurrency } from "../../../services/utils/helpers";
 
 function BatchWidget({
-  data,
-  addToBatch,
-  isButtonOff,
-  paymentType,
-  subBudgetHeadId,
+  data = [],
+  addToBatch = undefined,
+  isButtonOff = false,
+  paymentType = "",
+  subBudgetHeadId = 0,
+  subBudgetHeadCode = "",
+  maxSlots = 0
 }) {
   if (data) {
     return (
@@ -38,9 +40,9 @@ function BatchWidget({
                                     isButtonOff ||
                                     (paymentType !== "" &&
                                       paymentType !== item?.payment_type) ||
-                                    (subBudgetHeadId > 0 &&
-                                      subBudgetHeadId !=
-                                        item?.subBudgetHead?.id)
+                                    (subBudgetHeadCode > 0 &&
+                                      subBudgetHeadCode !=
+                                        item?.subBudgetHeadCode)
                                   }
                                 >
                                   <i className="fa fa-plus"></i>

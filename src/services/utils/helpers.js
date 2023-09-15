@@ -110,6 +110,23 @@ export const search = (str = "", data = []) => {
   return filtered;
 };
 
+export const batchValues = [
+  {
+    name: "staff-payment",
+    maxSlot: 6,
+    subBudgetCode: "",
+    prefix: "SP",
+    default: true,
+  },
+  {
+    name: "third-party",
+    maxSlot: 1,
+    subBudgetCode: "",
+    prefix: "TPP",
+    default: false,
+  },
+];
+
 export const getPaymentType = (code) => {
   const type = code.substring(0, 2);
   return type === "SP" ? "STAFF PAYMENT" : "THIRD PARTY PAYMENT";

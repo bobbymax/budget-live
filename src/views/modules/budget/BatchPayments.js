@@ -4,23 +4,13 @@
 import React, { useEffect, useState } from "react";
 import { collection, store } from "../../../services/utils/controllers";
 import { uniqueNumberGenerator } from "../../../services/utils/helpers";
-import useApi from "../../../services/hooks/useApi";
 import BatchWidget from "../../../components/commons/widgets/BatchWidget";
 import BatchCard from "../../../components/commons/widgets/BatchCard";
-import "./drag.css";
 import Loading from "../../../components/commons/Loading";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const BatchPayment = (props) => {
-  const auth = useSelector((state) => state.auth.value.user);
+const BatchPayment = () => {
   const navigate = useNavigate();
-  const {
-    data: expenditures,
-    setData: setExpenditures,
-    request,
-    loading,
-  } = useApi(collection);
 
   const initialState = {
     boardType: "",
@@ -30,6 +20,8 @@ const BatchPayment = (props) => {
     buttonDisabled: false,
     sub_budget_head_id: 0,
     subBudgetCode: "",
+    added: 0,
+    removed: null
   };
 
   const maxSlots = {
@@ -38,22 +30,24 @@ const BatchPayment = (props) => {
   };
 
   const [state, setState] = useState(initialState);
+  const [expenditures, setExpenditures] = useState([])
   const [batchable, setBatchable] = useState([]);
   const [board, setBoard] = useState([]);
+  const [loading, setLoading] = useState(false)
 
   const defaultData = [
     {
       id: 1,
       title: "STAFF PAYMENT",
       items: batchable.filter(
-        (ex) => ex.payment_type && ex.payment_type === "staff-payment"
+        (ex) => ex?.payment_type && ex?.payment_type === "staff-payment"
       ),
     },
     {
       id: 2,
       title: "THIRD PARTY",
       items: batchable.filter(
-        (ex) => ex.payment_type && ex.payment_type === "third-party"
+        (ex) => ex?.payment_type && ex?.payment_type === "third-party"
       ),
     },
   ];
@@ -63,6 +57,7 @@ const BatchPayment = (props) => {
   const boardTypeState = state.boardType !== "" && boardLength == 0 && "";
 
   const batchClaim = (expenditure) => {
+
     // Filter selected expenditure from expenditures
     const newLoads = expenditures.filter((exp) => exp.id != expenditure.id);
     // Check board length
@@ -80,6 +75,7 @@ const BatchPayment = (props) => {
         sub_budget_head_id: expenditure?.sub_budget_head_id,
         maxSlot: availableSlots,
         subBudgetCode: expenditure?.subBudgetHeadCode,
+        added: parseInt(expenditure?.id)
       });
     } else {
       if (
@@ -89,6 +85,10 @@ const BatchPayment = (props) => {
       ) {
         setExpenditures(newLoads);
         setBoard([expenditure, ...board]);
+        setState({
+          ...state,
+          added: parseInt(expenditure?.id)
+        });
       }
     }
   };
@@ -120,7 +120,6 @@ const BatchPayment = (props) => {
   const handleDelete = (expenditure) => {
     if (board.length >= 1) {
       const claimChoosen = board.filter((b) => expenditure.id == b.id);
-
       const boardState = board.filter((b) => expenditure.id != b.id);
 
       if (boardState.length > 0) {
@@ -132,6 +131,7 @@ const BatchPayment = (props) => {
         setState({
           ...state,
           buttonDisabled: state.boardType !== "",
+          removed: expenditure?.id
         });
       } else {
         const newExpenditure = [...expenditures, claimChoosen[0]];
@@ -150,15 +150,7 @@ const BatchPayment = (props) => {
     }
   };
 
-  useEffect(() => {
-    request("expenditures");
-  }, []);
-
-  useEffect(() => {
-    if (expenditures.length > 0) {
-      setBatchable(expenditures.filter((exp) => exp.status === "cleared"));
-    }
-  }, [expenditures]);
+  // console.log(batchable, state)
 
   useEffect(() => {
     if (boardLength > 0) {
@@ -189,6 +181,36 @@ const BatchPayment = (props) => {
       });
     }
   }, [boardTypeState]);
+  
+  useEffect(() => {
+    try {
+      setLoading(true)
+      collection("batch/cleared/expenditures")
+      .then(res => {
+        setBatchable(res.data.data)
+        setExpenditures(res.data.data)
+        setLoading(false)
+      })
+      .catch(err => {
+        console.error(err.message)
+        setLoading(false)
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (state.added > 0) {
+      setBatchable(
+        batchable?.filter(batch => parseInt(batch?.id) !== state.added)
+      )
+    }
+  }, [state.added])
+
+  useEffect(() => {
+    setBatchable(expenditures)
+  }, [expenditures])
 
   return (
     <>
@@ -215,6 +237,8 @@ const BatchPayment = (props) => {
             isButtonOff={state.buttonDisabled}
             paymentType={state.boardType}
             subBudgetHeadId={state.sub_budget_head_id}
+            subBudgetHeadCode={state.subBudgetCode}
+            maxSlots={state.maxSlot}
           />
         </div>
 
@@ -222,7 +246,7 @@ const BatchPayment = (props) => {
           <div className="row">
             <div className="col-md-12">
               <h4 className="content-title content-title-xs mb-3 text-muted">
-                - BATCH - {state.code.toUpperCase()}
+                - BATCH - {state.code?.toUpperCase()}
               </h4>
             </div>
 
