@@ -66,6 +66,8 @@ const Overview = (props) => {
     }
   }, []);
 
+  // console.log(data)
+
   useEffect(() => {
     collection("departments")
       .then((res) => {

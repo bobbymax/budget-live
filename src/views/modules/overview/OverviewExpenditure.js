@@ -7,6 +7,7 @@ import { formatCurrency } from "../../../services/utils/helpers";
 import { CSVLink } from "react-csv";
 import { collection } from "../../../services/utils/controllers";
 import Loading from "../../../components/commons/Loading";
+import moment from "moment";
 
 const labels = [
   "Jan",
@@ -77,6 +78,8 @@ const OverviewExpenditure = () => {
       100
   );
 
+  // console.log(state)
+
   const bala =
     state.subBudgetHead.approved_amount -
     state.subBudgetHead.actual_expenditure;
@@ -124,7 +127,7 @@ const OverviewExpenditure = () => {
   };
 
   useEffect(() => {
-    if (state.subBudgetHead !== {} && state.subBudgetHead.id > 0) {
+    if (state.subBudgetHead.id > 0) {
       setChartData(returnedResult());
     }
   }, [state.expenditures]);
@@ -186,6 +189,8 @@ const OverviewExpenditure = () => {
                     <td>Beneficiary</td>
                     <td>Description</td>
                     <td>Amount</td>
+                    <td>Raised At</td>
+                    <td>Status</td>
                   </tr>
                 </thead>
 
@@ -193,10 +198,12 @@ const OverviewExpenditure = () => {
                   {state.expenditures && state.expenditures.length > 0 ? (
                     state.expenditures.map((subBudget) => (
                       <tr key={subBudget.id}>
-                        <td>{subBudget.subBudgetHead.budgetCode}</td>
+                        <td>{subBudget.subBudgetHeadCode}</td>
                         <td>{subBudget.beneficiary}</td>
                         <td>{subBudget.description}</td>
                         <td>{formatCurrency(parseFloat(subBudget.amount))}</td>
+                        <td>{moment(subBudget.created_at).format("LL")}</td>
+                        <td>{subBudget.status}</td>
                       </tr>
                     ))
                   ) : (
