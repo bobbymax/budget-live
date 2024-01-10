@@ -38,6 +38,7 @@ const Dashboard = () => {
     "super-administrator",
     "head-of-department",
     "ict-manager",
+    "budget-owner"
   ];
 
   useEffect(() => {
@@ -47,35 +48,38 @@ const Dashboard = () => {
       const claimsRequest = collection("department/claims");
       const overviews = collection("dashboard/overview");
       const fundsData = collection("creditBudgetHeads");
+      const bcosData = collection("budget/bcos")
 
       try {
-        batchRequests([expenditureRequest, claimsRequest, overviews, fundsData])
+        batchRequests([expenditureRequest, claimsRequest, overviews, fundsData, bcosData])
           .then(
             axios.spread((...res) => {
+              const expenditures = res[0].data?.data;
+              const claims = res[1].data?.data;
+              const overview = res[2].data?.data;
+              const funds = res[3].data?.data;
+              const bcos = res[4].data?.data
 
-              const expenditures = res[0].data.data;
-              const claims = res[1].data.data;
-              const overview = res[2].data.data;
-              const funds = res[3].data.data;
+              console.log(bcos);
 
               const paymentForms = expenditures.filter(
                 (exp) =>
                   exp && exp?.bco.department_id == auth.department_id
               );
+
               const personal = claims.filter(
                 (claim) =>
                   claim &&
                   claim.owner.id == auth.id &&
                   claim.type !== "touring-advance"
               );
+              
               const retirement = claims.filter(
                 (claim) =>
                   claim.type === "touring-advance" &&
                   claim.owner.id == auth.id &&
                   !claim.rettired
               );
-
-              // const funds = funds
 
               const approved = funds
                 .map((fund) => parseFloat(fund.approved_amount))
@@ -152,6 +156,8 @@ const Dashboard = () => {
     expectedPerformance,
     actualPerformance,
   } = state.summary;
+
+  // console.log(state)
 
   return (
     <>
