@@ -49,6 +49,7 @@ const Expenditures = () => {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [disableBttn, setDisableBttn] = useState(false);
+  const [budgetClosed, setBudgetClosed] = useState(false);
 
   const columns = [
     {
@@ -248,17 +249,27 @@ const Expenditures = () => {
       setLoading(true);
       const expenditureData = collection("expenditures");
       const subBudgetHeadsData = collection("subBudgetHeads");
+      const settings = collection("settings");
 
-      batchRequests([expenditureData, subBudgetHeadsData])
+      batchRequests([expenditureData, subBudgetHeadsData, settings])
         .then(
           axios.spread((...res) => {
             const exp = res[0].data.data;
             const subs = res[1].data.data;
+            const sets = res[2].data?.data;
+
+            const status = sets?.filter(
+              (setting) => setting?.key === "budget_status"
+            );
+            const stat = status?.length > 0 ? status[0] : null;
+
+            const value = stat !== null ? stat?.value === "closed" : false;
 
             setLoading(false);
 
             setExpenditures(exp);
             setSubBudgetHeads(subs.filter((budget) => budget.fund !== null));
+            setBudgetClosed(value);
           })
         )
         .catch((err) => {
@@ -325,7 +336,7 @@ const Expenditures = () => {
               type="button"
               className="btn btn-success btn-rounded mb-4"
               onClick={() => setOpen(true)}
-              disabled={open || disableBttn}
+              disabled={open || disableBttn || budgetClosed}
               // disabled
             >
               <i className="fa fa-send mr-2"></i>
