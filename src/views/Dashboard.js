@@ -38,7 +38,7 @@ const Dashboard = () => {
     "super-administrator",
     "head-of-department",
     "ict-manager",
-    "budget-owner"
+    "budget-owner",
   ];
 
   useEffect(() => {
@@ -48,23 +48,22 @@ const Dashboard = () => {
       const claimsRequest = collection("department/claims");
       const overviews = collection("dashboard/overview");
       const fundsData = collection("creditBudgetHeads");
-      const bcosData = collection("budget/bcos")
+      // const bcosData = collection("budget/bcos")
 
       try {
-        batchRequests([expenditureRequest, claimsRequest, overviews, fundsData, bcosData])
+        batchRequests([expenditureRequest, claimsRequest, overviews, fundsData])
           .then(
             axios.spread((...res) => {
               const expenditures = res[0].data?.data;
               const claims = res[1].data?.data;
               const overview = res[2].data?.data;
               const funds = res[3].data?.data;
-              const bcos = res[4].data?.data
+              // const bcos = res[4].data?.data
 
-              console.log(bcos);
+              // console.log(bcos);
 
               const paymentForms = expenditures.filter(
-                (exp) =>
-                  exp && exp?.bco.department_id == auth.department_id
+                (exp) => exp && exp?.bco.department_id == auth.department_id
               );
 
               const personal = claims.filter(
@@ -73,7 +72,7 @@ const Dashboard = () => {
                   claim.owner.id == auth.id &&
                   claim.type !== "touring-advance"
               );
-              
+
               const retirement = claims.filter(
                 (claim) =>
                   claim.type === "touring-advance" &&
@@ -188,87 +187,90 @@ const Dashboard = () => {
           <BudgetController userDashboardData={state} />
         </div>
 
-        {auth && auth.roles.some((role) => allowedRoles.includes(role.label)) && (
-          <>
-            <div className="col-xl-12 col-md-12 col-sm-12">
-              <div className="row">
-                <div className="col-sm-12 col-md-4 col-lg-4">
-                  <div className="card budget-box-shadow">
-                    <div className="card-body">
-                      <div className="media align-items-center">
-                        <DoughnutChart
-                          chartData={state.overview}
-                          totalApproved={approvedAmount}
-                        />
+        {auth &&
+          auth.roles.some((role) => allowedRoles.includes(role.label)) && (
+            <>
+              <div className="col-xl-12 col-md-12 col-sm-12">
+                <div className="row">
+                  <div className="col-sm-12 col-md-4 col-lg-4">
+                    <div className="card budget-box-shadow">
+                      <div className="card-body">
+                        <div className="media align-items-center">
+                          <DoughnutChart
+                            chartData={state.overview}
+                            totalApproved={approvedAmount}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="col-sm-12 col-md-8 col-lg-8">
-                  <div className="card budget-box-shadow text-white bg-success">
-                    <ul className="list-group list-group-flush">
-                      <li className="list-group-item d-flex justify-content-between">
-                        <span className="mb-0">Approved Amount :</span>
-                        <strong>{formatCurrency(approvedAmount)}</strong>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between">
-                        <span className="mb-0">Booked Expenditure :</span>
-                        <strong>{formatCurrency(bookedExpenditure)}</strong>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between">
-                        <span className="mb-0">Actual Expenditure :</span>
-                        <strong>{formatCurrency(actualExpenditure)}</strong>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between">
-                        <span className="mb-0">Booked Balance :</span>
-                        <strong>{formatCurrency(bookedBalance)}</strong>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between">
-                        <span className="mb-0">Actual Balance :</span>
-                        <strong>{formatCurrency(actualBalance)}</strong>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between">
-                        <span className="mb-0">Expected Performance :</span>
-                        <strong>
-                          {parseFloat(expectedPerformance).toFixed(2) + "%"}
-                        </strong>
-                      </li>
-                      <li className="list-group-item d-flex justify-content-between">
-                        <span className="mb-0">Actual Performance :</span>
-                        <strong>
-                          {parseFloat(actualPerformance).toFixed(2) + "%"}
-                        </strong>
-                      </li>
-                    </ul>
+                  <div className="col-sm-12 col-md-8 col-lg-8">
+                    <div className="card budget-box-shadow text-white bg-success">
+                      <ul className="list-group list-group-flush">
+                        <li className="list-group-item d-flex justify-content-between">
+                          <span className="mb-0">Approved Amount :</span>
+                          <strong>{formatCurrency(approvedAmount)}</strong>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between">
+                          <span className="mb-0">Booked Expenditure :</span>
+                          <strong>{formatCurrency(bookedExpenditure)}</strong>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between">
+                          <span className="mb-0">Actual Expenditure :</span>
+                          <strong>{formatCurrency(actualExpenditure)}</strong>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between">
+                          <span className="mb-0">Booked Balance :</span>
+                          <strong>{formatCurrency(bookedBalance)}</strong>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between">
+                          <span className="mb-0">Actual Balance :</span>
+                          <strong>{formatCurrency(actualBalance)}</strong>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between">
+                          <span className="mb-0">Expected Performance :</span>
+                          <strong>
+                            {parseFloat(expectedPerformance).toFixed(2) + "%"}
+                          </strong>
+                        </li>
+                        <li className="list-group-item d-flex justify-content-between">
+                          <span className="mb-0">Actual Performance :</span>
+                          <strong>
+                            {parseFloat(actualPerformance).toFixed(2) + "%"}
+                          </strong>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="col-xl-12 col-md-12 col-sm-12">
-              <div className="card">
-                <div className="card-header align-items-center border-0 pb-0">
-                  <h3 className="fs-20 text-black">Monthly Expenses</h3>
+              <div className="col-xl-12 col-md-12 col-sm-12">
+                <div className="card">
+                  <div className="card-header align-items-center border-0 pb-0">
+                    <h3 className="fs-20 text-black">Monthly Expenses</h3>
 
-                  {/* <Link className="btn btn-outline-primary rounded" to="#">
+                    {/* <Link className="btn btn-outline-primary rounded" to="#">
                     Download CSV
                   </Link> */}
-                </div>
+                  </div>
 
-                <div className="card-body pb-0 pt-0">
-                  <div className="d-flex align-items-center mb-3">
-                    <BarChart
-                      chartData={
-                        state.performance !== undefined ? state.performance : {}
-                      }
-                    />
+                  <div className="card-body pb-0 pt-0">
+                    <div className="d-flex align-items-center mb-3">
+                      <BarChart
+                        chartData={
+                          state.performance !== undefined
+                            ? state.performance
+                            : {}
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
       </div>
     </>
   );
