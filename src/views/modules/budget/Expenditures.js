@@ -265,10 +265,14 @@ const Expenditures = () => {
 
             const value = stat !== null ? stat?.value === "closed" : false;
 
+            const allowed = subs.filter(
+              (sub) => Array.from(sub?.budgetCode)[0] === "C"
+            );
+
             setLoading(false);
 
             setExpenditures(exp);
-            setSubBudgetHeads(subs.filter((budget) => budget.fund !== null));
+            setSubBudgetHeads(allowed.filter((budget) => budget.fund !== null));
             setBudgetClosed(value);
           })
         )
