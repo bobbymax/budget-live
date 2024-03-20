@@ -21,9 +21,13 @@ import CustomTable from "../../../components/commons/tables/customized/CustomTab
 
 const Expenditures = () => {
   const navigate = useNavigate();
+  const auth = useSelector((state) => state?.auth?.value?.user);
   const reconciliations = useSelector(
     (state) => state?.auth?.value?.user?.department?.reconciliations
   );
+
+  // console.log(auth);
+
   const initialState = {
     claim: null,
     code: "",
@@ -265,9 +269,10 @@ const Expenditures = () => {
 
             const value = stat !== null ? stat?.value === "closed" : false;
 
-            const allowed = subs.filter(
-              (sub) => Array.from(sub?.budgetCode)[0] === "C"
-            );
+            const allowed =
+              auth?.staff_no === "10041" || auth?.staff_no === "SUPER"
+                ? subs
+                : subs.filter((sub) => Array.from(sub?.budgetCode)[0] === "C");
 
             setLoading(false);
 
